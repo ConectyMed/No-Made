@@ -35,5 +35,27 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
       <slot />
     </main>
     <Footer />
+
+    <script>
+      // Le seul effet au défilement de la v1 (design.md §5) : apparition en fondu-montée,
+      // une fois par élément. Sans JS ou en mouvement réduit, tout est visible d'emblée.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if (!reduce && items.length && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('js-reveal');
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>

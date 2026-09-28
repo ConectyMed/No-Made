@@ -1,0 +1,42 @@
+---
+/** La carte lime, utilisée une seule fois : elle renvoie vers le formulaire (design.md §6). Pas de newsletter. */
+import Button from './Button.astro';
+import { CTA_LABEL, CTA_HREF } from '@/data/site';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = 'Envie de sortir ? Écris-nous.',
+  text = 'Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email et on cale une date ensemble.',
+} = Astro.props;
+---
+
+<aside class="highlight" aria-label="Demander une session">
+  <h3 class="highlight__title">{title}</h3>
+  <p class="highlight__text">{text}</p>
+  <Button href={CTA_HREF} variant="primary">{CTA_LABEL}</Button>
+</aside>
+
+<style>
+  .highlight {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    border-radius: var(--radius-card);
+    background: var(--lime);
+    color: var(--on-lime);
+  }
+
+  .highlight__title {
+    font-size: var(--text-xl);
+  }
+
+  .highlight__text {
+    font-size: var(--text-sm);
+    color: rgba(20, 20, 20, 0.72);
+    max-width: 38ch;
+  }
+</style>

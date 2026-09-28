@@ -1,26 +1,82 @@
 ---
-/** Offres. M0 : en-tête de page. M2 : une carte par session, alimentée par src/content/offers. */
+/** Offres : une carte détaillée par session, alimentée par src/content/offers/fr. */
+import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
+import OfferCard from '@/components/OfferCard.astro';
+import HighlightCard from '@/components/HighlightCard.astro';
 import { usePage } from '@/i18n';
+import { site } from '@/data/site';
 
 const page = usePage('offers');
+const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <Base title={page.title} description={page.description}>
   <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
 
   <section class="section" aria-label="Les sessions">
-    <div class="container">
-      <div class="card notice">
-        <p class="muted">Les deux offres arrivent ici au prochain jalon (M2).</p>
+    <div class="container list">
+      {offers.map((offer, i) => <div data-reveal style={`--reveal-delay: ${i * 90}ms`}><OfferCard offer={offer} headingLevel="h2" /></div>)}
+    </div>
+  </section>
+
+  <section class="section" aria-label="Infos pratiques">
+    <div class="container practical">
+      <div class="card practical__info" data-reveal>
+        <h2 class="practical__title">Bon à savoir</h2>
+        <ul class="practical__list">
+          <li>Les sessions ont lieu en région {site.area}. Le point de rendez-vous est précisé par email.</li>
+          <li>Pas de calendrier public pour l’instant : on cale chaque date ensemble, après ta demande.</li>
+          <li>Le paiement se règle après confirmation, pas en ligne. Les conditions sont dans les <a href="/cgv/">CGV</a>.</li>
+          <li>Ce sont des balades et des temps dehors, pas des séances de sport. La séquence mobilité de la demi-journée est encadrée par l’éducateur partenaire.</li>
+        </ul>
+      </div>
+      <div data-reveal style="--reveal-delay: 120ms">
+        <HighlightCard title="Une question avant de choisir ?" text="Écris-nous, on te répond simplement. Tu peux aussi directement demander une session." />
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .notice {
-    padding: var(--space-6);
+  .list {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .practical {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .practical__info {
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  }
+
+  .practical__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-4);
+  }
+
+  .practical__list {
+    display: grid;
+    gap: var(--space-3);
+    padding-left: 1.1em;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .practical__list a {
+    color: var(--moss);
+  }
+
+  @media (min-width: 56em) {
+    .practical {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      align-items: start;
+    }
   }
 </style>

@@ -1,0 +1,101 @@
+---
+/**
+ * Carte photo haute et très arrondie : image, dégradé sombre en bas,
+ * petite icône ronde, titre, une ligne (design.md §6).
+ */
+import PlaceholderImage from './PlaceholderImage.astro';
+
+interface Props {
+  title: string;
+  text: string;
+  /** Description de la photo prévue. */
+  photoAlt: string;
+  tone?: 'moss' | 'sand' | 'sky';
+  icon?: 'path' | 'hands' | 'family';
+}
+const { title, text, photoAlt, tone = 'moss', icon = 'path' } = Astro.props;
+---
+
+<article class="photo-card">
+  <PlaceholderImage alt={photoAlt} ratio="3 / 4" tone={tone} class="photo-card__media" />
+  <div class="photo-card__shade" aria-hidden="true"></div>
+  <div class="photo-card__body">
+    <span class="photo-card__icon" aria-hidden="true">
+      {icon === 'path' && (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c4-1 4-6 8-7s4-5 8-6" /><circle cx="4" cy="20" r="1.2" fill="currentColor" /><circle cx="20" cy="7" r="1.2" fill="currentColor" /></svg>
+      )}
+      {icon === 'hands' && (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l4-4 5 5" /><path d="M21 12l-4-4-5 5" /><path d="M8 13v5a4 4 0 0 0 8 0v-5" /></svg>
+      )}
+      {icon === 'family' && (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3" /><circle cx="17" cy="9" r="2.2" /><path d="M3 20a6 6 0 0 1 12 0" /><path d="M14 20a4 4 0 0 1 7 0" /></svg>
+      )}
+    </span>
+    <h3 class="photo-card__title">{title}</h3>
+    <p class="photo-card__text">{text}</p>
+  </div>
+</article>
+
+<style>
+  .photo-card {
+    position: relative;
+    display: grid;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    isolation: isolate;
+    color: #fff;
+    aspect-ratio: 4 / 5; /* un peu moins haute sur mobile, pleine largeur */
+  }
+
+  @media (min-width: 40em) {
+    .photo-card {
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  .photo-card > :global(.photo-card__media) {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .photo-card__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(20, 20, 20, 0.72) 0%, rgba(20, 20, 20, 0.25) 40%, transparent 65%);
+  }
+
+  .photo-card__body {
+    position: relative;
+    z-index: 2;
+    align-self: end;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+
+  .photo-card__icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: var(--space-2);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--moss);
+  }
+
+  .photo-card__title {
+    color: #fff;
+    font-size: var(--text-xl);
+    line-height: 1.1;
+  }
+
+  .photo-card__text {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 26ch;
+  }
+</style>

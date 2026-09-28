@@ -1,0 +1,68 @@
+---
+/**
+ * Emplacement photo clairement marqué, en attendant les vraies images des premières sorties.
+ * Rend un bloc teinté avec le libellé [PHOTO : …] ; le texte alternatif décrit l'image prévue.
+ */
+interface Props {
+  /** Description de l'image prévue, ex. "marche en nature sur un sentier de garrigue". */
+  alt: string;
+  /** Rapport largeur/hauteur CSS, ex. "3 / 4". */
+  ratio?: string;
+  class?: string;
+  tone?: 'moss' | 'sand' | 'sky';
+}
+const { alt, ratio = '3 / 4', class: className, tone = 'moss' } = Astro.props;
+---
+
+<div
+  class:list={['ph-image', `ph-image--${tone}`, className]}
+  style={`aspect-ratio: ${ratio}`}
+  role="img"
+  aria-label={`Emplacement photo : ${alt}`}
+  data-placeholder="PHOTO"
+>
+  <span class="ph-image__label">[PHOTO : {alt}]</span>
+</div>
+
+<style>
+  .ph-image {
+    position: relative;
+    display: grid;
+    align-items: start; /* étiquette en haut, pour ne pas chevaucher un titre en bas de carte */
+    justify-items: center;
+    padding-top: var(--space-5);
+    width: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    background:
+      radial-gradient(120% 80% at 20% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
+      linear-gradient(160deg, var(--_a) 0%, var(--_b) 100%);
+  }
+
+  .ph-image--moss {
+    --_a: #b9c7a6;
+    --_b: #6f8a58;
+  }
+
+  .ph-image--sand {
+    --_a: #e6dcc6;
+    --_b: #b8a37e;
+  }
+
+  .ph-image--sky {
+    --_a: #e9edf0;
+    --_b: #a9b8bf;
+  }
+
+  .ph-image__label {
+    padding: 0.4em 0.8em;
+    border: 1px dashed rgba(20, 20, 20, 0.45);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.75);
+    color: #3a3a3a;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    text-align: center;
+    max-width: 85%;
+  }
+</style>

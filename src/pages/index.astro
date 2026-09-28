@@ -1,44 +1,97 @@
 ---
 /**
- * Accueil. Au jalon M0 : hero statique (poster + texte + CTA + 4 tuiles).
- * Le hero vidéo, les animations d'entrée et les sections suivantes arrivent en M1 et M2.
+ * Accueil, selon le wireframe de design.md §7 :
+ * 1. hero (statique jusqu'au jalon M1 : la vidéo remplacera le dégradé)
+ * 2. offres : cartes à gauche, texte + carte lime à droite
+ * 3. comment ça marche : 3 étapes
+ * 4. les trois piliers : texte à gauche, 3 cartes photo à droite
+ * 5. témoignages : rien tant que site.showTestimonials est false
  */
+import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import Eyebrow from '@/components/Eyebrow.astro';
 import Headline from '@/components/Headline.astro';
 import Button from '@/components/Button.astro';
+import OfferCard from '@/components/OfferCard.astro';
+import HighlightCard from '@/components/HighlightCard.astro';
+import PhotoCard from '@/components/PhotoCard.astro';
 import { usePage } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
 
 const page = usePage('home');
 
-// Faits réels uniquement (design.md §4 et §8). Mis à jour avec les offres.
+// Le champ `slug` sert d'identifiant, donc on filtre la langue sur le chemin du fichier.
+const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+// Faits réels uniquement (design.md §4 et §8), valables pour les deux offres.
 const facts = [
   { value: '2h30 à 3h', label: 'par session' },
   { value: '3 à 5', label: 'personnes' },
   { value: 'dès 30 €', label: 'par personne' },
   { value: site.area, label: 'notre terrain' },
 ];
+
+const steps = [
+  {
+    title: 'Tu nous écris',
+    text: 'Tu choisis une session, tu nous dis pour combien de personnes et quand tu es disponible.',
+  },
+  {
+    title: 'On cale une date',
+    text: 'On te répond par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.',
+  },
+  {
+    title: 'On marche',
+    text: 'Rendez-vous au départ du sentier. Le téléphone reste dans le sac, le reste suit.',
+  },
+];
+
+const pillars = [
+  {
+    title: 'Marche en nature',
+    text: 'Des sentiers de la région, à un rythme tranquille, avec des pauses pour regarder.',
+    photoAlt: 'un sentier de garrigue au petit matin, personnes de dos',
+    tone: 'moss',
+    icon: 'path',
+  },
+  {
+    title: 'Coopération',
+    text: 'Des exercices simples à faire ensemble, sans compétition, dehors.',
+    photoAlt: 'un petit groupe qui franchit un passage ensemble, vu de loin',
+    tone: 'sand',
+    icon: 'hands',
+  },
+  {
+    title: 'Reconnex parents / ados',
+    text: 'Une demi-journée pour un parent et un ado, sans écran, côte à côte.',
+    photoAlt: 'un parent et un adolescent qui marchent côte à côte, de dos',
+    tone: 'sky',
+    icon: 'family',
+  },
+] as const;
 ---
 
 <Base title={page.title} description={page.description} isHome bodyClass="page-home">
+  <!-- 1. Hero -->
   <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__media" aria-hidden="true">
-      <!-- M1 : poster + vidéo en boucle. Ici, un dégradé provisoire de ciel vers --bg. -->
-    </div>
+    <div class="hero__frame">
+      <div class="hero__media" aria-hidden="true">
+        <!-- M1 : poster + vidéo en boucle. Ici, un dégradé provisoire de ciel vers --bg. -->
+      </div>
 
-    <div class="container hero__content">
-      <Eyebrow>{page.eyebrow}</Eyebrow>
-      <Headline as="h1" id="hero-title" text={page.h1} class="hero__title" />
-      <p class="hero__lead">{page.lead}</p>
-      <Button href={CTA_HREF} size="lg">{CTA_LABEL}</Button>
-    </div>
+      <div class="hero__content">
+        <Eyebrow>{page.eyebrow}</Eyebrow>
+        <Headline as="h1" id="hero-title" text={page.h1} class="hero__title" />
+        <p class="hero__lead">{page.lead}</p>
+        <Button href={CTA_HREF} size="lg">{CTA_LABEL}</Button>
+      </div>
 
-    <div class="container">
       <ul class="facts" role="list">
         {
           facts.map((f) => (
-            <li class="fact card">
+            <li class="fact">
               <span class="fact__value serif">{f.value}</span>
               <span class="fact__label small muted">{f.label}</span>
             </li>
@@ -47,16 +100,97 @@ const facts = [
       </ul>
     </div>
   </section>
+
+  <!-- 2. Offres -->
+  <section class="section offers" aria-labelledby="offers-title">
+    <div class="container offers__grid">
+      <div class="section-head offers__head" data-reveal>
+        <Eyebrow>Les sessions</Eyebrow>
+        <Headline as="h2" id="offers-title" text="Deux façons de sortir" highlight="sortir" />
+        <p class="muted">
+          Deux formats en phase de test : une balade guidée de 2h30, et une demi-journée hors écran.
+          Petits groupes, sentiers de la région {site.area}.
+        </p>
+        <a href="/offres/" class="text-link">Voir les offres en détail</a>
+      </div>
+
+      <div class="offers__cards">
+        {offers.map((offer, i) => <div data-reveal style={`--reveal-delay: ${i * 90}ms`}><OfferCard offer={offer} compact /></div>)}
+      </div>
+
+      <div class="offers__cta" data-reveal style="--reveal-delay: 120ms">
+        <HighlightCard />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Comment ça marche -->
+  <section class="section how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <Eyebrow>Comment ça marche</Eyebrow>
+        <Headline as="h2" id="how-title" text="Trois étapes, pas plus" highlight="Trois" />
+      </div>
+      <ol class="steps" role="list">
+        {
+          steps.map((s, i) => (
+            <li class="step card" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+              <span class="step__num serif" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="step__title">{s.title}</h3>
+              <p class="step__text muted">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. Les trois piliers -->
+  <section class="section pillars" aria-labelledby="pillars-title">
+    <div class="container pillars__grid">
+      <div class="section-head pillars__head" data-reveal>
+        <Eyebrow>Ce qu’on fait</Eyebrow>
+        <Headline as="h2" id="pillars-title" text="Marcher, coopérer, se retrouver dehors." highlight="dehors" />
+        <p class="muted">
+          Pas de discours, pas de performance. On sort, on marche, on fait quelques choses ensemble, on parle.
+          La partie physique, quand il y en a, est encadrée par l’éducateur partenaire.
+        </p>
+        <div class="pillars__actions">
+          <Button href={CTA_HREF}>{CTA_LABEL}</Button>
+          <Button href="/a-propos/" variant="secondary">Qui est derrière</Button>
+        </div>
+      </div>
+      <div class="pillars__cards">
+        {
+          pillars.map((p, i) => (
+            <div data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+              <PhotoCard title={p.title} text={p.text} photoAlt={p.photoAlt} tone={p.tone} icon={p.icon} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Témoignages : uniquement de vrais témoignages, jamais avant (design.md §2, §7) -->
+  {site.showTestimonials && <section class="section" aria-label="Témoignages" />}
 </Base>
 
 <style>
+  /* ---------- Hero ---------- */
   .hero {
+    padding: var(--space-3);
+  }
+
+  .hero__frame {
     position: relative;
     display: grid;
+    grid-template-rows: 1fr auto; /* texte en haut, tuiles collées en bas du cadre */
     gap: clamp(2.5rem, 2rem + 4vw, 5rem);
-    padding-top: clamp(3rem, 2rem + 5vw, 7rem);
-    padding-bottom: var(--space-6);
-    min-height: calc(100svh - var(--header-h));
+    min-height: calc(100svh - var(--header-h) - 2 * var(--space-3));
+    padding: clamp(3rem, 2rem + 5vw, 6.5rem) var(--gutter) var(--space-4);
+    border-radius: var(--radius-card);
+    overflow: hidden;
     isolation: isolate;
   }
 
@@ -64,11 +198,15 @@ const facts = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(to bottom, var(--sky) 0%, var(--bg) 70%);
+    background:
+      radial-gradient(90% 60% at 50% 100%, rgba(79, 107, 58, 0.16), transparent 70%),
+      linear-gradient(to bottom, var(--sky) 0%, #f1f2ec 55%, var(--bg) 100%);
   }
 
   .hero__content {
     display: grid;
+    align-self: start;
+    align-content: start;
     justify-items: center;
     text-align: center;
     gap: var(--space-5);
@@ -89,13 +227,19 @@ const facts = [
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
+    align-self: end;
+    margin-top: auto;
   }
 
   .fact {
     display: grid;
     gap: var(--space-1);
-    padding: var(--space-5) var(--space-5);
+    padding: var(--space-5);
+    background: rgba(255, 255, 255, 0.82);
+    border: var(--border);
     border-radius: var(--radius-inner);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 
   .fact__value {
@@ -104,6 +248,101 @@ const facts = [
     letter-spacing: var(--tracking-heading);
   }
 
+  /* ---------- Offres ---------- */
+  /* Mobile : titre, cartes, carte lime. Desktop : cartes à gauche, titre + carte lime à droite. */
+  .offers__grid {
+    display: grid;
+    grid-template-areas:
+      'head'
+      'cards'
+      'cta';
+    gap: var(--space-6);
+  }
+
+  .offers__head {
+    grid-area: head;
+    margin-bottom: 0;
+  }
+
+  .offers__cards {
+    grid-area: cards;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .offers__cta {
+    grid-area: cta;
+  }
+
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: var(--moss);
+    font-weight: 500;
+    text-decoration: none;
+    min-height: var(--tap-min);
+  }
+
+  .text-link::after {
+    content: '→';
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .text-link:hover::after {
+    transform: translateX(3px);
+  }
+
+  .text-link:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------- Étapes ---------- */
+  .steps {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .step {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .step__num {
+    font-size: var(--text-2xl);
+    color: var(--moss);
+    line-height: 1;
+    margin-bottom: var(--space-3);
+  }
+
+  .step__text {
+    font-size: var(--text-sm);
+  }
+
+  /* ---------- Piliers ---------- */
+  .pillars__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .pillars__head {
+    margin-bottom: 0;
+  }
+
+  .pillars__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .pillars__cards {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  /* ---------- Desktop ---------- */
   @media (min-width: 40em) {
     .facts {
       grid-template-columns: repeat(4, 1fr);
@@ -112,6 +351,41 @@ const facts = [
 
     .fact {
       border-radius: calc(var(--radius-card) * 0.75);
+    }
+
+    .steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pillars__cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .hero {
+      padding: var(--space-4);
+    }
+
+    .offers__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        'cards head'
+        'cards cta';
+      gap: var(--space-5) var(--space-8);
+      align-items: start;
+    }
+
+    .offers__cards {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .pillars__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+      gap: var(--space-8);
+      align-items: center;
     }
   }
 </style>
