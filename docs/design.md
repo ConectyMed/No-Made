@@ -197,13 +197,15 @@ any [PLACEHOLDER] remains (override for previews).
 ## 12. Admin (mini CRM), added 2026-09-28
 
 Decided with the owner's representative: a small CRM at `/admin`, for Anthony and the site administrator.
-Not a public feature. Content editing stays separate (Keystatic, draft mode, later step).
+Not a public feature. Site content (texts, prices, photos) is NOT editable from the admin: Anthony asks the
+site administrator, who changes the files (decided 2026-09-28; the Keystatic step was dropped).
 
 - **Scope**: requests from the form (status: nouvelle → répondue → confirmée / annulée, notes, reply by
   opening the owner's own mailbox with a prefilled draft, the site never sends), contacts (one card per
   person, notes, history), planned sessions with participants and an editable amount that counts as
   revenue when the session is ticked "faite", and a dashboard. Delivered in four steps: 1 base + accounts +
-  requests (done), 2 contacts + sessions + payment (done 2026-09-28), 3 dashboard (done 2026-09-28), 4 Keystatic.
+  requests (done), 2 contacts + sessions + payment (done 2026-09-28), 3 dashboard (done 2026-09-28).
+  A fourth step (Keystatic content editing) was dropped.
 - **Dashboard**: waiting (new requests, awaiting client, upcoming sessions, contacts), money (month revenue
   with delta vs previous month, year revenue, people taken out, request conversion rate for the year),
   a twelve-month CSS bar chart, revenue by offer, next five sessions, latest requests. Revenue = amount of
@@ -249,7 +251,7 @@ Not a public feature. Content editing stays separate (Keystatic, draft mode, lat
       temporary bootstrap account, then change it on /admin/compte. Anthony's own account later via `ADMIN_EMAILS`.
 - [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.
 - [x] Admin step 3 (2026-09-28): dashboard.
-- [ ] Admin step 4: Keystatic
+- [x] Admin step 4 (Keystatic) dropped 2026-09-28: content changes go through the site administrator.
 - [x] Hero video received and encoded (2026-09-28)
 - [ ] Real photos
 - [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.

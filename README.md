@@ -64,4 +64,4 @@ puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un termin
 | M5.1 | Admin : base Turso, comptes, connexion, boîte de demandes branchée sur le formulaire | fait |
 | M5.2 | Admin : contacts, sessions, participants, paiement au cochage, lien Google Agenda | fait |
 | M5.3 | Admin : tableau de bord (chiffre, sessions, conversion, douze mois, par offre) | fait |
-| M5.4 | Contenu du site éditable en brouillon (Keystatic) | à venir |
+| M5.4 | Édition du contenu par Anthony : abandonnée (2026-09-28), les modifications passent par l'administrateur du site | — |

@@ -121,7 +121,7 @@ L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de
 
 8. **Tableau de bord** : en haut, ce qui attend (demandes à traiter, réponses attendues, sessions à venir, carnet) ; puis le chiffre du mois avec l'écart au mois précédent, le chiffre de l'année, les personnes emmenées, le taux de demandes converties ; enfin douze mois de chiffre en histogramme, la répartition par offre, les prochaines sessions et les dernières demandes. Tout le chiffre vient des sessions cochées « faite ».
 
-À venir : édition du contenu du site en brouillon (étape 4).
+Le contenu du site (textes, prix, photos) ne se modifie pas depuis l'admin : Anthony te transmet ses changements, tu me les passes ou tu modifies les fichiers indiqués dans le README.
 
 ---
 
