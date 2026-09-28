@@ -63,9 +63,15 @@ if (found.size === 0) {
 console.log(`check-placeholders : ${found.size} placeholder(s) restant(s) :`);
 for (const [key, pages] of [...found].sort()) console.log(`  ${key}  →  ${[...pages].sort().join(', ')}`);
 
-if (isProd && process.env.ALLOW_PLACEHOLDERS !== '1') {
+const allowRaw = process.env.ALLOW_PLACEHOLDERS;
+const allow = ['1', 'true', 'yes', 'on'].includes(String(allowRaw ?? '').trim().toLowerCase());
+console.log(
+  `\nEnvironnement : VERCEL_ENV=${process.env.VERCEL_ENV ?? '-'} · branche=${process.env.VERCEL_GIT_COMMIT_REF ?? '-'} · production=${isProd ? 'oui' : 'non'} · ALLOW_PLACEHOLDERS=${allowRaw === undefined ? '(absente)' : JSON.stringify(allowRaw)}`,
+);
+
+if (isProd && !allow) {
   console.error('\nBuild de production refusé : il reste des informations à compléter (voir docs/PLACEHOLDERS.md).');
-  console.error('Pour forcer malgré tout (prévisualisation uniquement) : ALLOW_PLACEHOLDERS=1');
+  console.error('Pour forcer pendant le développement : variable ALLOW_PLACEHOLDERS=1, cochée pour l’environnement Production, puis Redeploy.');
   process.exit(1);
 }
-console.log(isProd ? '\nALLOW_PLACEHOLDERS=1 : build autorisé malgré les placeholders.' : '\nBuild de prévisualisation : autorisé.');
+console.log(isProd ? 'ALLOW_PLACEHOLDERS actif : build de production autorisé malgré les placeholders.' : 'Build de prévisualisation : autorisé.');
