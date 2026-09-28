@@ -11,7 +11,7 @@ import type { IconName } from '@/components/Icon.astro';
 import ProvisionalImage from '@/components/ProvisionalImage.astro';
 import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
-import Testimonials from '@/components/Testimonials.astro';
+import Quote from '@/components/Quote.astro';
 import Placeholder from '@/components/Placeholder.astro';
 import { usePage, t } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
@@ -202,6 +202,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </div>
         </article>
       </div>
+      <Quote who="sophie-m" class="quote-after" />
     </div>
   </section>
 
@@ -217,6 +218,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
             <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
             Sans écran
           </span>
+          <Quote who="karim-b" compact class="reconnex__quote" />
         </div>
         <div class="reconnex__text">
           <span class="reconnex__label eyebrow">Format parent / enfant</span>
@@ -258,11 +260,9 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </li>
         ))}
       </ol>
+      <Quote who="lea-d" class="quote-after quote-center" />
     </div>
   </section>
-
-  <!-- 5 bis. Avis (affiché seulement avec de vrais avis, site.showTestimonials) -->
-  <Testimonials />
 
   <!-- 6. Prix -->
   {entry && groupPrice && groupPrice.amountCents !== undefined && (
@@ -475,6 +475,19 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
   .specs :global(.specs__icon) {
     color: var(--green-600);
+  }
+
+  /* ---------- Citations intégrées ---------- */
+  :global(.quote-after) {
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  :global(.quote-center) {
+    margin-inline: auto;
+  }
+
+  :global(.reconnex__quote) {
+    margin-top: var(--space-7);
   }
 
   /* ---------- Piliers ---------- */

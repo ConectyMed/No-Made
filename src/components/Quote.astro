@@ -1,0 +1,120 @@
+---
+/**
+ * Citation d'un participant, intégrée dans la page comme un exergue : pas de carte, un filet lime,
+ * le texte en grand, l'attribution en petit. `who` = nom du fichier dans src/content/testimonials/fr/.
+ * Ne rend rien si l'avis n'existe pas ou si site.showTestimonials est faux. Un avis provisoire
+ * porte un marqueur invisible que le contrôle des placeholders détecte.
+ */
+import { getCollection } from 'astro:content';
+import { site } from '@/data/site';
+
+interface Props {
+  who: string;
+  /** Version resserrée, pour vivre dans un cadre (Reconnexion). */
+  compact?: boolean;
+  class?: string;
+}
+const { who, compact = false, class: className } = Astro.props;
+
+const entry = site.showTestimonials
+  ? (await getCollection('testimonials', ({ id, filePath }) => filePath?.includes('/testimonials/fr/') && id.endsWith(who))).at(0)
+  : undefined;
+const offers = entry ? await getCollection('offers') : [];
+const offerTitle = offers.find((o) => o.data.slug === entry?.data.offerSlug)?.data.title;
+const monthLabel = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(Date.UTC(y, m - 1, 15)));
+};
+---
+
+{
+  entry && (
+    <figure class:list={['quote', { 'quote--compact': compact }, className]} data-reveal>
+      <blockquote class="quote__text">
+        <p>{entry.body?.trim()}</p>
+      </blockquote>
+      <figcaption class="quote__by">
+        <strong>{entry.data.name}</strong>
+        <span>
+          {offerTitle && <>{offerTitle} · </>}
+          {monthLabel(entry.data.date)}
+        </span>
+        {entry.data.provisional && <span class="visually-hidden">[AVIS PROVISOIRE]</span>}
+      </figcaption>
+    </figure>
+  )
+}
+
+<style>
+  .quote {
+    position: relative;
+    padding-left: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    max-width: 40rem;
+  }
+
+  /* Le filet et le guillemet : la seule ornementation. */
+  .quote::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--lime);
+  }
+
+  .quote__text {
+    margin: 0;
+  }
+
+  .quote__text p {
+    font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+    color: var(--green-900);
+    text-wrap: pretty;
+  }
+
+  .quote__text p::before {
+    content: '« ';
+    color: var(--green-600);
+  }
+
+  .quote__text p::after {
+    content: ' »';
+    color: var(--green-600);
+  }
+
+  .quote__by {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    align-items: baseline;
+    margin-top: var(--space-4);
+    font-size: var(--label-sm);
+    color: var(--ink-2);
+  }
+
+  .quote__by strong {
+    color: var(--green-900);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .quote--compact {
+    max-width: none;
+    padding-left: 1.25rem;
+  }
+
+  .quote--compact .quote__text p {
+    font-size: var(--body-lg);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .quote--compact .quote__by {
+    margin-top: var(--space-3);
+  }
+</style>

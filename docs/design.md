@@ -140,8 +140,10 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
 
-Testimonials (`Testimonials.astro`, between Déroulement and Prix): shown when `site.showTestimonials` is
-true and entries exist in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
+Testimonials are not a section but **pull quotes** (`Quote.astro`) woven into the page: one after the three
+moments (adult format), one under the Reconnexion image (parent / child), one after the steps, before the
+price banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
+Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
 2026-09-28, at the representative's request, three **provisional, invented** reviews (`provisional: true`)
 fill the section for previews; each carries a visually-hidden "[AVIS PROVISOIRE]" marker that the
 placeholder gate catches, so production stays blocked until the three real reviews replace them.
