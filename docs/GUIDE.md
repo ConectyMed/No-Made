@@ -111,7 +111,7 @@ Autres possibilités reconnues par le site si vous préférez : Calendly (plan g
 
 ## Étape 6 quater — Les avis de participants
 
-Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Depuis le 28 septembre 2026, deux **avis provisoires, inventés pour la maquette** (fichiers `karim-b.md`, `lea-d.md`) sont glissés dans la page comme des citations ; la troisième citation est de Rousseau, libre de droits, et peut rester. Ils portent un marqueur invisible `[AVIS PROVISOIRE]` : la production reste bloquée tant qu'ils sont là, comme pour les images provisoires.
+Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Depuis le 28 septembre 2026, deux **avis provisoires, inventés pour la maquette** (fichiers `karim-b.md`, `lea-d.md`) sont glissés dans la page comme des citations ; la troisième citation est de Rimbaud (*Sensation*), libre de droits, et peut rester. Ils portent un marqueur invisible `[AVIS PROVISOIRE]` : la production reste bloquée tant qu'ils sont là, comme pour les images provisoires.
 
 Pour chaque avis, envoie-moi : le prénom et l'initiale du nom, le texte tel qu'il a été écrit, le mois de la session, l'offre concernée, d'où vient l'avis (email, message, oral), et la confirmation que la personne est d'accord pour être citée. Je crée un fichier par avis dans `src/content/testimonials/fr/` (modèle : `_modele.md`) et j'active la section. Pas d'étoiles ni de note : le texte et le prénom suffisent, c'est plus crédible.
 
