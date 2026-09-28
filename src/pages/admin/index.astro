@@ -1,17 +1,59 @@
 ---
-/** Tableau de bord (version étape 1 : demandes à traiter et dernières demandes ; complet à l'étape 3). */
+/**
+ * Tableau de bord : ce qui attend (demandes à traiter, prochaines sessions), ce qui a été fait
+ * (chiffre du mois et de l'année, sessions, personnes), et deux vues : douze mois de chiffre,
+ * répartition par offre. Tout vient des sessions cochées « faite ».
+ */
 import Admin from '@/layouts/Admin.astro';
-import { countRequestsByStatus, listRequests } from '@/lib/crm/requests';
+import Icon from '@/components/Icon.astro';
+import { countRequestsByStatus, listRequests, requestConversion } from '@/lib/crm/requests';
+import { listOutings, monthlyRevenue, revenueByOffer, totalsBetween } from '@/lib/crm/outings';
+import { countContacts } from '@/lib/crm/contacts';
 import { REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
-import { formatRelative } from '@/lib/dates';
+import { formatDateLong, formatMonthKey, formatRelative, formatTime, formatUntil, msToParisParts, shiftParisMonth, startOfParisYear } from '@/lib/dates';
+import { formatPrice } from '@/lib/format';
 
 export const prerender = false;
 
 const user = Astro.locals.user!;
-const counts = await countRequestsByStatus();
-const latest = (await listRequests()).slice(0, 6);
-const hour = Number(new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(Date.now()));
+const now = Date.now();
+const monthStart = shiftParisMonth(now, 0);
+const nextMonth = shiftParisMonth(now, 1);
+const prevMonth = shiftParisMonth(now, -1);
+const yearStart = startOfParisYear(now);
+const nextYear = shiftParisMonth(yearStart, 12);
+const twelveAgo = shiftParisMonth(now, -11);
+
+const [counts, latest, conversion, month, lastMonth, year, byOffer, monthly, upcoming, contacts] = await Promise.all([
+  countRequestsByStatus(),
+  listRequests(),
+  requestConversion(yearStart),
+  totalsBetween(monthStart, nextMonth),
+  totalsBetween(prevMonth, monthStart),
+  totalsBetween(yearStart, nextYear),
+  revenueByOffer(yearStart, nextYear),
+  monthlyRevenue(twelveAgo),
+  listOutings('a-venir'),
+  countContacts(),
+]);
+
+const hour = Number(new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(now));
 const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
+const today = formatDateLong(now);
+
+// Douze mois, du plus ancien au courant, zéros compris.
+const series: { key: string; label: string; revenueCents: number; done: number }[] = [];
+for (let i = -11; i <= 0; i++) {
+  const key = msToParisParts(shiftParisMonth(now, i)).date.slice(0, 7);
+  const found = monthly.find((m) => m.month === key);
+  series.push({ key, label: formatMonthKey(key), revenueCents: found?.revenueCents ?? 0, done: found?.done ?? 0 });
+}
+const maxRevenue = Math.max(1, ...series.map((s) => s.revenueCents));
+const totalOffers = Math.max(1, ...byOffer.map((o) => o.revenueCents));
+const delta = lastMonth.revenueCents > 0 ? Math.round(((month.revenueCents - lastMonth.revenueCents) / lastMonth.revenueCents) * 100) : null;
+const rate = conversion.total > 0 ? Math.round((conversion.converted / conversion.total) * 100) : null;
+const yearLabel = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', timeZone: 'Europe/Paris' }).format(now);
+const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: 'Europe/Paris' }).format(now);
 ---
 
 <Admin title="Tableau de bord">
@@ -19,9 +61,11 @@ const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
     <div>
       <span class="eyebrow">Tableau de bord</span>
       <h1>{hello} {user.name}</h1>
+      <p>{today.charAt(0).toUpperCase() + today.slice(1)}. {counts.nouvelle > 0 ? `${counts.nouvelle} demande${counts.nouvelle > 1 ? 's' : ''} à traiter.` : 'Rien en attente.'}{upcoming.length > 0 ? ` Prochaine session ${formatUntil(upcoming[0].startsAt)}.` : ''}</p>
     </div>
   </div>
 
+  <!-- 1. Ce qui attend -->
   <div class="tiles">
     <a href="/admin/demandes?statut=nouvelle" class="tile adm-card tile--accent">
       <span class="tile__num">{counts.nouvelle}</span>
@@ -29,72 +73,175 @@ const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
     </a>
     <a href="/admin/demandes?statut=repondue" class="tile adm-card">
       <span class="tile__num">{counts.repondue}</span>
-      <span class="tile__label">en attente de réponse du client</span>
+      <span class="tile__label">en attente d’une réponse du client</span>
     </a>
-    <a href="/admin/demandes?statut=confirmee" class="tile adm-card">
-      <span class="tile__num">{counts.confirmee}</span>
-      <span class="tile__label">confirmée{counts.confirmee > 1 ? 's' : ''}</span>
+    <a href="/admin/sessions" class="tile adm-card">
+      <span class="tile__num">{upcoming.length}</span>
+      <span class="tile__label">session{upcoming.length > 1 ? 's' : ''} à venir</span>
     </a>
-    <div class="tile adm-card tile--soon">
-      <span class="tile__num">…</span>
-      <span class="tile__label">sessions et chiffre d’affaires : étape suivante</span>
+    <a href="/admin/contacts" class="tile adm-card">
+      <span class="tile__num">{contacts}</span>
+      <span class="tile__label">personne{contacts > 1 ? 's' : ''} dans le carnet</span>
+    </a>
+  </div>
+
+  <!-- 2. Ce qui a été fait -->
+  <div class="tiles tiles--money">
+    <div class="tile adm-card">
+      <span class="tile__kicker">Chiffre de {monthLabel}</span>
+      <span class="tile__num">{formatPrice(month.revenueCents)}</span>
+      <span class="tile__label">
+        {month.done} session{month.done > 1 ? 's' : ''} faite{month.done > 1 ? 's' : ''}
+        {delta !== null && <> · <span class:list={['delta', { 'delta--up': delta >= 0, 'delta--down': delta < 0 }]}>{delta >= 0 ? '+' : ''}{delta} %</span> vs le mois dernier</>}
+      </span>
+    </div>
+    <div class="tile adm-card">
+      <span class="tile__kicker">Chiffre {yearLabel}</span>
+      <span class="tile__num">{formatPrice(year.revenueCents)}</span>
+      <span class="tile__label">{year.done} session{year.done > 1 ? 's' : ''} faite{year.done > 1 ? 's' : ''}</span>
+    </div>
+    <div class="tile adm-card">
+      <span class="tile__kicker">Personnes emmenées en {yearLabel}</span>
+      <span class="tile__num">{year.people}</span>
+      <span class="tile__label">{year.done > 0 ? `${(year.people / year.done).toFixed(1).replace('.', ',')} par session en moyenne` : 'sur les sessions faites'}</span>
+    </div>
+    <div class="tile adm-card">
+      <span class="tile__kicker">Demandes converties en {yearLabel}</span>
+      <span class="tile__num">{rate === null ? '—' : `${rate} %`}</span>
+      <span class="tile__label">{conversion.converted} sur {conversion.total} reçue{conversion.total > 1 ? 's' : ''}{conversion.cancelled > 0 ? ` · ${conversion.cancelled} annulée${conversion.cancelled > 1 ? 's' : ''}` : ''}</span>
     </div>
   </div>
 
-  <section class="adm-card latest" aria-labelledby="latest-title">
-    <div class="latest__head">
-      <h2 id="latest-title">Dernières demandes</h2>
-      <a href="/admin/demandes" class="small">Tout voir</a>
-    </div>
-    {
-      latest.length === 0 ? (
-        <p class="adm-empty">Aucune demande pour l’instant. Elles arriveront ici dès le premier envoi du formulaire.</p>
-      ) : (
-        <table class="adm-table">
-          <thead>
-            <tr>
-              <th>Qui</th>
-              <th>Session</th>
-              <th>Personnes</th>
-              <th>Reçue</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            {latest.map((r) => (
-              <tr>
-                <td>
-                  <a href={`/admin/demandes/${r.id}`}>{r.contactName}</a>
-                  <br />
-                  <span class="small">{r.contactEmail}</span>
-                </td>
-                <td>{r.offerLabel}</td>
-                <td>{r.groupSize}</td>
-                <td>{formatRelative(r.createdAt)}</td>
-                <td>
-                  <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
-                </td>
-              </tr>
+  <div class="grid">
+    <!-- 3. Douze mois -->
+    <section class="adm-card chart" aria-labelledby="chart-title">
+      <div class="card-head">
+        <h2 id="chart-title">Douze derniers mois</h2>
+        <span class="small muted">Sessions cochées « faite »</span>
+      </div>
+      {
+        series.every((s) => s.revenueCents === 0) ? (
+          <p class="adm-empty">Rien d’encaissé pour l’instant. Dès qu’une session est cochée « faite », son montant apparaît ici.</p>
+        ) : (
+          <ol class="bars" role="list">
+            {series.map((s) => (
+              <li class="bar" style={`--h: ${Math.round((s.revenueCents / maxRevenue) * 100)}%`}>
+                <span class="bar__val">{s.revenueCents ? formatPrice(s.revenueCents) : ''}</span>
+                <span class="bar__fill" aria-hidden="true" />
+                <span class="bar__label">{s.label.replace(/\s\d{4}$/, '')}</span>
+                <span class="visually-hidden">{s.label} : {formatPrice(s.revenueCents)}, {s.done} session{s.done > 1 ? 's' : ''}</span>
+              </li>
             ))}
-          </tbody>
-        </table>
-      )
-    }
-  </section>
+          </ol>
+        )
+      }
+    </section>
+
+    <!-- 4. Par offre -->
+    <section class="adm-card" aria-labelledby="offers-title">
+      <div class="card-head">
+        <h2 id="offers-title">Par offre, {yearLabel}</h2>
+      </div>
+      {
+        byOffer.length === 0 ? (
+          <p class="adm-empty">Aucune session faite cette année.</p>
+        ) : (
+          <ul class="offers" role="list">
+            {byOffer.map((o) => (
+              <li>
+                <div class="offers__row">
+                  <span class="offers__name">{o.offerLabel}</span>
+                  <span class="offers__val">{formatPrice(o.revenueCents)} <span class="muted">· {o.done} session{o.done > 1 ? 's' : ''}</span></span>
+                </div>
+                <span class="offers__track" aria-hidden="true">
+                  <span class="offers__fill" style={`width: ${Math.round((o.revenueCents / totalOffers) * 100)}%`} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- 5. Prochaines sessions -->
+    <section class="adm-card" aria-labelledby="next-title">
+      <div class="card-head">
+        <h2 id="next-title">Prochaines sessions</h2>
+        <a href="/admin/sessions" class="small">Le planning</a>
+      </div>
+      {
+        upcoming.length === 0 ? (
+          <p class="adm-empty">Rien de prévu. <a href="/admin/sessions/nouvelle">Créer une session</a>, ou planifier depuis une demande.</p>
+        ) : (
+          <ul class="next" role="list">
+            {upcoming.slice(0, 5).map((o) => (
+              <li>
+                <a href={`/admin/sessions/${o.id}`} class="next__date">
+                  <Icon name="calendar" size={16} />
+                  {formatDateLong(o.startsAt)}, {formatTime(o.startsAt)}
+                </a>
+                <span class="small muted">
+                  {o.offerLabel} · {o.people} pers.{o.place ? ` · ${o.place}` : ''} · {formatPrice(o.amountCents)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- 6. Dernières demandes -->
+    <section class="adm-card latest" aria-labelledby="latest-title">
+      <div class="card-head">
+        <h2 id="latest-title">Dernières demandes</h2>
+        <a href="/admin/demandes" class="small">Tout voir</a>
+      </div>
+      {
+        latest.length === 0 ? (
+          <p class="adm-empty">Aucune demande pour l’instant. Elles arriveront ici dès le premier envoi du formulaire.</p>
+        ) : (
+          <ul class="next" role="list">
+            {latest.slice(0, 6).map((r) => (
+              <li>
+                <div class="latest__row">
+                  <a href={`/admin/demandes/${r.id}`} class="next__date">{r.contactName}</a>
+                  <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
+                </div>
+                <span class="small muted">{r.offerLabel} · {r.groupSize} pers. · {formatRelative(r.createdAt)}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </div>
 </Admin>
 
 <style>
   .tiles {
     display: grid;
     gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .tiles--money {
     margin-bottom: var(--space-6);
   }
 
   .tile {
     display: grid;
     gap: var(--space-1);
+    align-content: start;
     text-decoration: none;
     color: inherit;
+  }
+
+  .tile__kicker {
+    font-size: var(--label-sm);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green-600);
   }
 
   .tile__num {
@@ -123,16 +270,24 @@ const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
     color: var(--on-dark-muted);
   }
 
-  .tile--soon {
-    border-style: dashed;
-    box-shadow: none;
+  .delta {
+    font-weight: 700;
   }
 
-  .tile--soon .tile__num {
-    color: var(--ink-3);
+  .delta--up {
+    color: var(--green-600);
   }
 
-  .latest__head {
+  .delta--down {
+    color: var(--danger);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .card-head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -140,11 +295,131 @@ const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
     margin-bottom: var(--space-4);
   }
 
-  .latest__head h2 {
+  .card-head h2 {
     font-size: var(--text-md);
   }
 
-  .latest__head a {
+  .card-head a {
+    color: var(--green-600);
+  }
+
+  /* Histogramme en CSS : hauteur en pourcentage du meilleur mois. */
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.35rem;
+    align-items: end;
+    height: 13rem;
+    padding-top: 1.5rem;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-items: end;
+    height: 100%;
+    text-align: center;
+  }
+
+  .bar__val {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar__fill {
+    display: block;
+    height: max(var(--h), 2px);
+    border-radius: 0.4rem 0.4rem 0 0;
+    background: var(--lime);
+    align-self: end;
+  }
+
+  .bar:last-child .bar__fill {
+    background: var(--green-600);
+  }
+
+  .bar__label {
+    font-size: var(--label-sm);
+    color: var(--ink-2);
+    padding-top: 0.35rem;
+    border-top: var(--border);
+  }
+
+  .offers {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .offers__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-size: var(--body-sm);
+    margin-bottom: 0.4rem;
+  }
+
+  .offers__name {
+    font-weight: 600;
+    color: var(--green-900);
+  }
+
+  .offers__track {
+    display: block;
+    height: 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-low);
+    overflow: hidden;
+  }
+
+  .offers__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--lime);
+  }
+
+  .next {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .next li {
+    display: grid;
+    gap: 0.15rem;
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border);
+  }
+
+  .next li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .next__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--green-900);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .next__date:hover {
+    text-decoration: underline;
+  }
+
+  .latest__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .adm-empty a {
     color: var(--green-600);
   }
 
@@ -157,6 +432,20 @@ const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
   @media (min-width: 64em) {
     .tiles {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 40em) {
+    .bar__val {
+      visibility: hidden;
+    }
+
+    .bar:nth-child(odd) .bar__label {
+      visibility: hidden;
     }
   }
 </style>

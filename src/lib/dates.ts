@@ -91,3 +91,30 @@ export function startOfParisYear(ms = Date.now()): number {
 export function toGoogleUtc(ms: number): string {
   return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
+
+/** Début du mois, décalé de n mois (heure de Paris). */
+export function shiftParisMonth(ms: number, n: number): number {
+  const { date } = msToParisParts(ms);
+  const y = Number(date.slice(0, 4));
+  const m = Number(date.slice(5, 7)) - 1 + n;
+  const yy = y + Math.floor(m / 12);
+  const mm = ((m % 12) + 12) % 12;
+  return parisToMs(`${yy}-${String(mm + 1).padStart(2, '0')}-01`, '00:00') ?? ms;
+}
+
+/** "2026-10" → "oct. 2026" */
+export function formatMonthKey(key: string): string {
+  const [y, m] = key.split('-').map(Number);
+  return new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric', timeZone: TZ }).format(Date.UTC(y, m - 1, 15));
+}
+
+/** Pour une date à venir : "aujourd’hui", "demain", "dans 5 jours", sinon la date. */
+export function formatUntil(ms: number, now = Date.now()): string {
+  const today = msToParisParts(now).date;
+  const target = msToParisParts(ms).date;
+  if (target === today) return 'aujourd’hui';
+  const days = Math.round((parisToMs(target, '12:00')! - parisToMs(today, '12:00')!) / 86_400_000);
+  if (days === 1) return 'demain';
+  if (days > 1 && days < 60) return `dans ${days} jours`;
+  return `le ${formatDate(ms)}`;
+}

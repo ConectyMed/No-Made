@@ -161,3 +161,18 @@ export async function deleteRequest(id: string): Promise<void> {
     await db.delete(schema.contacts).where(eq(schema.contacts.id, row.contactId));
   }
 }
+
+/** Demandes reçues depuis une date : combien ont donné une session (confirmée ou rattachée), combien annulées. */
+export async function requestConversion(from: number): Promise<{ total: number; converted: number; cancelled: number }> {
+  const db = await getDb();
+  const row = await db
+    .select({
+      total: count(),
+      converted: sql<number>`sum(case when ${schema.requests.status} = 'confirmee' or ${schema.requests.outingId} is not null then 1 else 0 end)`,
+      cancelled: sql<number>`sum(case when ${schema.requests.status} = 'annulee' then 1 else 0 end)`,
+    })
+    .from(schema.requests)
+    .where(sql`${schema.requests.createdAt} >= ${from}`)
+    .get();
+  return { total: Number(row?.total ?? 0), converted: Number(row?.converted ?? 0), cancelled: Number(row?.cancelled ?? 0) };
+}

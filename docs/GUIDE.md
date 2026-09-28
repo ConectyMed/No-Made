@@ -119,7 +119,9 @@ L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de
 6. **Sessions** : depuis une demande, « Planifier une session » crée la session avec la personne déjà inscrite, le nombre de personnes et un montant suggéré d'après l'offre ; la demande passe en « confirmée ». Ou « Rattacher à une session prévue » si la date existe déjà. Sur la session : participants (ajout depuis le carnet, retrait), date, lieu, durée, notes, montant (avec la suggestion recalculée selon le nombre de personnes, bouton « Utiliser »), et un lien « Ajouter à Google Agenda » prérempli.
 7. **Paiement** : quand la session est passée, « Marquer faite » fige son montant, qui compte alors dans le chiffre d'affaires du tableau de bord. « Annuler la session » la garde dans l'historique sans la compter. Les deux sont réversibles.
 
-À venir : tableau de bord complet (étape 3), édition du contenu du site en brouillon (étape 4).
+8. **Tableau de bord** : en haut, ce qui attend (demandes à traiter, réponses attendues, sessions à venir, carnet) ; puis le chiffre du mois avec l'écart au mois précédent, le chiffre de l'année, les personnes emmenées, le taux de demandes converties ; enfin douze mois de chiffre en histogramme, la répartition par offre, les prochaines sessions et les dernières demandes. Tout le chiffre vient des sessions cochées « faite ».
+
+À venir : édition du contenu du site en brouillon (étape 4).
 
 ---
 

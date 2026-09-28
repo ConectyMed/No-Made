@@ -203,7 +203,11 @@ Not a public feature. Content editing stays separate (Keystatic, draft mode, lat
   opening the owner's own mailbox with a prefilled draft, the site never sends), contacts (one card per
   person, notes, history), planned sessions with participants and an editable amount that counts as
   revenue when the session is ticked "faite", and a dashboard. Delivered in four steps: 1 base + accounts +
-  requests (done), 2 contacts + sessions + payment (done 2026-09-28), 3 dashboard, 4 Keystatic.
+  requests (done), 2 contacts + sessions + payment (done 2026-09-28), 3 dashboard (done 2026-09-28), 4 Keystatic.
+- **Dashboard**: waiting (new requests, awaiting client, upcoming sessions, contacts), money (month revenue
+  with delta vs previous month, year revenue, people taken out, request conversion rate for the year),
+  a twelve-month CSS bar chart, revenue by offer, next five sessions, latest requests. Revenue = amount of
+  sessions with status "faite", by session start date, Europe/Paris months.
 - **Sessions model**: `outings` (offer, start in ms, duration, place, status prévue / faite / annulée,
   amount in cents, notes) and `participants` (contact, people count, optional source request). A request
   gets `outing_id` and status "confirmée" when planned or attached. Amount suggestion from the offer's
@@ -244,7 +248,8 @@ Not a public feature. Content editing stays separate (Keystatic, draft mode, lat
 - [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login with the
       temporary bootstrap account, then change it on /admin/compte. Anthony's own account later via `ADMIN_EMAILS`.
 - [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.
-- [ ] Admin steps 3–4
+- [x] Admin step 3 (2026-09-28): dashboard.
+- [ ] Admin step 4: Keystatic
 - [x] Hero video received and encoded (2026-09-28)
 - [ ] Real photos
 - [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.
