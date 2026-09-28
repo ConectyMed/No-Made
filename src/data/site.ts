@@ -40,7 +40,7 @@ export const site = {
   ],
 
   /** Interrupteurs de contenu. */
-  showTestimonials: false, // passe à true seulement avec de vrais témoignages
+  showTestimonials: true, // avis provisoires depuis le 2026-09-28 ; à remplacer par les vrais (voir GUIDE, étape 6 quater)
 } as const;
 
 /** Libellé du CTA principal, identique partout (design.md §2). */

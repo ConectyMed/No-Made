@@ -6,6 +6,7 @@ Généré par `npm run build` le 2026-09-28.
 |---|---|
 | `[ADRESSE ET SITE DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[ADRESSE POSTALE]` | /confidentialite/, /mentions-legales/ |
+| `[AVIS PROVISOIRE]` | / |
 | `[CONDITIONS MÉTÉO ET ANNULATION]` | /contact/ |
 | `[DATE DE MISE À JOUR]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[IMAGE PROVISOIRE]` | / |

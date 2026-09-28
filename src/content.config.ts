@@ -56,9 +56,19 @@ const testimonials = defineCollection({
     offerSlug: z.string().optional(),
     /** D'où vient l'avis : email, message, oral… (interne, non affiché) */
     source: z.string().optional(),
-    /** La personne a donné son accord pour être citée sur le site. Obligatoire. */
-    consent: z.literal(true),
+    /** La personne a donné son accord pour être citée sur le site. Obligatoire pour un vrai avis. */
+    consent: z.boolean().default(false),
+    /**
+     * Avis provisoire, inventé pour la maquette (décision du 2026-09-28). Il porte un marqueur
+     * [AVIS PROVISOIRE] invisible à l'écran mais vu par le contrôle des placeholders : la production
+     * reste bloquée tant qu'il n'est pas remplacé par un vrai avis.
+     */
+    provisional: z.boolean().default(false),
     order: z.number().int().default(0),
+  })
+  .refine((t) => t.provisional || t.consent === true, {
+    message: 'Un vrai avis exige consent: true ; un avis inventé exige provisional: true.',
+    path: ['consent'],
   }),
 });
 

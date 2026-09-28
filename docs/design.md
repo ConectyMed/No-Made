@@ -140,9 +140,12 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
 
-Testimonials (`Testimonials.astro`, between Déroulement and Prix): shown only when `site.showTestimonials`
-is true AND real entries exist in `src/content/testimonials/fr/` (schema requires `consent: true`; first
-name + initial, month, offer; no stars, no ratings). Three reviews announced 2026-09-28.
+Testimonials (`Testimonials.astro`, between Déroulement and Prix): shown when `site.showTestimonials` is
+true and entries exist in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
+2026-09-28, at the representative's request, three **provisional, invented** reviews (`provisional: true`)
+fill the section for previews; each carries a visually-hidden "[AVIS PROVISOIRE]" marker that the
+placeholder gate catches, so production stays blocked until the three real reviews replace them.
+First name + initial, month, offer; no stars, no ratings.
 
 ## 7. Other pages
 
@@ -251,7 +254,8 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [ ] Owner: portrait photo; full legal name for the legal pages
 - [ ] Solo price
 - [ ] Visio booking URL (Cal.com; Google Calendar dropped 2026-09-28, no Google account)
-- [ ] Three real testimonials announced 2026-09-28, to be added with consent
+- [ ] Three real testimonials announced 2026-09-28, to replace the provisional ones (files in
+      src/content/testimonials/fr/, then remove `provisional: true`)
 - [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login with the
       temporary bootstrap account, then change it on /admin/compte. Anthony's own account later via `ADMIN_EMAILS`.
 - [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.
