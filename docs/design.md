@@ -159,7 +159,7 @@ First name + initial, month, offer; no stars, no ratings.
 - **/a-propos** — the owner in the first person: "Moi, c'est Anthony", his story in his own facts (10 years
   of autonomous travel, knowledge of the terrain, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
   for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why Nó Made exists,
-  a four-item facts list, one portrait slot ([PHOTO À FOURNIR]), a Montaigne pull quote (*Essais*, III, 3,
+  a four-item facts list, his portrait (travel photo, captioned Pérou), a Montaigne pull quote (*Essais*, III, 3,
   public domain, chosen by the representative 2026-09-28) as the bridge, then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
 - **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): a booking
   page (Cal.com recommended since the owner has no Google account; Calendly and Google Calendar also
@@ -187,8 +187,17 @@ Turnstile dormant behind env keys. No payment.
 ## 10. Imagery
 
 - Real photos from the first outings replace everything as soon as they exist.
-- Until then (approved 2026-09-28), the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
-  visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship to production.
+- First real photos received 2026-09-28: three of Anthony's travel photos (Peru), re-encoded with
+  `sharp` (auto-rotated, EXIF and GPS stripped, 1500×2000, JPEG 86) into `src/assets/photos/`, served
+  through `Photo.astro` (Astro `<Image>`, webp, responsive widths, `object-fit: cover`, optional
+  `position`). Each carries a small "Pérou" caption (bottom left) so nobody mistakes them for the
+  region. Placement: the steep stone stairway → home "Marcher, randonner"; the glacier lake → home
+  "Respirer, se concentrer"; Anthony seated on a summit rock → À propos portrait (4:5 frame).
+- Not used: the lakeside shot (a third person is in frame, no consent; blurry) and the tropical beach
+  (1280 px, soft).
+- Two AI-generated images remain as **provisional visuals** ("Bouger" card, Reconnexion frame), each
+  carrying a visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship
+  to production. Needed: a bodyweight / mobility shot outdoors, and a parent / child (or regional trail) shot.
 - Hero video received 2026-09-28. Source `assets/source/hero-source.mp4` is 1280×720, 24 fps, 8 s,
   no audio, so there is no 1080p encode (upscaling would add weight, not detail). Built files in
   `public/hero/`: `hero-720.mp4` (0.99 MB, desktop), `hero-540.mp4` (0.29 MB, phones),

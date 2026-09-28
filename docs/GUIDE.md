@@ -73,7 +73,14 @@ Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. 
 
 Reçue et intégrée. Source en `assets/source/hero-source.mp4` (1280×720, 8 s, sans son), encodages et poster dans `public/hero/`. Si tu remplaces la vidéo un jour : même format, même dossier, puis `npm run video` régénère tout (il faut ffmpeg sur la machine).
 
-Les cinq visuels actuels sont générés par IA et portent un badge « image provisoire ». Ils ne peuvent pas partir en production : le build refusera tant qu'ils sont là. Remplace-les par tes photos quand tu en as (`src/assets/provisoire/`, mêmes noms de fichiers, et je retire les badges).
+Premières vraies photos reçues le 28 septembre 2026 (voyages d'Anthony au Pérou), dans `src/assets/photos/`, métadonnées retirées : l'escalier de montagne (accueil, « Marcher, randonner »), le lac d'altitude (accueil, « Respirer, se concentrer ») et son portrait assis sur un rocher (À propos). Elles portent une petite légende « Pérou », pour ne pas laisser croire que c'est la région : à retirer si tu préfères.
+
+Deux visuels restent générés par IA, avec le badge « image provisoire » qui bloque la production : « Bouger » (accueil) et le cadre Reconnexion parent / enfant. Il manque donc :
+
+- une photo d'Anthony en train de faire un exercice au poids du corps ou de mobilité, dehors ;
+- une photo parent / enfant en nature (avec l'accord des personnes, et sans visage d'enfant reconnaissable si possible), ou à défaut un sentier de la région qui servira de fond au cadre.
+
+Deux photos n'ont pas été retenues : celle au bord du lac où apparaît une autre personne (pas d'accord de sa part, et l'image est floue), et la plage tropicale (trop petite, 1280 px, et floue). Les vidéos m'intéressent : une boucle de quelques secondes peut remplacer une image dans un cadre, comme le hero.
 
 ---
 
@@ -82,7 +89,7 @@ Les cinq visuels actuels sont générés par IA et portent un badge « image pro
 Chaque case correspond à un placeholder jaune. Le build de production refuse de partir tant qu'il en reste (`docs/PLACEHOLDERS.md` en donne la liste à jour après chaque `npm run build`).
 
 - [x] **Lui** : prénom et parcours reçus (Anthony). Pas de diplôme ni de titre, et pas un mot sur le bar : c'est décidé.
-- [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
+- [x] **Son portrait** pour la page À propos : reçu le 28 septembre 2026 (photo de voyage, Pérou).
 - [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
 - [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
 - [x] **Lien Cal.com** pour la visio : reçu le 28 septembre 2026 (`cal.com/nomadeproject/presentation`), en place.

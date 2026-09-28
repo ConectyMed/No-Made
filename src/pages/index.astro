@@ -1,7 +1,8 @@
 ---
 /**
  * Accueil (design.md v2 §6) : hero, pourquoi sortir, trois temps forts, Reconnexion, déroulement,
- * prix, formulaire. Le site parle en « je » : la personne qui encadre. Images provisoires étiquetées.
+ * prix, formulaire. Le site parle en « je » : la personne qui encadre. Deux vraies photos (voyages d'Anthony,
+ * légendées) ; les visuels encore provisoires restent étiquetés.
  */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
@@ -9,6 +10,7 @@ import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import type { IconName } from '@/components/Icon.astro';
 import ProvisionalImage from '@/components/ProvisionalImage.astro';
+import Photo from '@/components/Photo.astro';
 import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import Quote from '@/components/Quote.astro';
@@ -17,9 +19,9 @@ import { usePage, t } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 import { formatPrice } from '@/lib/format';
 
-import marcheImg from '@/assets/provisoire/groupe-marche.png';
+import marcheImg from '@/assets/photos/escalier-perou.jpg';
 import mobiliteImg from '@/assets/provisoire/mobilite.png';
-import respirationImg from '@/assets/provisoire/respiration.png';
+import respirationImg from '@/assets/photos/lac-perou.jpg';
 import reconnexImg from '@/assets/provisoire/parent-ado.png';
 
 const page = usePage('home');
@@ -153,7 +155,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
       <div class="moments">
         <article class="moment card card--hover" data-reveal>
           <div class="moment__media">
-            <ProvisionalImage src={marcheImg} alt="Un petit groupe qui marche sur un sentier, vu de dos" />
+            <Photo src={marcheImg} alt="Vu d’en haut, un escalier de pierre qui descend à pic dans la montagne, au-dessus d’une vallée dans les nuages" caption="Pérou" position="center 30%" />
             <span class="moment__pill glass label-sm">Temps 01</span>
           </div>
           <div class="moment__body">
@@ -187,7 +189,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
         <article class="moment card card--hover" data-reveal style="--reveal-delay: 160ms">
           <div class="moment__media">
-            <ProvisionalImage src={respirationImg} alt="Une personne qui respire calmement face aux collines" />
+            <Photo src={respirationImg} alt="Un lac d’altitude à l’eau claire, immobile, au pied d’un glacier" caption="Pérou" position="center 45%" />
             <span class="moment__pill glass label-sm">Temps 03</span>
           </div>
           <div class="moment__body">
@@ -551,7 +553,8 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     border-radius: 0;
   }
 
-  .moment__media :global(.prov) {
+  .moment__media :global(.prov),
+  .moment__media :global(.photo) {
     border-radius: 0;
   }
 

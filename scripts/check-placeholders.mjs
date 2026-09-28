@@ -51,7 +51,7 @@ if (found.size === 0) {
 } else {
   lines.push('| Placeholder | Pages |', '|---|---|');
   for (const [key, pages] of [...found].sort()) lines.push(`| \`${key}\` | ${[...pages].sort().join(', ')} |`);
-  lines.push('', 'Où les remplir : `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/pages/a-propos.astro` (diplôme, carte pro), `src/assets/provisoire/` (images).');
+  lines.push('', 'Où les remplir : `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/assets/provisoire/` (images encore provisoires).');
 }
 writeFileSync(join(ROOT, 'docs', 'PLACEHOLDERS.md'), lines.join('\n') + '\n');
 

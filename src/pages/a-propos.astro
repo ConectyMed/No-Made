@@ -3,11 +3,12 @@
  * À propos : la personne qui encadre les sessions, en « je ». Une seule voix sur tout le site.
  * Le parcours vient de ses mots (2026-09-28), rien n'est ajouté. Aucun titre professionnel
  * n'est affiché (sa décision). Une citation de Montaigne (Essais, III, 3) fait le pont entre le parcours
- * et la pratique. Reste à fournir : le portrait.
+ * et la pratique. Le portrait est une photo de voyage (Pérou), légendée.
  */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
-import PlaceholderImage from '@/components/PlaceholderImage.astro';
+import Photo from '@/components/Photo.astro';
+import portraitImg from '@/assets/photos/anthony-portrait.jpg';
 import Button from '@/components/Button.astro';
 import Quote from '@/components/Quote.astro';
 import Icon from '@/components/Icon.astro';
@@ -40,7 +41,7 @@ const practice: { icon: IconName; title: string; text: string }[] = [
   <section class="section section--top0" aria-labelledby="story-title">
     <div class="container story">
       <div class="story__photo frame" data-reveal>
-        <PlaceholderImage alt={`portrait de ${firstName} (à fournir)`} ratio="4 / 5" tone="moss" />
+        <Photo src={portraitImg} alt={`${firstName}, assis sur un rocher en haut d’une montagne, capuche et casquette, le regard vers les crêtes`} caption="Pérou" sizes="(min-width: 56em) 22rem, 100vw" loading="eager" position="center 60%" />
       </div>
       <div class="story__text prose" data-reveal style="--reveal-delay: 100ms">
         <h2 id="story-title">Moi, c’est {firstName}</h2>
@@ -134,6 +135,8 @@ const practice: { icon: IconName; title: string; text: string }[] = [
 
   .story__photo {
     max-width: 22rem;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
     border: var(--border);
   }
 
