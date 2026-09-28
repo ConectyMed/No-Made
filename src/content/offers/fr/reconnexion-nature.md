@@ -1,6 +1,6 @@
 ---
-slug: reconnex-nature
-title: Reconnex nature
+slug: reconnexion-nature
+title: Reconnexion nature
 category: Balade guidée
 summary: Une balade guidée de 2h30, en petit groupe. On marche, on s’arrête, on parle. Le téléphone reste dans le sac.
 duration: 2h30

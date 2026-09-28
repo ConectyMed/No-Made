@@ -10,7 +10,7 @@
 ## 1. Project
 
 **Nó Made Project**: small-group guided nature experiences in the PACA region (France). Guided walks,
-screen-free half-days, and a "Reconnex" parent / teen format. A partner qualified educator leads any
+screen-free half-days, and a "Reconnexion" parent / teen format. A partner qualified educator leads any
 physical-exercise or mobility content and is named on the site.
 
 **v1:** showcase + "request a session" flow. No public calendar, no online payment. Sessions are scheduled
@@ -39,7 +39,7 @@ Everything sits inside a centred 80rem container with rounded "frames".
 | Token | Value | Use |
 |---|---|---|
 | `--bg` | `#f9f9f8` | page |
-| `--surface-low` | `#f3f4f3` | tinted sections (Reconnex frame, footer) |
+| `--surface-low` | `#f3f4f3` | tinted sections (Reconnexion frame, footer) |
 | `--surface` | `#ffffff` | cards, nav pill, inputs |
 | `--surface-high` | `#e8e8e7` | big faded step numbers |
 | `--ink` | `#1a1c1c` | body text |
@@ -84,7 +84,7 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
   Until then the provisional trail image.
 - Gradient from green-900 at 90% at the bottom to transparent at the top, so white text reads.
 - Tag pill (white, blurred, lime dot): "Région PACA · sessions en petit groupe".
-- H1 in white: [SLOGAN] (a proposal is in `src/i18n/fr.json`, to validate). Lead in white at 90%.
+- H1 in white: "Marcher. Respirer. Se retrouver dehors." (validated), editable in `src/i18n/fr.json`. Lead in white at 90%.
 - Two CTAs: "Demander une session" (lime) and "Découvrir le format" (white glass, scrolls to the approach).
 - Spec bar (white glass pill): Région PACA · 3 à 5 personnes · 100 % dehors.
 - Portrait mobile: same frame, media covers, content stacks.
@@ -96,7 +96,7 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
    "0n / word"): Terrain, Marche, Coopération, Groupe.
 3. **Trois temps forts** — three image-top cards (image 16rem high, pill "Temps 0n", headline-md, body,
    footer row with a note and an icon): Marche · Mobilité with [NOM DU PARTENAIRE] · Respirer et parler.
-4. **Reconnex** — tinted frame, image left with a floating glass badge "Sans écran", label
+4. **Reconnexion** — tinted frame, image left with a floating glass badge "Sans écran", label
    "Format parent / ado", headline-xl, lead, three check bullets, CTA + real price note.
 5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu nous écris ·
    On cale une date · On se retrouve dehors.
@@ -139,7 +139,7 @@ Turnstile dormant behind env keys. No payment.
 ## 10. Imagery
 
 - Real photos from the first outings replace everything as soon as they exist.
-- Until then, the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
+- Until then (approved 2026-09-28), the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
   visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship to production.
 - The hero video (1080p ≤ 4 MB, 720p ≤ 1 MB, poster webp) is still expected in `assets/source/`.
 
@@ -152,8 +152,8 @@ any [PLACEHOLDER] remains (override for previews).
 
 ## 12. Open items
 
-- [ ] Slogan: validate or replace the proposal in `src/i18n/fr.json` → `pages.home.h1`
-- [ ] Which offer carries the name "Reconnex": the 2h30 walk, the parent / ado half-day, or both?
+- [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver dehors."
+- [x] The format is spelled "Reconnexion" (2026-09-28). "Reconnexion nature" is the 2h30 walk; the parent / ado half-day is presented as the Reconnexion parent / ado format.
 - [ ] Partner educator: name, diploma, professional card number, separate business or not
 - [ ] Hero video and poster
 - [ ] Real photos

@@ -20,7 +20,17 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 );
 ---
 
-<form class="form card" id={id} action="/api/contact" method="post" novalidate={false}>
+<!-- États sans JavaScript : la redirection du serveur cible #merci ou #erreur, affichés via :target -->
+<div class="notice notice--ok card" id="merci" role="status">
+  <strong>Merci, on a bien reçu ta demande.</strong>
+  <span>On te répond par email pour caler une date ensemble. Un accusé de réception vient de partir.</span>
+</div>
+<div class="notice notice--err card" id="erreur" role="alert">
+  <strong>L’envoi n’a pas fonctionné.</strong>
+  <span>Réessaie dans un moment, ou écris-nous directement par email.</span>
+</div>
+
+<form class="form card" id={id} action="/api/contact" method="post" data-contact-form>
   <div class="form__row">
     <div class="field">
       <label for={`${id}-name`}>Prénom et nom</label>
@@ -80,7 +90,9 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   </div>
   <input type="hidden" name="startedAt" value={String(Date.now())} data-started-at />
 
-  <Button type="submit" variant="lime" size="lg" icon="send" block>Envoyer ma demande</Button>
+  <Button type="submit" variant="lime" size="lg" icon="send" block data-submit>Envoyer ma demande</Button>
+
+  <p class="form__status small" data-status aria-live="polite"></p>
 
   <p class="form__note small muted">
     <Icon name="shield" size={16} />
@@ -89,9 +101,61 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 </form>
 
 <script>
-  // Horodatage réel côté client (le rendu statique fige la valeur au build).
+  // 1. Horodatage réel côté client (le rendu statique fige la valeur au build).
   document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => {
     el.value = String(Date.now());
+  });
+
+  // 2. Envoi en fetch avec retour inline. Sans JS, le formulaire poste normalement
+  //    et le serveur redirige vers #merci ou #erreur.
+  document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-status]');
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const fields = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+
+    const setStatus = (text: string, kind: 'ok' | 'err' | '') => {
+      if (!status) return;
+      status.textContent = text;
+      status.dataset.kind = kind;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      if (!form.checkValidity()) return; // le navigateur affiche ses messages natifs
+      e.preventDefault();
+      fields.forEach((f) => f.setCustomValidity(''));
+      setStatus('Envoi en cours…', '');
+      if (submit) submit.disabled = true;
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json', 'X-Requested-With': 'fetch' },
+        });
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; errors?: Record<string, string> };
+
+        if (res.ok && data.ok) {
+          form.reset();
+          document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => (el.value = String(Date.now())));
+          setStatus('Merci, on a bien reçu ta demande. On te répond par email.', 'ok');
+          form.querySelector<HTMLElement>('[data-status]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else if (data.errors) {
+          const first = Object.entries(data.errors)[0];
+          const field = first && form.elements.namedItem(first[0]);
+          if (field instanceof HTMLElement && 'setCustomValidity' in field) {
+            (field as HTMLInputElement).setCustomValidity(first[1]);
+            (field as HTMLInputElement).reportValidity();
+          }
+          setStatus(first ? first[1] : 'Vérifie les champs du formulaire.', 'err');
+        } else {
+          setStatus(data.error ?? 'L’envoi n’a pas fonctionné. Réessaie dans un moment.', 'err');
+        }
+      } catch {
+        setStatus('Pas de réseau ? Réessaie dans un moment, ou écris-nous directement par email.', 'err');
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
   });
 </script>
 
@@ -190,6 +254,53 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+
+  .form__status {
+    min-height: 1.2em;
+    text-align: center;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .form__status:empty {
+    display: none;
+  }
+
+  .form__status[data-kind='ok'] {
+    color: var(--green-600);
+  }
+
+  .form__status[data-kind='err'] {
+    color: #93000a;
+  }
+
+  .notice {
+    display: none;
+    gap: 0.25rem;
+    margin-bottom: var(--space-5);
+    padding: var(--space-5);
+    font-size: var(--body-sm);
+    color: var(--ink-2);
+  }
+
+  .notice strong {
+    color: var(--green-900);
+    font-size: var(--body);
+  }
+
+  .notice:target {
+    display: grid;
+  }
+
+  .notice--ok {
+    border-color: var(--lime);
+    background: rgba(197, 242, 96, 0.25);
+  }
+
+  .notice--err {
+    border-color: #ffdad6;
+    background: #fff5f4;
   }
 
   .form__note {

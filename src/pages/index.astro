@@ -1,6 +1,6 @@
 ---
 /**
- * Accueil (design.md v2 §6) : hero, l'approche, trois temps forts, Reconnex, déroulement,
+ * Accueil (design.md v2 §6) : hero, l'approche, trois temps forts, Reconnexion, déroulement,
  * prix, formulaire. Les images sont provisoires et étiquetées ; la vidéo remplacera l'image du hero (M1).
  */
 import { getCollection } from 'astro:content';
@@ -27,7 +27,7 @@ const h1Lines = page.h1.split('\n');
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const entry = offers[0]; // Reconnex nature, 2h30
+const entry = offers[0]; // Reconnexion nature, 2h30
 const halfDay = offers.find((o) => o.data.slug === 'demi-journee-hors-ecran');
 const duoPrice = halfDay?.data.pricing[0];
 
@@ -82,7 +82,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
             {page.tag}
           </span>
 
-          <h1 id="hero-title" class="hero__title" data-proposal="slogan">
+          <h1 id="hero-title" class="hero__title">
             {h1Lines.map((line, i) => (
               <>
                 {line}
@@ -194,7 +194,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     </div>
   </section>
 
-  <!-- 4. Reconnex -->
+  <!-- 4. Reconnexion -->
   <section class="section" id="reconnex" aria-labelledby="reconnex-title">
     <div class="container">
       <div class="reconnex frame" data-reveal>
@@ -209,7 +209,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
         </div>
         <div class="reconnex__text">
           <span class="reconnex__label eyebrow">Format parent / ado</span>
-          <h2 id="reconnex-title">Reconnex : une demi-journée parent / ado, sans écran</h2>
+          <h2 id="reconnex-title">Reconnexion : une demi-journée parent / ado, sans écran</h2>
           <p class="lead">Trois heures dehors, à deux. On marche, on fait quelques exercices ensemble, et on prend le temps de parler.</p>
           <ul class="checks" role="list">
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Sans pression :</strong> des exercices simples, à ton rythme et au sien.</span></li>
@@ -217,7 +217,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Un vrai temps à deux :</strong> loin de la maison, loin des écrans.</span></li>
           </ul>
           <div class="reconnex__cta">
-            <Button href={`/contact/?offre=${halfDay?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnex</Button>
+            <Button href={`/contact/?offre=${halfDay?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
             {duoPrice && (
               <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · prix de test</span>
             )}
@@ -506,7 +506,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     color: var(--green-600);
   }
 
-  /* ---------- Reconnex ---------- */
+  /* ---------- Reconnexion ---------- */
   .reconnex {
     display: grid;
     gap: var(--space-7);
