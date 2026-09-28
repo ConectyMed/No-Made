@@ -1,0 +1,50 @@
+---
+/**
+ * Titre avec un seul mot mis en avant en moss (design.md §3).
+ * - `text` : le titre complet.
+ * - `highlight` : le mot à colorer (première occurrence, insensible à la casse).
+ * Si `text` est un placeholder entre crochets, il est rendu comme tel.
+ */
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  text: string;
+  highlight?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  class?: string;
+  id?: string;
+}
+
+const { text, highlight, as: Tag = 'h2', class: className, id } = Astro.props;
+
+const placeholderMatch = text.match(/^\[([^\]]+)\]$/);
+
+let before = text;
+let word = '';
+let after = '';
+
+if (!placeholderMatch && highlight) {
+  const index = text.toLowerCase().indexOf(highlight.toLowerCase());
+  if (index >= 0) {
+    before = text.slice(0, index);
+    word = text.slice(index, index + highlight.length);
+    after = text.slice(index + highlight.length);
+  }
+}
+---
+
+<Tag class={className} id={id}>
+  {
+    placeholderMatch ? (
+      <Placeholder name={placeholderMatch[1]} />
+    ) : word ? (
+      <>
+        {before}
+        <em class="hl">{word}</em>
+        {after}
+      </>
+    ) : (
+      text
+    )
+  }
+</Tag>

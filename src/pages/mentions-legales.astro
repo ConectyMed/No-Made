@@ -1,0 +1,10 @@
+---
+import Legal from '@/layouts/Legal.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('legalNotice');
+---
+
+<Legal title={page.title} description={page.description} h1={page.h1}>
+  <p class="muted">Modèle rédigé au jalon M4, à compléter avec les informations de l’entreprise.</p>
+</Legal>

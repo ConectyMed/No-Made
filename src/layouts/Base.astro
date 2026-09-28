@@ -1,0 +1,39 @@
+---
+/**
+ * Gabarit commun à toutes les pages : <head>, lien d'évitement, en-tête,
+ * contenu principal, pied de page.
+ */
+import Seo from '@/components/Seo.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { t } from '@/i18n';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  isHome?: boolean;
+  noindex?: boolean;
+  /** Classe ajoutée à <body>, ex. "page-home" pour les animations d'entrée. */
+  bodyClass?: string;
+}
+
+const { title, description, image, isHome = false, noindex = false, bodyClass } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <Seo {title} {description} {image} {isHome} {noindex} />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a href="#contenu" class="skip-link">{t('common.skipToContent')}</a>
+    <Header />
+    <main id="contenu" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

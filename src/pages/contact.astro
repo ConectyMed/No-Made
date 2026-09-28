@@ -1,0 +1,32 @@
+---
+/** Contact / Demande de session. M0 : en-tête de page. M3 : formulaire, envoi d'email, FAQ. */
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('contact');
+---
+
+<Base title={page.title} description={page.description}>
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+
+  <section class="section" aria-label="Formulaire de demande">
+    <div class="container">
+      <div class="card notice">
+        <p class="muted">Le formulaire de demande et la FAQ arrivent au jalon M3.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <h2 id="faq-title" class="visually-hidden">Questions fréquentes</h2>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notice {
+    padding: var(--space-6);
+  }
+</style>

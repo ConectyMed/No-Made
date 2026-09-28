@@ -1,0 +1,53 @@
+---
+/**
+ * En-tête de page intérieure : eyebrow, titre avec mot mis en avant, chapô.
+ * L'accueil a son propre hero (M1) et n'utilise pas ce composant.
+ */
+import Eyebrow from './Eyebrow.astro';
+import Headline from './Headline.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  highlight?: string;
+  lead?: string;
+  align?: 'start' | 'center';
+}
+
+const { eyebrow, title, highlight, lead, align = 'start' } = Astro.props;
+---
+
+<header class:list={['intro', `intro--${align}`]}>
+  <div class="container intro__inner">
+    {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+    <Headline as="h1" text={title} highlight={highlight} />
+    {lead && <p class="lead">{lead}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .intro {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  .intro__inner {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+
+  .intro h1 {
+    font-size: var(--text-display);
+    max-width: 14ch;
+  }
+
+  .intro--center .intro__inner {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .intro--center .lead {
+    margin-inline: auto;
+  }
+</style>

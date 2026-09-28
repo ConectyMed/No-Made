@@ -1,0 +1,98 @@
+---
+/**
+ * Gabarit des trois pages légales (/mentions-legales, /cgv, /confidentialite).
+ * Le contenu (modèles à compléter) est rédigé au jalon M4.
+ */
+import Base from './Base.astro';
+import { legalLinks } from '@/data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  h1: string;
+  /** Date de dernière mise à jour, affichée sous le titre quand elle existe. */
+  updated?: string;
+}
+
+const { title, description, h1, updated } = Astro.props;
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+---
+
+<Base {title} {description}>
+  <div class="container legal">
+    <nav class="legal__nav" aria-label="Pages légales">
+      <ul role="list">
+        {
+          legalLinks.map((l) => (
+            <li>
+              <a href={l.href} aria-current={(l.href.replace(/\/+$/, '') || '/') === current ? 'page' : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <article class="legal__body prose">
+      <h1>{h1}</h1>
+      {updated && <p class="small muted">Dernière mise à jour : {updated}</p>}
+      <slot />
+    </article>
+  </div>
+</Base>
+
+<style>
+  .legal {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: clamp(2.5rem, 2rem + 3vw, 5rem);
+  }
+
+  .legal__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .legal__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    padding: 0 1rem;
+    border-radius: var(--radius-pill);
+    border: var(--border);
+    background: var(--surface);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .legal__nav a[aria-current='page'] {
+    color: var(--ink);
+    border-color: rgba(20, 20, 20, 0.25);
+  }
+
+  .legal__body h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  @media (min-width: 56em) {
+    .legal {
+      grid-template-columns: 14rem minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+
+    .legal__nav {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-5));
+    }
+
+    .legal__nav ul {
+      flex-direction: column;
+    }
+  }
+</style>

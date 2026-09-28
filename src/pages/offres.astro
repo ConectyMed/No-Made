@@ -1,0 +1,26 @@
+---
+/** Offres. M0 : en-tête de page. M2 : une carte par session, alimentée par src/content/offers. */
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('offers');
+---
+
+<Base title={page.title} description={page.description}>
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+
+  <section class="section" aria-label="Les sessions">
+    <div class="container">
+      <div class="card notice">
+        <p class="muted">Les deux offres arrivent ici au prochain jalon (M2).</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notice {
+    padding: var(--space-6);
+  }
+</style>

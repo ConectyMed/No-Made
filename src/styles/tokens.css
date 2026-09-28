@@ -1,0 +1,94 @@
+/*
+  Design tokens — Nó Made Project
+  Source : docs/design.md §3. Tout est en variables CSS pour pouvoir
+  remplacer la palette d'un seul coup quand l'identité finale arrive.
+
+  Deux couches :
+  1. Palette brute (--palette-*) : les valeurs estimées de design.md.
+  2. Tokens sémantiques (--bg, --ink, …) : ce que les composants utilisent.
+  Pour changer de palette, ne toucher qu'à la couche 1.
+*/
+
+:root {
+  /* ---------- 1. Palette brute (estimée, à remplacer) ---------- */
+  --palette-offwhite: #f7f6f2;
+  --palette-white: #ffffff;
+  --palette-ink: #141414;
+  --palette-grey: #6f6f6f;
+  --palette-moss: #4f6b3a;
+  --palette-moss-dark: #3a5229;
+  --palette-lime: #d6ec6e;
+  --palette-line: rgba(20, 20, 20, 0.08);
+
+  /* ---------- 2. Tokens sémantiques ---------- */
+  --bg: var(--palette-offwhite);
+  --surface: var(--palette-white);
+  --ink: var(--palette-ink);
+  --muted: var(--palette-grey);
+  --moss: var(--palette-moss);
+  --moss-dark: var(--palette-moss-dark);
+  --lime: var(--palette-lime);
+  --line: var(--palette-line);
+
+  /* Dérivés */
+  --on-moss: var(--palette-white); /* texte sur bouton moss : 6.0:1 */
+  --on-lime: var(--palette-ink); /* texte sur lime : 14.1:1. Jamais de blanc sur lime. */
+  --sky: #eef0ec; /* [À AJUSTER M1] : couleur du ciel du poster pour fondre la vidéo dans --bg */
+  --focus: var(--moss);
+  --overlay: rgba(247, 246, 242, 0.96);
+  --card-shadow: 0 1px 2px rgba(20, 20, 20, 0.03), 0 12px 32px -20px rgba(20, 20, 20, 0.18);
+  --card-shadow-hover: 0 2px 4px rgba(20, 20, 20, 0.04), 0 20px 40px -20px rgba(20, 20, 20, 0.22);
+
+  /* ---------- Typographie ---------- */
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Échelle fluide (clamp). Mobile → desktop. */
+  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --text-sm: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.97rem + 0.2vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --text-xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --text-2xl: clamp(1.875rem, 1.5rem + 1.6vw, 2.5rem);
+  --text-3xl: clamp(2.375rem, 1.8rem + 2.6vw, 3.5rem);
+  --text-display: clamp(2.875rem, 2rem + 4.4vw, 5.25rem);
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-body: 1.6;
+  --tracking-display: -0.02em;
+  --tracking-heading: -0.015em;
+
+  /* ---------- Espacement ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --section-gap: clamp(4rem, 3rem + 5vw, 7.5rem);
+  --gutter: clamp(1.25rem, 4vw, 3.6rem);
+  --content-max: 75rem; /* ~1200px */
+  --prose-max: 42rem;
+
+  /* ---------- Formes ---------- */
+  --radius-card: clamp(1.5rem, 1.25rem + 1vw, 2rem); /* 24–32px */
+  --radius-inner: 1rem;
+  --radius-pill: 999px;
+  --border: 1px solid var(--line);
+
+  /* ---------- Mouvement ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* expo-like */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 320ms;
+  --dur-slow: 950ms;
+  --dur-media: 1200ms;
+
+  /* ---------- Layout ---------- */
+  --header-h: 4.5rem;
+  --tap-min: 2.75rem; /* 44px */
+}

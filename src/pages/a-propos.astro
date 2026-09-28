@@ -1,0 +1,26 @@
+---
+/** À propos. M0 : en-tête de page. M2 : parcours + éducateur partenaire (placeholders). */
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('about');
+---
+
+<Base title={page.title} description={page.description}>
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+
+  <section class="section" aria-label="Parcours">
+    <div class="container">
+      <div class="card notice">
+        <p class="muted">Le parcours et la présentation de l’éducateur partenaire arrivent au jalon M2.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notice {
+    padding: var(--space-6);
+  }
+</style>

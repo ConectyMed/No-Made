@@ -1,0 +1,10 @@
+---
+import Legal from '@/layouts/Legal.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('privacy');
+---
+
+<Legal title={page.title} description={page.description} h1={page.h1}>
+  <p class="muted">Modèle RGPD rédigé au jalon M4 : données du formulaire, finalités, durées, droits.</p>
+</Legal>

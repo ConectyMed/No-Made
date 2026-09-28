@@ -1,0 +1,134 @@
+---
+/** Pied de page : 4 colonnes (Explorer, Infos pratiques, Légal, Suivre) et copyright (design.md §6). */
+import Placeholder from './Placeholder.astro';
+import { site, nav, legalLinks, CTA_LABEL, CTA_HREF } from '@/data/site';
+import { t } from '@/i18n';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a href="/" class="footer__name" aria-label={t('common.home')}>{site.shortName}</a>
+        <p class="small muted footer__tag">
+          Balades guidées et expériences nature en petit groupe, en région {site.area}.
+        </p>
+      </div>
+
+      <nav class="footer__col" aria-label={t('footer.explore')}>
+        <h2 class="footer__title">{t('footer.explore')}</h2>
+        <ul role="list">
+          {nav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <h2 class="footer__title">{t('footer.practical')}</h2>
+        <ul role="list">
+          <li>{t('footer.area')}</li>
+          <li><a href={CTA_HREF}>{CTA_LABEL}</a></li>
+          <li><a href="/contact/#faq">{t('footer.faq')}</a></li>
+          <li><Placeholder name="ADRESSE EMAIL" /></li>
+        </ul>
+      </div>
+
+      <nav class="footer__col" aria-label={t('footer.legal')}>
+        <h2 class="footer__title">{t('footer.legal')}</h2>
+        <ul role="list">
+          {legalLinks.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <h2 class="footer__title">{t('footer.follow')}</h2>
+        <ul role="list">
+          {site.social.map((s) => (
+            <li>
+              {s.label} : <Placeholder name={s.placeholder.replace(/^\[|\]$/g, '')} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer__copy small muted">© {year} {t('footer.copyright')}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--section-gap);
+    padding-block: var(--space-8) var(--space-6);
+    border-top: var(--border);
+    background: var(--surface);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-7) var(--space-5);
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+    max-width: 22rem;
+  }
+
+  .footer__name {
+    font-weight: 600;
+    font-size: var(--text-lg);
+    text-decoration: none;
+  }
+
+  .footer__tag {
+    margin-top: var(--space-3);
+  }
+
+  .footer__title {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__col ul {
+    display: grid;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .footer__col a {
+    text-decoration: none;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .footer__col a:hover {
+    color: var(--ink);
+  }
+
+  .footer__copy {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: var(--border);
+    font-size: var(--text-xs);
+  }
+
+  @media (min-width: 48em) {
+    .footer__grid {
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+    }
+
+    .footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

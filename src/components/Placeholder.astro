@@ -1,0 +1,15 @@
+---
+/**
+ * Marque visuellement une information manquante : [SLOGAN], [NOM DU PARTENAIRE]…
+ * Le texte reste entre crochets dans le HTML final, ce qui permet au script
+ * de vérification (M4) de bloquer un build de production tant qu'il en reste.
+ */
+interface Props {
+  name: string; // sans crochets, ex. "SLOGAN"
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+const label = `[${name.toUpperCase()}]`;
+---
+
+<mark class:list={['placeholder', className]} data-placeholder={name} title="Information à compléter">{label}</mark>

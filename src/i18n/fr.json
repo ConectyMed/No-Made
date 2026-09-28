@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "titleSuffix": "Nó Made Project",
+    "defaultDescription": "Balades guidées et expériences nature en petit groupe, en région PACA. Marcher, respirer, poser son téléphone, parler."
+  },
+  "common": {
+    "skipToContent": "Aller au contenu",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "mainNav": "Navigation principale",
+    "footerNav": "Pied de page",
+    "home": "Nó Made Project, retour à l’accueil",
+    "requestSession": "Demander une session",
+    "requestThisSession": "Demander cette session",
+    "learnMore": "En savoir plus",
+    "comingSoon": "Bientôt"
+  },
+  "footer": {
+    "explore": "Explorer",
+    "practical": "Infos pratiques",
+    "legal": "Légal",
+    "follow": "Suivre",
+    "area": "Zone : région PACA",
+    "faq": "Questions fréquentes",
+    "copyright": "Nó Made Project. Tous droits réservés."
+  },
+  "pages": {
+    "home": {
+      "title": "Balades guidées et expériences nature en PACA",
+      "description": "Nó Made Project : balades guidées en petit groupe, demi-journées hors écran et formats Reconnex parents / ados en région PACA.",
+      "eyebrow": "Nature, en petit groupe",
+      "h1": "[SLOGAN]",
+      "lead": "Marcher, respirer, poser ton téléphone, parler. Des balades guidées en petit groupe, en région PACA."
+    },
+    "offers": {
+      "title": "Nos offres",
+      "description": "Deux formats en phase de test : Reconnex nature (2h30, 3 à 5 personnes, 30 € par personne) et Demi-journée hors écran (3h).",
+      "eyebrow": "Offres",
+      "h1": "Deux façons de sortir",
+      "hlWord": "sortir",
+      "lead": "Deux formats, en phase de test. Les prix peuvent bouger. Tu choisis, tu nous écris, on cale une date ensemble."
+    },
+    "about": {
+      "title": "À propos",
+      "description": "Qui est derrière Nó Made Project, et l’éducateur partenaire qui encadre la partie physique des sessions.",
+      "eyebrow": "À propos",
+      "h1": "Qui est derrière Nó Made",
+      "hlWord": "derrière",
+      "lead": "Une personne, un éducateur partenaire, et l’envie de transmettre le goût de sortir."
+    },
+    "contact": {
+      "title": "Demander une session",
+      "description": "Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email.",
+      "eyebrow": "Contact",
+      "h1": "Demander une session",
+      "hlWord": "session",
+      "lead": "Pas de calendrier en ligne pour l’instant : tu nous écris, on te répond et on cale une date ensemble."
+    },
+    "legalNotice": {
+      "title": "Mentions légales",
+      "description": "Mentions légales du site Nó Made Project.",
+      "h1": "Mentions légales"
+    },
+    "terms": {
+      "title": "Conditions générales de vente",
+      "description": "Conditions générales de vente des sessions Nó Made Project : réservation, annulation, remboursement.",
+      "h1": "Conditions générales de vente"
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "description": "Comment Nó Made Project traite tes données personnelles (RGPD).",
+      "h1": "Politique de confidentialité"
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "description": "Cette page n’existe pas ou plus.",
+      "h1": "Cette page s’est perdue en chemin",
+      "hlWord": "perdue",
+      "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les offres.",
+      "backHome": "Retour à l’accueil"
+    }
+  }
+}

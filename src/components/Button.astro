@@ -1,0 +1,109 @@
+---
+/**
+ * Bouton ou lien-bouton. Trois variantes (design.md §6) :
+ *  - primary   : fond moss, texte blanc
+ *  - secondary : blanc, bordure fine
+ *  - lime      : l'accent, réservé au CTA de la nav et à la carte highlight
+ */
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: 'primary' | 'secondary' | 'lime';
+  size?: 'md' | 'lg';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href, type = 'button', variant = 'primary', size = 'md', class: className, ...rest } =
+  Astro.props;
+
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, className].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: var(--tap-min);
+    padding: 0.7em 1.4em;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    font-weight: 500;
+    font-size: var(--text-sm);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  .btn--lg {
+    font-size: var(--text-base);
+    padding: 0.85em 1.7em;
+  }
+
+  .btn--primary {
+    background: var(--moss);
+    color: var(--on-moss);
+  }
+
+  .btn--primary:hover {
+    background: var(--moss-dark);
+  }
+
+  .btn--secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .btn--secondary:hover {
+    border-color: rgba(20, 20, 20, 0.2);
+  }
+
+  .btn--lime {
+    background: var(--lime);
+    color: var(--on-lime);
+  }
+
+  .btn--lime:hover {
+    filter: brightness(0.96);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -10px rgba(20, 20, 20, 0.35);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  .btn:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn:hover {
+      transform: none;
+    }
+  }
+</style>

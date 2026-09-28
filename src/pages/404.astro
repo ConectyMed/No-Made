@@ -1,0 +1,27 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import Button from '@/components/Button.astro';
+import { usePage } from '@/i18n';
+
+const page = usePage('notFound');
+---
+
+<Base title={page.title} description={page.description} noindex>
+  <PageIntro title={page.h1} highlight={page.hlWord} lead={page.lead} align="center">
+    <div class="actions">
+      <Button href="/">{page.backHome}</Button>
+      <Button href="/offres/" variant="secondary">Voir les offres</Button>
+    </div>
+  </PageIntro>
+</Base>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+</style>

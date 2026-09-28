@@ -1,0 +1,117 @@
+---
+/**
+ * Accueil. Au jalon M0 : hero statique (poster + texte + CTA + 4 tuiles).
+ * Le hero vidéo, les animations d'entrée et les sections suivantes arrivent en M1 et M2.
+ */
+import Base from '@/layouts/Base.astro';
+import Eyebrow from '@/components/Eyebrow.astro';
+import Headline from '@/components/Headline.astro';
+import Button from '@/components/Button.astro';
+import { usePage } from '@/i18n';
+import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
+
+const page = usePage('home');
+
+// Faits réels uniquement (design.md §4 et §8). Mis à jour avec les offres.
+const facts = [
+  { value: '2h30 à 3h', label: 'par session' },
+  { value: '3 à 5', label: 'personnes' },
+  { value: 'dès 30 €', label: 'par personne' },
+  { value: site.area, label: 'notre terrain' },
+];
+---
+
+<Base title={page.title} description={page.description} isHome bodyClass="page-home">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__media" aria-hidden="true">
+      <!-- M1 : poster + vidéo en boucle. Ici, un dégradé provisoire de ciel vers --bg. -->
+    </div>
+
+    <div class="container hero__content">
+      <Eyebrow>{page.eyebrow}</Eyebrow>
+      <Headline as="h1" id="hero-title" text={page.h1} class="hero__title" />
+      <p class="hero__lead">{page.lead}</p>
+      <Button href={CTA_HREF} size="lg">{CTA_LABEL}</Button>
+    </div>
+
+    <div class="container">
+      <ul class="facts" role="list">
+        {
+          facts.map((f) => (
+            <li class="fact card">
+              <span class="fact__value serif">{f.value}</span>
+              <span class="fact__label small muted">{f.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 4vw, 5rem);
+    padding-top: clamp(3rem, 2rem + 5vw, 7rem);
+    padding-bottom: var(--space-6);
+    min-height: calc(100svh - var(--header-h));
+    isolation: isolate;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom, var(--sky) 0%, var(--bg) 70%);
+  }
+
+  .hero__content {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-5);
+  }
+
+  .hero__title {
+    font-size: var(--text-display);
+    max-width: 16ch;
+  }
+
+  .hero__lead {
+    font-size: var(--text-lg);
+    color: var(--muted);
+    max-width: 34rem;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .fact {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-5) var(--space-5);
+    border-radius: var(--radius-inner);
+  }
+
+  .fact__value {
+    font-size: var(--text-2xl);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-heading);
+  }
+
+  @media (min-width: 40em) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+    }
+
+    .fact {
+      border-radius: calc(var(--radius-card) * 0.75);
+    }
+  }
+</style>
