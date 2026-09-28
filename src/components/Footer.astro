@@ -12,7 +12,7 @@ const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
   <div class="container footer__top">
     <div class="footer__brand">
       <a href="/" class="footer__name" aria-label={t('common.home')}>{site.name}</a>
-      <p class="small muted">Balades guidées et sorties nature en petit groupe, région {site.area}.</p>
+      <p class="small muted">{site.tagline} Région {site.area}.</p>
     </div>
 
     <nav aria-label={t('common.footerNav')}>

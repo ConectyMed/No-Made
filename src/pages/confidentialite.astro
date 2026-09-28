@@ -10,8 +10,8 @@ const page = usePage('privacy');
 
 <Legal title={page.title} description={page.description} h1={page.h1} updated="[DATE DE MISE À JOUR]">
   <p class="lead">
-    Version courte : on ne collecte que ce que tu écris dans le formulaire, uniquement pour te répondre et organiser
-    ta session. Pas de cookie, pas de traceur, pas de revente.
+    Version courte : je ne collecte que ce que tu écris dans le formulaire, ou ce que tu saisis pour réserver un
+    créneau visio, uniquement pour te répondre et organiser ta session. Pas de cookie, pas de traceur, pas de revente.
   </p>
 
   <h2>1. Qui est responsable</h2>
@@ -32,6 +32,11 @@ const page = usePage('privacy');
         <td>Mesures précontractuelles à ta demande (art. 6.1.b RGPD)</td>
       </tr>
       <tr>
+        <td>Nom, email et créneau choisi, si tu réserves un rendez-vous visio (saisis chez Google)</td>
+        <td>Organiser la visio et t’envoyer le lien</td>
+        <td>Mesures précontractuelles à ta demande (art. 6.1.b RGPD)</td>
+      </tr>
+      <tr>
         <td>Horodatage du formulaire, champ technique anti-robot</td>
         <td>Écarter les envois automatisés</td>
         <td>Intérêt légitime : sécurité du service (art. 6.1.f)</td>
@@ -43,18 +48,19 @@ const page = usePage('privacy');
       </tr>
     </tbody>
   </table>
-  <p>Aucune donnée sensible n’est demandée. Si tu nous signales une information de santé utile pour la session, elle
+  <p>Aucune donnée sensible n’est demandée. Si tu me signales une information de santé utile pour la session, elle
     n’est utilisée que pour adapter la sortie et n’est pas conservée au-delà.</p>
 
   <h2>3. Qui y a accès</h2>
   <ul>
-    <li><strong>Nous</strong>, pour te répondre.</li>
-    <li><strong>Resend</strong> (États-Unis), qui achemine l’email du formulaire jusqu’à notre boîte et l’accusé de
+    <li><strong>Moi</strong>, pour te répondre. Personne d’autre n’encadre les sessions.</li>
+    <li><strong>Resend</strong> (États-Unis), qui achemine l’email du formulaire jusqu’à ma boîte et l’accusé de
       réception jusqu’à toi. Transfert encadré par les clauses contractuelles types de la Commission européenne.</li>
     <li><strong>Vercel</strong> (États-Unis), qui héberge le site et exécute le formulaire. Mêmes garanties.</li>
-    <li><strong>Microsoft</strong>, fournisseur de notre boîte email (Outlook).</li>
-    <li>Le cas échéant, <Placeholder name="NOM DU PARTENAIRE" />, éducateur partenaire, pour les seules informations
-      nécessaires à l’encadrement de la session (prénom, nombre de participants).</li>
+    <li><strong>Microsoft</strong>, fournisseur de ma boîte email (Outlook).</li>
+    <li><strong>Google</strong> (Google Agenda et Google Meet), uniquement si tu réserves un créneau visio : le
+      calendrier ne se charge que quand tu cliques dessus, et la réservation se fait chez Google selon sa
+      <a href="https://policies.google.com/privacy?hl=fr" rel="noopener">politique de confidentialité</a>.</li>
   </ul>
   <p>Aucune donnée n’est vendue ni transmise à des fins publicitaires.</p>
 
@@ -68,14 +74,15 @@ const page = usePage('privacy');
   <p>
     Tu peux demander l’accès à tes données, leur rectification, leur effacement, la limitation du traitement, t’opposer
     au traitement fondé sur l’intérêt légitime, et demander leur portabilité. Écris à
-    <a href={`mailto:${site.email}`}>{site.email}</a> ; nous répondons sous un mois. Tu peux aussi saisir la CNIL :
+    <a href={`mailto:${site.email}`}>{site.email}</a> ; je réponds sous un mois. Tu peux aussi saisir la CNIL :
     <a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>.
   </p>
 
   <h2>6. Cookies et mesure d’audience</h2>
   <p>
-    Le site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ou de publicité. Le site n’intègre
-    aucun contenu tiers (polices, vidéos, cartes) chargé depuis d’autres serveurs.
+    Le site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ou de publicité. Il n’intègre aucun
+    contenu tiers (polices, vidéos, cartes) chargé automatiquement. Le seul contenu externe est le calendrier de
+    rendez-vous Google, affiché uniquement si tu cliques sur le bouton prévu, et il peut alors déposer ses propres cookies.
     <Placeholder name="SI TURNSTILE EST ACTIVÉ : MENTIONNER CLOUDFLARE TURNSTILE (ANTI-ROBOT, SANS COOKIE PUBLICITAIRE)" />
   </p>
 

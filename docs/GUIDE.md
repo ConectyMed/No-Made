@@ -79,13 +79,28 @@ Les cinq visuels actuels sont générés par IA et portent un badge « image pro
 
 Chaque case correspond à un placeholder jaune. Le build de production refuse de partir tant qu'il en reste (`docs/PLACEHOLDERS.md` en donne la liste à jour après chaque `npm run build`).
 
-- [ ] **Éducateur partenaire** : prénom, nom, diplôme exact (intitulé officiel), numéro de carte professionnelle, et s'il exerce en son nom propre ou via une structure.
-- [ ] **Toi** : prénom et nom à afficher sur À propos, et la photo personnelle (Machu Picchu).
+- [ ] **Lui** : son prénom (page À propos et signature de l'email de confirmation), un paragraphe sur son parcours, dans ses mots, et un portrait. Pas de diplôme ni de titre : c'est décidé.
+- [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
+- [ ] **Lien Google Agenda** pour la visio (étape 6 bis ci-dessous).
 - [ ] **Adresse email publique** (étape 3).
 - [ ] **Instagram** et **Facebook** : les liens, ou « pas de compte » et je retire la ligne.
 - [ ] **Météo et annulation** : que se passe-t-il s'il pleut, si quelqu'un annule la veille, si toi tu annules ? Report, remboursement, acompte ? Deux ou trois phrases suffisent, je rédige.
 - [ ] **Statut juridique** pour les pages légales : micro-entreprise (à confirmer), nom ou dénomination, SIRET, adresse, TVA applicable ou non (mention « TVA non applicable, art. 293 B du CGI » en micro-entreprise), médiateur de la consommation choisi, assureur responsabilité civile professionnelle.
 - [ ] **Langues futures** éventuelles (anglais ?), pour préparer la configuration.
+
+---
+
+## Étape 6 bis — Le rendez-vous visio avec Google Agenda (15 min, à faire par lui)
+
+Le site propose une visio gratuite de 20 minutes avant de réserver. Le calendrier est celui de Google Agenda, gratuit avec un compte Google.
+
+1. Se connecter à [calendar.google.com](https://calendar.google.com) avec son compte Google (en créer un s'il n'en a pas ; l'adresse Outlook peut servir d'identifiant).
+2. Bouton **Créer** → **Planning de rendez-vous**. Nom : « Échanger en visio, 20 min ». Durée 20 min. Choisir les jours et heures où il accepte des visios, et une marge entre deux rendez-vous.
+3. Dans **Paramètres de réservation**, cocher **Visioconférence Google Meet** : le lien de la visio est créé et envoyé tout seul.
+4. Enregistrer, puis ouvrir le planning et cliquer sur **Partager** → onglet **Intégrer sur un site** → copier **l'URL** qui se trouve dans le code (elle commence par `https://calendar.google.com/calendar/appointments/schedules/`). C'est celle-là qu'il me faut, pas le lien court.
+5. Me l'envoyer. Je la mets dans `src/data/site.ts` (`visio.url`), et le bouton « Réserver un créneau visio » se met à fonctionner : le calendrier s'affiche dans la page, au clic seulement.
+
+Si son compte n'a pas l'option « Planning de rendez-vous », le lien court de partage (`calendar.app.google/…`) marche aussi : le bouton ouvrira alors la page Google dans un nouvel onglet.
 
 ---
 
@@ -95,7 +110,7 @@ Quand les étapes 1, 2 et 4 sont faites :
 
 1. Ouvre le site sur l'URL de prévisualisation donnée par l'hébergeur.
 2. Remplis le formulaire avec ta propre adresse et envoie.
-3. Tu dois recevoir l'email « Demande de session : … » dans la minute, et ton adresse de test doit recevoir « On a bien reçu ta demande ».
+3. Tu dois recevoir l'email « Demande de session : … » dans la minute, et ton adresse de test doit recevoir « J'ai bien reçu ta demande ».
 4. Réponds directement à l'email reçu : la réponse part vers le demandeur.
 
 Si rien n'arrive : vérifie les trois variables de l'étape 4, puis les journaux de la fonction chez l'hébergeur. Dis-moi ce que tu vois.

@@ -1,6 +1,6 @@
 # Nó Made Project — site web
 
-Site vitrine de Nó Made Project : balades guidées et expériences nature en petit groupe, région PACA.
+Site vitrine de Nó Made Project : sorties nature « corps / aventure » en solo ou en petit groupe, et un format Reconnexion parent / enfant, région PACA. Le site parle en « je » : la personne qui encadre les sessions.
 Le brief complet (look, ton, pages, offres, décisions) est dans [`docs/design.md`](docs/design.md).
 
 ## Démarrer
@@ -23,7 +23,8 @@ Node 22 ou plus récent.
 | Les couleurs du mode sombre | `src/styles/tokens.css`, bloc `[data-theme='dark']` (et son miroir `prefers-color-scheme`) |
 | Les textes de l'interface et des pages | `src/i18n/fr.json` |
 | Le nom, la zone, l'email, les réseaux, les liens de la nav | `src/data/site.ts` |
-| Une offre, un prix | `src/content/offers/fr/*.md` (à partir du jalon M2) |
+| Une offre, un prix | `src/content/offers/fr/*.md` |
+| Le prénom, le lien Google Agenda de la visio, la phrase du pied de page | `src/data/site.ts` |
 | Une page | `src/pages/<nom>.astro` |
 | L'en-tête, le pied de page, un bouton | `src/components/` |
 | La police (Plus Jakarta Sans) | `public/fonts/` + `@font-face` dans `src/styles/global.css` |

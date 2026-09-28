@@ -1,7 +1,7 @@
 ---
 /**
- * Accueil (design.md v2 §6) : hero, l'approche, trois temps forts, Reconnexion, déroulement,
- * prix, formulaire. Les images sont provisoires et étiquetées ; la vidéo remplacera l'image du hero (M1).
+ * Accueil (design.md v2 §6) : hero, pourquoi sortir, trois temps forts, Reconnexion, déroulement,
+ * prix, formulaire. Le site parle en « je » : la personne qui encadre. Images provisoires étiquetées.
  */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
@@ -12,8 +12,8 @@ import ProvisionalImage from '@/components/ProvisionalImage.astro';
 import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import Placeholder from '@/components/Placeholder.astro';
-import { usePage } from '@/i18n';
-import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
+import { usePage, t } from '@/i18n';
+import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 import { formatPrice } from '@/lib/format';
 
 import marcheImg from '@/assets/provisoire/groupe-marche.png';
@@ -27,40 +27,43 @@ const h1Lines = page.h1.split('\n');
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const entry = offers[0]; // Reconnexion nature, 2h30
-const halfDay = offers.find((o) => o.data.slug === 'demi-journee-hors-ecran');
-const duoPrice = halfDay?.data.pricing[0];
+const entry = offers[0]; // Expérience corps / aventure, 2h30
+const groupPrice = entry?.data.pricing.find((p) => p.amountCents !== undefined);
+const soloPrice = entry?.data.pricing.find((p) => p.amountCents === undefined);
+const reconnex = offers.find((o) => o.data.slug === 'reconnexion-parent-enfant');
+const duoPrice = reconnex?.data.pricing[0];
 
 const specs: { icon: IconName; text: string }[] = [
   { icon: 'pin', text: `Région ${site.area}` },
-  { icon: 'users', text: '3 à 5 personnes' },
+  { icon: 'users', text: 'En solo ou de 3 à 5' },
   { icon: 'leaf', text: '100 % dehors' },
 ];
 
+// Les quatre raisons de sortir, telles que formulées par la personne qui encadre.
 const pillars: { icon: IconName; title: string; text: string; foot: string }[] = [
   {
-    icon: 'leaf',
-    title: 'Dehors, sur de vrais sentiers',
-    text: 'Des chemins de la région PACA, choisis selon la saison et le groupe. Loin du bruit, sans aller loin.',
-    foot: '01 / Terrain',
+    icon: 'hands',
+    title: 'Un corps qui suit',
+    text: 'Retrouver une bonne condition physique sans salle ni machine : la marche, le poids du corps, des mouvements qui servent tous les jours.',
+    foot: '01 / Condition',
   },
   {
     icon: 'walk',
-    title: 'Marcher, sans chrono',
-    text: 'Un rythme tranquille et des pauses pour regarder. Pas de kilomètres à faire, pas de performance.',
-    foot: '02 / Marche',
+    title: 'Sortir de la routine',
+    text: 'Casser le rythme habituel, changer de décor, faire ce qu’on ne fait jamais. La zone de confort, on en sort à pied.',
+    foot: '02 / Routine',
   },
   {
-    icon: 'hands',
-    title: 'Faire ensemble',
-    text: 'Quelques exercices simples à faire à plusieurs, sans compétition. Juste de quoi se parler autrement.',
-    foot: '03 / Coopération',
+    icon: 'wind',
+    title: 'Une tête plus claire',
+    text: 'Respirer, se concentrer, laisser le bruit derrière. Entretenir ce qui nous sert toute la vie : le souffle, l’attention.',
+    foot: '03 / Esprit',
   },
   {
-    icon: 'chat',
-    title: 'Petit groupe',
-    text: 'Trois à cinq personnes, pour que chacun ait la place de parler et d’écouter.',
-    foot: '04 / Groupe',
+    icon: 'leaf',
+    title: 'Redécouvrir ce qui t’entoure',
+    text: 'Les sentiers, la garrigue, les collines à vingt minutes de chez toi. On les regarde rarement. On va les parcourir.',
+    foot: '04 / Nature',
   },
 ];
 ---
@@ -100,7 +103,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
           <div class="hero__cta">
             <Button href={CTA_HREF} variant="lime" size="lg" icon="arrow-right">{CTA_LABEL}</Button>
-            <Button href="#approche" variant="glass" size="lg" icon="chevron-down">Découvrir le format</Button>
+            <Button href="#approche" variant="glass" size="lg" icon="chevron-down">{t('common.discover')}</Button>
           </div>
 
           <ul class="specs glass" role="list">
@@ -116,12 +119,12 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     </div>
   </section>
 
-  <!-- 2. L'approche -->
+  <!-- 2. Pourquoi sortir -->
   <section class="section" id="approche" aria-labelledby="approche-title">
     <div class="container">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">L’approche Nó Made</span>
-        <h2 id="approche-title">Une sortie simple, dehors, en petit groupe.</h2>
+        <span class="eyebrow">Pourquoi sortir</span>
+        <h2 id="approche-title">Ce que je te propose de retrouver dehors.</h2>
       </div>
       <ul class="pillars" role="list">
         {pillars.map((p, i) => (
@@ -142,8 +145,9 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   <section class="section" id="temps-forts" aria-labelledby="temps-title">
     <div class="container">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">Trois temps forts</span>
+        <span class="eyebrow">Une expérience corps / aventure</span>
         <h2 id="temps-title">Ce qu’on fait pendant une session</h2>
+        <p class="lead">Trois temps, dans des proportions qui dépendent de toi. Je m’adapte à ton profil, en solo comme en groupe.</p>
       </div>
       <div class="moments">
         <article class="moment card card--hover" data-reveal>
@@ -153,11 +157,11 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </div>
           <div class="moment__body">
             <div>
-              <h3>Marcher</h3>
-              <p class="muted">On part d’un point de rendez-vous et on marche à un rythme tranquille. On s’arrête quand un endroit le mérite. Pas de montre, pas d’objectif.</p>
+              <h3>Marcher, randonner</h3>
+              <p class="muted">On part d’un point de rendez-vous et on marche, parfois on grimpe un peu. Le terrain fait le travail, le rythme s’adapte à toi ou au groupe.</p>
             </div>
             <div class="moment__foot small muted">
-              <span>Rythme tranquille · sentiers de la région</span>
+              <span>Sentiers de la région · rythme adapté</span>
               <Icon name="walk" size={20} class="moment__icon" />
             </div>
           </div>
@@ -170,11 +174,11 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </div>
           <div class="moment__body">
             <div>
-              <h3>Bouger, avec <Placeholder name="NOM DU PARTENAIRE" /></h3>
-              <p class="muted">Dans la demi-journée, une séquence de mobilité douce encadrée par <Placeholder name="NOM DU PARTENAIRE" />, éducateur diplômé. Adaptée à chacun, sans forcer.</p>
+              <h3>Bouger</h3>
+              <p class="muted">Préparation physique fonctionnelle au poids du corps, et mobilité inspirée du yoga et du mouvement animal. Des gestes simples, progressifs, adaptés à chacun.</p>
             </div>
             <div class="moment__foot small muted">
-              <span>Uniquement dans la demi-journée</span>
+              <span>Poids du corps · mobilité</span>
               <Icon name="hands" size={20} class="moment__icon" />
             </div>
           </div>
@@ -187,12 +191,12 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </div>
           <div class="moment__body">
             <div>
-              <h3>Respirer et parler</h3>
-              <p class="muted">On finit par un temps posé : on respire, on parle de ce qu’on a vécu, sans téléphone. C’est souvent le moment qu’on retient.</p>
+              <h3>Respirer, se concentrer</h3>
+              <p class="muted">On finit posé : des techniques de respiration et de concentration, puis un temps pour parler de ce qu’on a vécu, sans téléphone. Souvent le moment qu’on retient.</p>
             </div>
             <div class="moment__foot small muted">
-              <span>Fin de session · en petit groupe</span>
-              <Icon name="chat" size={20} class="moment__icon" />
+              <span>Fin de session · sans écran</span>
+              <Icon name="wind" size={20} class="moment__icon" />
             </div>
           </div>
         </article>
@@ -206,7 +210,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
       <div class="reconnex frame" data-reveal>
         <div class="reconnex__visual">
           <div class="reconnex__img frame">
-            <ProvisionalImage src={reconnexImg} alt="Un parent et un adolescent assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
+            <ProvisionalImage src={reconnexImg} alt="Un parent et son enfant assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
           </div>
           <span class="reconnex__badge glass label-sm">
             <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
@@ -214,17 +218,17 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           </span>
         </div>
         <div class="reconnex__text">
-          <span class="reconnex__label eyebrow">Format parent / ado</span>
-          <h2 id="reconnex-title">Reconnexion : une demi-journée parent / ado, sans écran</h2>
-          <p class="lead">Trois heures dehors, à deux. On marche, on fait quelques exercices ensemble, et on prend le temps de parler.</p>
+          <span class="reconnex__label eyebrow">Format parent / enfant</span>
+          <h2 id="reconnex-title">Reconnexion : une demi-journée parent / enfant, sans écran</h2>
+          <p class="lead">Trois heures dehors, à deux. On marche, on bouge ensemble, et on prend le temps de parler.</p>
           <ul class="checks" role="list">
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Sans pression :</strong> des exercices simples, à ton rythme et au sien.</span></li>
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Téléphones dans le sac :</strong> l’attention va à l’autre et au sentier.</span></li>
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Un vrai temps à deux :</strong> loin de la maison, loin des écrans.</span></li>
           </ul>
           <div class="reconnex__cta">
-            <Button href={`/contact/?offre=${halfDay?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
-            {duoPrice && (
+            <Button href={`/contact/?offre=${reconnex?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
+            {duoPrice?.amountCents !== undefined && (
               <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · prix de test</span>
             )}
           </div>
@@ -242,8 +246,8 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
       </div>
       <ol class="steps" role="list">
         {[
-          { t: 'Tu nous écris', d: 'Le formulaire ci-dessous : la session qui t’intéresse, le nombre de personnes, tes disponibilités.' },
-          { t: 'On cale une date', d: 'On te répond par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.' },
+          { t: 'Tu m’écris', d: 'Le formulaire ci-dessous : la session qui t’intéresse, seul ou à plusieurs, tes disponibilités. Ou un créneau visio, si tu préfères en parler d’abord.' },
+          { t: 'On cale une date', d: 'Je te réponds par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.' },
           { t: 'On se retrouve dehors', d: 'Chaussures fermées, de l’eau dans le sac. Le téléphone reste dedans, le reste suit.' },
         ].map((s, i) => (
           <li class="step card" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
@@ -257,7 +261,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   </section>
 
   <!-- 6. Prix -->
-  {entry && (
+  {entry && groupPrice && groupPrice.amountCents !== undefined && (
     <section class="section section--tight" id="prix" aria-labelledby="prix-title">
       <div class="container">
         <div class="price frame" data-reveal>
@@ -265,19 +269,25 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           <div class="price__grid">
             <div class="price__text">
               <span class="price__pill label-sm">Prix de test</span>
-              <h3 id="prix-title" class="price__title">{entry.data.title} : {entry.data.duration} en petit groupe</h3>
+              <h3 id="prix-title" class="price__title">{entry.data.title} : {entry.data.duration}, en solo ou en petit groupe</h3>
               <p class="price__desc">{entry.data.summary}</p>
+              <a href={VISIO_HREF} class="price__link label-sm">{VISIO_LABEL} avant de te décider</a>
             </div>
             <div class="price__side">
               <div class="price__amount">
-                <span class="label-sm price__amount-label">{entry.data.groupSize}</span>
+                <span class="label-sm price__amount-label">En groupe de 3 à 5</span>
                 <div>
-                  <strong>{formatPrice(entry.data.pricing[0].amountCents)}</strong>
-                  <span class="price__per">/ {entry.data.pricing[0].label.replace(/^par /, '')}</span>
+                  <strong>{formatPrice(groupPrice.amountCents)}</strong>
+                  <span class="price__per">/ {groupPrice.label.replace(/^par /, '').replace(/, en groupe$/, '')}</span>
                 </div>
+                {soloPrice && (
+                  <span class="price__solo small">
+                    En solo : <Placeholder name={soloPrice.placeholder ?? 'TARIF SOLO'} />
+                  </span>
+                )}
               </div>
               <Button href={`/contact/?offre=${entry.data.slug}#demande`} variant="lime" size="lg" icon="arrow-right">Demander cette session</Button>
-              <a href="/offres/" class="price__link label-sm">Voir les deux offres</a>
+              <a href="/offres/" class="price__link label-sm">Voir les deux sessions</a>
             </div>
           </div>
         </div>
@@ -290,8 +300,8 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     <div class="container">
       <div class="section-head section-head--center" data-reveal>
         <span class="eyebrow">Prends contact</span>
-        <h2 id="contact-title">Envie de sortir ? Écris-nous.</h2>
-        <p class="lead">Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email.</p>
+        <h2 id="contact-title">Envie de sortir ? Écris-moi.</h2>
+        <p class="lead">Dis-moi quelle session t’intéresse, seul ou à plusieurs, et quand. Je te réponds par email. Tu préfères en parler d’abord ? <a href={VISIO_HREF}>Réserve un créneau visio</a>, c’est gratuit.</p>
       </div>
       <div class="contact__form" data-reveal>
         <ContactForm />
@@ -760,6 +770,19 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     color: var(--on-dark-muted);
     text-decoration: underline;
     text-underline-offset: 0.2em;
+  }
+
+  .price__solo {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--on-dark-muted);
+  }
+
+  /* Sur le bandeau vert foncé, le placeholder passe en lime plein pour rester lisible. */
+  .price__solo :global(.placeholder) {
+    background: var(--lime);
+    color: var(--on-lime);
+    border-color: var(--lime-dim);
   }
 
   /* ---------- Contact ---------- */

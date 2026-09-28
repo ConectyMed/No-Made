@@ -9,9 +9,17 @@
 
 ## 1. Project
 
-**Nó Made Project**: small-group guided nature experiences in the PACA region (France). Guided walks,
-screen-free half-days, and a "Reconnexion" parent / teen format. A partner qualified educator leads any
-physical-exercise or mobility content and is named on the site.
+**Nó Made Project**: outdoor "body / adventure" experiences in the PACA region (France), solo or in a small
+group, plus a "Reconnexion" parent / child format. Each session mixes walking or hiking, functional bodyweight
+preparation, mobility (yoga and animal-movement inspired), and breathing / concentration techniques, adapted to
+each profile. The problems it answers, in the owner's words: get body and mind moving again, regain a good
+physical condition, step out of the "routine" comfort zone, rediscover the nature around us. Audience: adults,
+mostly 30–50, and parent / child duos.
+
+**Voice (decided 2026-09-28):** the site belongs to the one person who leads every session. It speaks in the
+first person ("je"), addresses the visitor as "tu". Nobody else appears: no founder, no partner, no team.
+The person behind the project's setup stays invisible everywhere, including legal pages. No professional
+title ("éducateur", diploma, card number) is displayed anywhere, by decision of the owner.
 
 **v1:** showcase + "request a session" flow. No public calendar, no online payment. Sessions are scheduled
 case by case after contact. **Later:** dated sessions with capacity, live availability, Stripe Checkout.
@@ -20,14 +28,16 @@ case by case after contact. **Later:** dated sessions with capacity, live availa
 
 ## 2. Standing rules (from the project brief, unchanged)
 
-- All copy in French, informal "tu".
-- No invented statistics, testimonials, partner logos or credentials. Real facts only: duration, group size,
-  price, area. Test prices are labelled as such.
-- Sessions are presented as guided walks and nature / connection experiences. Mobility or physical exercise
-  is described only when led by the partner educator, who is named: [NOM DU PARTENAIRE].
-- Placeholders wherever information is missing: [SLOGAN], [NOM DU PARTENAIRE], [DIPLÔME],
-  [NUMÉRO DE CARTE PROFESSIONNELLE], [ADRESSE EMAIL], [LIEN INSTAGRAM], photos.
-- Main CTA label: **"Demander une session"** (there is no booking, so never "Réserver").
+- All copy in French, informal "tu", first person "je" (one voice: the person who leads the sessions).
+- No invented statistics, testimonials, logos or credentials. Real facts only: duration, group size,
+  price, area. Test prices are labelled as such. A price that is not known yet is a placeholder, never a guess.
+- Sessions describe what the owner actually does (walk, bodyweight work, mobility, breathing) and never make
+  a medical or therapeutic claim: no "réhabilitation", "thérapie", "soigne". The training method behind the
+  bodyweight work is not named.
+- Placeholders wherever information is missing: [PRÉNOM], [PARCOURS…], [TARIF SOLO], [LIEN GOOGLE AGENDA],
+  [LIEN INSTAGRAM], photos, legal identity.
+- Main CTA label: **"Demander une session"** (no session booking, so never "Réserver une session").
+  Secondary CTA: **"Réserver un créneau visio"**, a free 20-minute video call before deciding.
 
 ## 3. Visual direction (from the Stitch mockup)
 
@@ -115,16 +125,17 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
 ## 6. Home page sections, in order
 
 1. **Hero** (above).
-2. **L'approche** — uppercase label, headline-xl, four small cards (icon box, title, body-sm, footer
-   "0n / word"): Terrain, Marche, Coopération, Groupe.
+2. **Pourquoi sortir** — uppercase label, headline-xl, four small cards (icon box, title, body-sm, footer
+   "0n / word"): Condition, Routine, Esprit, Nature (the four problems the owner answers).
 3. **Trois temps forts** — three image-top cards (image 16rem high, pill "Temps 0n", headline-md, body,
-   footer row with a note and an icon): Marche · Mobilité with [NOM DU PARTENAIRE] · Respirer et parler.
+   footer row with a note and an icon): Marcher, randonner · Bouger (bodyweight + mobility) · Respirer, se
+   concentrer.
 4. **Reconnexion** — tinted frame, image left with a floating glass badge "Sans écran", label
-   "Format parent / ado", headline-xl, lead, three check bullets, CTA + real price note.
-5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu nous écris ·
+   "Format parent / enfant", headline-xl, lead, three check bullets, CTA + real price note.
+5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu m'écris ·
    On cale une date · On se retrouve dehors.
-6. **Prix** — green-800 banner: label "Prix de test", the entry offer, its price large in lime, CTA,
-   link to /offres.
+6. **Prix** — deep-green banner: label "Prix de test", the entry offer, its group price large in lime, the
+   solo price as a placeholder until known, CTA, link to /offres, link to the visio block.
 7. **Contact** — centred intro and the request form in a white card (see §8).
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
@@ -134,12 +145,15 @@ Testimonials: none until real ones exist (`site.showTestimonials`).
 ## 7. Other pages
 
 - **/offres** — one detailed card per offer (category pill, duration, group, prices, for whom, programme,
-  what to bring, CTA), practical notes, contact teaser.
-- **/a-propos** — the founder's story (10 years of autonomous travel, BJJ, climbing, boxing, physical
-  preparation, 15 years in hospitality, a taste for passing things on), written as biography, never as
-  session content. Partner educator block: [NOM DU PARTENAIRE], [DIPLÔME], [NUMÉRO DE CARTE PROFESSIONNELLE].
-  One personal photo slot (Machu Picchu photo, provided later).
-- **/contact** — intro, the form, FAQ (native details/summary).
+  what to bring, CTA + "Échanger en visio d'abord" link), practical notes, visio teaser.
+  Offers: `experience-corps-aventure` (2h30, solo or 3–5, 30 € per person in a group, solo price [TARIF SOLO])
+  and `reconnexion-parent-enfant` (3h, duo 60 € or four people 80 €).
+- **/a-propos** — the owner in the first person: "Je m'appelle [PRÉNOM]", why Nó Made exists (from the
+  owner's brief), a [PARCOURS…] placeholder for the personal story, one portrait slot, then "Ma façon de
+  faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
+- **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): Google Calendar
+  appointment page, loaded in an iframe only after a click (no third-party request before), fallback link in
+  a new tab; placeholder [LIEN GOOGLE AGENDA] until the owner provides the URL. Then the FAQ.
 - **/mentions-legales, /cgv, /confidentialite** — three routes on a shared legal layout; templates at M4.
 - **404** in the same style.
 
@@ -180,11 +194,19 @@ any [PLACEHOLDER] remains (override for previews).
 
 ## 12. Open items
 
-- [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver dehors."
-- [x] The format is spelled "Reconnexion" (2026-09-28). "Reconnexion nature" is the 2h30 walk; the parent / ado half-day is presented as the Reconnexion parent / ado format.
-- [ ] Partner educator: name, diploma, professional card number, separate business or not
+- [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver." ("dehors" dropped from the hero title
+      later the same day; the OG image follows).
+- [x] The format is spelled "Reconnexion" (2026-09-28) and is the parent / child half-day. The adult session
+      is "Expérience corps / aventure".
+- [x] One voice, "je" (2026-09-28). The owner's micro-entreprise is the legal entity. No "éducateur" or
+      diploma on the site. The owner answers requests himself on nomadeproject@outlook.fr.
+- [x] Visio before booking (2026-09-28): Google Calendar appointment schedule, click-to-load, on /contact,
+      linked from the price banner, the offers page and each offer card.
+- [ ] Owner: first name, personal story paragraph, portrait photo
+- [ ] Solo price
+- [ ] Google Calendar booking URL
 - [x] Hero video received and encoded (2026-09-28)
 - [ ] Real photos
 - [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.
-- [ ] Legal status, VAT regime, cancellation and weather policy
+- [ ] Legal identity (name, SIRET, address, VAT), insurer, mediator, cancellation and weather policy
 - [ ] Future languages

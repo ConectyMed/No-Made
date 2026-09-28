@@ -12,6 +12,7 @@ import { z } from 'astro/zod';
 import { getCollection } from 'astro:content';
 import { sendMail, mailConfig, escapeHtml } from '@/lib/mail';
 import { env, isDev } from '@/lib/env';
+import { site } from '@/data/site';
 import type { SessionRequest } from '@/lib/types';
 
 export const prerender = false;
@@ -157,21 +158,23 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!sent.ok) {
     console.error('[contact] envoi impossible :', sent.error);
-    return respond(request, 502, { ok: false, error: 'L’envoi a échoué. Réessaie dans un moment ou écris-nous directement.' }, errUrl);
+    return respond(request, 502, { ok: false, error: 'L’envoi a échoué. Réessaie dans un moment ou écris-moi directement.' }, errUrl);
   }
 
-  // --- Accusé de réception au demandeur (français, tutoiement). Son échec n'est pas bloquant.
+  // --- Accusé de réception au demandeur (français, tutoiement, en « je »). Son échec n'est pas bloquant.
+  // Le prénom vient de site.ts : tant que c'est un placeholder, il apparaît aussi sur À propos et bloque la production.
   const ack = await sendMail({
     to: req.email,
-    subject: 'On a bien reçu ta demande — Nó Made Project',
+    subject: 'J’ai bien reçu ta demande — Nó Made Project',
     text: [
       `Bonjour ${req.name},`,
       '',
-      `On a bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
-      'On te répond par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+      `J’ai bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
+      'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+      `Si tu préfères qu’on en parle d’abord, tu peux réserver un créneau visio ici : ${new URL('/contact/#visio', request.url).toString()}`,
       '',
       'À bientôt dehors,',
-      'Nó Made Project',
+      `${site.ownerFirstName} — Nó Made Project`,
     ].join('\n'),
   });
   if (!ack.ok) console.warn('[contact] accusé de réception non envoyé :', ack.error);

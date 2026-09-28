@@ -22,12 +22,12 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
 <!-- États sans JavaScript : la redirection du serveur cible #merci ou #erreur, affichés via :target -->
 <div class="notice notice--ok card" id="merci" role="status">
-  <strong>Merci, on a bien reçu ta demande.</strong>
-  <span>On te répond par email pour caler une date ensemble. Un accusé de réception vient de partir.</span>
+  <strong>Merci, j’ai bien reçu ta demande.</strong>
+  <span>Je te réponds par email pour caler une date ensemble. Un accusé de réception vient de partir.</span>
 </div>
 <div class="notice notice--err card" id="erreur" role="alert">
   <strong>L’envoi n’a pas fonctionné.</strong>
-  <span>Réessaie dans un moment, ou écris-nous directement par email.</span>
+  <span>Réessaie dans un moment, ou écris-moi directement par email.</span>
 </div>
 
 <form class="form card" id={id} action="/api/contact" method="post" data-contact-form>
@@ -49,7 +49,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     </div>
     <div class="field">
       <label for={`${id}-size`}>Nombre de personnes</label>
-      <input id={`${id}-size`} name="groupSize" type="number" inputmode="numeric" min="1" max="5" required placeholder="2" />
+      <input id={`${id}-size`} name="groupSize" type="number" inputmode="numeric" min="1" max="5" required placeholder="1 si tu viens seul" />
     </div>
   </div>
 
@@ -96,7 +96,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
   <p class="form__note small muted">
     <Icon name="shield" size={16} />
-    <span>Pas de paiement en ligne. On te répond par email.</span>
+    <span>Pas de paiement en ligne. Je te réponds par email.</span>
   </p>
 </form>
 
@@ -137,7 +137,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
         if (res.ok && data.ok) {
           form.reset();
           document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => (el.value = String(Date.now())));
-          setStatus('Merci, on a bien reçu ta demande. On te répond par email.', 'ok');
+          setStatus('Merci, j’ai bien reçu ta demande. Je te réponds par email.', 'ok');
           form.querySelector<HTMLElement>('[data-status]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         } else if (data.errors) {
           const first = Object.entries(data.errors)[0];
@@ -151,7 +151,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
           setStatus(data.error ?? 'L’envoi n’a pas fonctionné. Réessaie dans un moment.', 'err');
         }
       } catch {
-        setStatus('Pas de réseau ? Réessaie dans un moment, ou écris-nous directement par email.', 'err');
+        setStatus('Pas de réseau ? Réessaie dans un moment, ou écris-moi directement par email.', 'err');
       } finally {
         if (submit) submit.disabled = false;
       }

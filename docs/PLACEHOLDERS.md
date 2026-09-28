@@ -8,20 +8,19 @@ Généré par `npm run build` le 2026-09-28.
 | `[ADRESSE POSTALE]` | /confidentialite/, /mentions-legales/ |
 | `[CONDITIONS MÉTÉO ET ANNULATION]` | /contact/ |
 | `[DATE DE MISE À JOUR]` | /cgv/, /confidentialite/, /mentions-legales/ |
-| `[DIPLÔME]` | /a-propos/, /mentions-legales/ |
 | `[IMAGE PROVISOIRE]` | / |
 | `[LIEN FACEBOOK]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /mentions-legales/, /offres/ |
+| `[LIEN GOOGLE AGENDA]` | /contact/ |
 | `[LIEN INSTAGRAM]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /mentions-legales/, /offres/ |
 | `[NOM DE L’ASSUREUR]` | /cgv/, /mentions-legales/ |
 | `[NOM DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
-| `[NOM DU PARTENAIRE]` | /, /a-propos/, /cgv/, /confidentialite/, /mentions-legales/, /offres/ |
-| `[NUMÉRO DE CARTE PROFESSIONNELLE]` | /a-propos/, /mentions-legales/ |
 | `[NUMÉRO DE CONTRAT]` | /mentions-legales/ |
 | `[NUMÉRO SIRET]` | /cgv/, /mentions-legales/ |
+| `[PARCOURS : D’OÙ TU VIENS ET DEPUIS QUAND TU FAIS ÇA]` | /a-propos/ |
 | `[PRÉNOM NOM]` | /cgv/, /confidentialite/, /mentions-legales/ |
-| `[STATUT DU PARTENAIRE : ENTREPRISE INDÉPENDANTE OU SALARIÉ]` | /mentions-legales/ |
+| `[PRÉNOM]` | /a-propos/ |
+| `[TARIF SOLO]` | /, /cgv/, /offres/ |
 | `[ZONE GÉOGRAPHIQUE COUVERTE]` | /mentions-legales/ |
-| `[À COMPLÉTER]` | /a-propos/ |
 | `[À CONFIRMER : STATUT JURIDIQUE]` | /mentions-legales/ |
 | `[À CONFIRMER]` | /confidentialite/ |
 | `[ÂGE MINIMUM ÉVENTUEL]` | /cgv/ |

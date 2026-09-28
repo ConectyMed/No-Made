@@ -1,7 +1,7 @@
 {
   "meta": {
     "titleSuffix": "Nó Made Project",
-    "defaultDescription": "Balades guidées et sorties nature en petit groupe, en région PACA. On marche, on fait quelques exercices ensemble, on parle. Le téléphone reste dans le sac."
+    "defaultDescription": "Sorties nature en région PACA : marche, préparation physique au poids du corps, mobilité et respiration. En solo, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
   },
   "common": {
     "skipToContent": "Aller au contenu",
@@ -14,36 +14,37 @@
     "home": "Nó Made Project, retour à l’accueil",
     "requestSession": "Demander une session",
     "requestThisSession": "Demander cette session",
-    "discover": "Découvrir le format"
+    "visioFirst": "Échanger en visio d’abord",
+    "discover": "Découvrir l’approche"
   },
   "pages": {
     "home": {
-      "title": "Balades guidées et sorties nature en PACA",
-      "description": "Nó Made Project : balades guidées en petit groupe, demi-journées hors écran et format Reconnexion parent / ado, en région PACA.",
-      "tag": "Région PACA · sessions en petit groupe",
-      "h1": "Marcher. Respirer.\nSe retrouver dehors.",
-      "lead": "Des balades guidées en petit groupe, sur les sentiers de la région PACA. On marche, on fait quelques exercices ensemble, on parle. Le téléphone reste dans le sac."
+      "title": "Sorties nature, corps et aventure en PACA",
+      "description": "Nó Made Project : marche, préparation physique au poids du corps, mobilité et respiration, dehors, en solo ou en petit groupe. Et un format Reconnexion parent / enfant. Région PACA.",
+      "tag": "Région PACA · en solo ou en petit groupe",
+      "h1": "Marcher. Respirer.\nSe retrouver.",
+      "lead": "Je t’emmène dehors, sur les sentiers de la région PACA, pour remettre le corps et la tête en mouvement : de la marche, du travail au poids du corps, de la mobilité, de la respiration. En solo, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
     },
     "offers": {
-      "title": "Nos offres",
-      "description": "Deux formats en phase de test : Reconnexion nature (2h30, 3 à 5 personnes, 30 € par personne) et Demi-journée hors écran (3h, en duo ou à 4).",
+      "title": "Les sessions",
+      "description": "Deux formats en phase de test : Expérience corps / aventure (2h30, en solo ou de 3 à 5 personnes) et Reconnexion parent / enfant (3h, en duo ou à 4).",
       "eyebrow": "Les sessions",
       "h1": "Deux façons de sortir",
-      "lead": "Deux formats, en phase de test. Les prix peuvent bouger. Tu choisis, tu nous écris, on cale une date ensemble."
+      "lead": "Deux formats, en phase de test. Les prix peuvent bouger. Tu choisis, tu m’écris, on cale une date ensemble. Et si tu préfères en parler d’abord, on se fait une visio."
     },
     "about": {
       "title": "À propos",
-      "description": "Qui est derrière Nó Made Project, et l’éducateur partenaire qui encadre la partie physique des sessions.",
+      "description": "Qui t’emmène dehors avec Nó Made Project, et comment je travaille : marche, poids du corps, mobilité, respiration.",
       "eyebrow": "À propos",
-      "h1": "Qui est derrière Nó Made",
-      "lead": "Une personne, un éducateur partenaire, et l’envie de transmettre le goût de sortir."
+      "h1": "Qui t’emmène dehors",
+      "lead": "Une personne, un sac, et l’envie de te sortir de la routine."
     },
     "contact": {
       "title": "Demander une session",
-      "description": "Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email.",
+      "description": "Dis-moi quelle session t’intéresse, seul ou à plusieurs, et quand. Je te réponds par email. Tu peux aussi réserver un créneau visio pour en parler d’abord.",
       "eyebrow": "Prends contact",
-      "h1": "Envie de sortir ? Écris-nous.",
-      "lead": "Pas de calendrier en ligne pour l’instant : tu nous écris, on te répond par email et on cale une date ensemble."
+      "h1": "Envie de sortir ? Écris-moi.",
+      "lead": "Pas de calendrier de réservation pour l’instant : tu m’écris, je te réponds par email et on cale une date ensemble. Tu préfères en parler avant ? Réserve un créneau visio, c’est gratuit."
     },
     "legalNotice": {
       "title": "Mentions légales",
@@ -64,7 +65,7 @@
       "title": "Page introuvable",
       "description": "Cette page n’existe pas ou plus.",
       "h1": "Cette page s’est perdue en chemin",
-      "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les offres.",
+      "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les sessions.",
       "backHome": "Retour à l’accueil"
     }
   }

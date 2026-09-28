@@ -1,0 +1,149 @@
+---
+/**
+ * Bloc « Tu préfères en parler d'abord ? » : rendez-vous visio via Google Agenda.
+ * Le calendrier ne se charge qu'au clic (aucun contenu Google avant), avec un lien de secours
+ * qui ouvre la page de réservation dans un nouvel onglet. Tant que l'URL est un placeholder,
+ * le bloc l'affiche tel quel et le contrôle des placeholders le signale.
+ */
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import Placeholder from './Placeholder.astro';
+import { site, VISIO_LABEL } from '@/data/site';
+
+const url = site.visio.url;
+const isPlaceholder = url.startsWith('[');
+// Seule une URL calendar.google.com accepte l'affichage dans la page (paramètre gv=true).
+const embedSrc =
+  !isPlaceholder && url.includes('calendar.google.com/calendar/appointments')
+    ? url + (url.includes('gv=true') ? '' : (url.includes('?') ? '&' : '?') + 'gv=true')
+    : null;
+---
+
+<section class="visio frame" id="visio" aria-labelledby="visio-title" data-visio>
+  <div class="visio__head">
+    <span class="eyebrow">Avant de réserver</span>
+    <h2 id="visio-title">Tu préfères en parler d’abord ?</h2>
+    <p class="lead">
+      {site.visio.duration} en visio, gratuites et sans engagement, pour voir ensemble ce qui te conviendrait : en solo, en
+      groupe, ou avec ton enfant. Tu choisis un créneau, tu reçois le lien de la visio par email.
+    </p>
+  </div>
+
+  {
+    isPlaceholder ? (
+      <p class="small muted">
+        Lien de réservation : <Placeholder name={url.slice(1, -1)} />
+      </p>
+    ) : (
+      <div class="visio__actions">
+        {embedSrc && (
+          <Button type="button" variant="lime" icon="calendar" data-visio-open>
+            {VISIO_LABEL}
+          </Button>
+        )}
+        <a href={url} class:list={['visio__ext', { 'btn-like': !embedSrc }]} target="_blank" rel="noopener">
+          {embedSrc ? 'Ouvrir dans un nouvel onglet' : VISIO_LABEL}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+    )
+  }
+
+  {
+    embedSrc && (
+      <div class="visio__frame" hidden data-visio-frame data-src={embedSrc}>
+        <p class="small muted visio__note">
+          <Icon name="shield" size={16} />
+          <span>Le calendrier est fourni par Google et ne se charge qu’à ta demande. <a href="/confidentialite/">Comment on traite tes données</a>.</span>
+        </p>
+      </div>
+    )
+  }
+</section>
+
+<script>
+  const open = document.querySelector<HTMLButtonElement>('[data-visio-open]');
+  const frame = document.querySelector<HTMLElement>('[data-visio-frame]');
+  if (open && frame) {
+    open.addEventListener('click', () => {
+      if (!frame.querySelector('iframe')) {
+        const iframe = document.createElement('iframe');
+        iframe.src = frame.dataset.src ?? '';
+        iframe.title = 'Choisir un créneau visio (Google Agenda)';
+        iframe.loading = 'lazy';
+        iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        frame.prepend(iframe);
+      }
+      frame.hidden = false;
+      open.setAttribute('aria-expanded', 'true');
+      frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+</script>
+
+<style>
+  .visio {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    background: var(--surface-low);
+    border: var(--border);
+    scroll-margin-top: var(--header-offset);
+  }
+
+  .visio__head {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .visio__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .visio__ext {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--green-600);
+    font-size: var(--label);
+    font-weight: 600;
+  }
+
+  /* Sans intégration possible : le lien externe prend l'apparence du bouton lime. */
+  .visio__ext.btn-like {
+    min-height: var(--tap-min);
+    padding: 0.7em 1.4em;
+    border-radius: var(--radius-pill);
+    background: var(--lime);
+    color: var(--on-lime);
+    text-decoration: none;
+  }
+
+  .visio__frame {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .visio__frame :global(iframe) {
+    width: 100%;
+    height: min(75vh, 44rem);
+    border: 0;
+    border-radius: var(--radius-box);
+    background: var(--surface);
+  }
+
+  .visio__note {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .visio__note :global(.icon) {
+    color: var(--green-600);
+    flex: none;
+  }
+</style>
