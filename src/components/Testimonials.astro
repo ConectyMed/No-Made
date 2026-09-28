@@ -1,0 +1,90 @@
+---
+/**
+ * Avis de participants (accueil). Ne s'affiche que si `site.showTestimonials` est vrai ET qu'au moins
+ * un avis réel existe dans src/content/testimonials/fr/. Prénom et initiale, mois, offre. Rien d'inventé.
+ */
+import { getCollection } from 'astro:content';
+import Icon from '@/components/Icon.astro';
+import { site } from '@/data/site';
+
+const items = site.showTestimonials
+  ? (await getCollection('testimonials', ({ filePath }) => filePath?.includes('/testimonials/fr/'))).sort((a, b) => a.data.order - b.data.order)
+  : [];
+const offers = items.length ? await getCollection('offers') : [];
+const offerTitle = (slug?: string) => offers.find((o) => o.data.slug === slug)?.data.title;
+const monthLabel = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(Date.UTC(y, m - 1, 15)));
+};
+---
+
+{
+  items.length > 0 && (
+    <section class="section" id="avis" aria-labelledby="avis-title">
+      <div class="container">
+        <div class="section-head section-head--center" data-reveal>
+          <span class="eyebrow">Ils sont sortis avec moi</span>
+          <h2 id="avis-title">Ce qu’ils en disent</h2>
+          <p class="lead">Des mots de participants, avec leur accord. Prénom et initiale seulement.</p>
+        </div>
+        <ul class="avis" role="list">
+          {items.map((t, i) => (
+            <li class="avis__card card" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+              <Icon name="chat" size={22} class="avis__icon" />
+              <blockquote class="avis__text">
+                <p>{t.body?.trim()}</p>
+              </blockquote>
+              <footer class="avis__meta small muted">
+                <strong>{t.data.name}</strong>
+                {offerTitle(t.data.offerSlug) && <> · {offerTitle(t.data.offerSlug)}</>}
+                {' '}· {monthLabel(t.data.date)}
+              </footer>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .avis {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .avis__card {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+  }
+
+  .avis :global(.avis__icon) {
+    color: var(--green-600);
+  }
+
+  .avis__text {
+    margin: 0;
+    font-size: var(--body-lg);
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .avis__text p::before {
+    content: '« ';
+  }
+
+  .avis__text p::after {
+    content: ' »';
+  }
+
+  .avis__meta strong {
+    color: var(--green-900);
+  }
+
+  @media (min-width: 56em) {
+    .avis {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

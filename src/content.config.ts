@@ -41,4 +41,25 @@ const offers = defineCollection({
   }),
 });
 
-export const collections = { offers };
+/**
+ * Témoignages : uniquement de vraies personnes, avec leur accord. Prénom et initiale suffisent.
+ * Un fichier dont le nom commence par _ est ignoré (sert de modèle).
+ */
+const testimonials = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/testimonials' }),
+  schema: z.object({
+    /** Ex. "Camille R." */
+    name: z.string().min(2),
+    /** Mois de la session, ex. "2026-10" */
+    date: z.string().regex(/^\d{4}-\d{2}$/, 'format AAAA-MM'),
+    /** Slug de l'offre concernée, ou vide. */
+    offerSlug: z.string().optional(),
+    /** D'où vient l'avis : email, message, oral… (interne, non affiché) */
+    source: z.string().optional(),
+    /** La personne a donné son accord pour être citée sur le site. Obligatoire. */
+    consent: z.literal(true),
+    order: z.number().int().default(0),
+  }),
+});
+
+export const collections = { offers, testimonials };

@@ -11,6 +11,7 @@ import type { IconName } from '@/components/Icon.astro';
 import ProvisionalImage from '@/components/ProvisionalImage.astro';
 import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
+import Testimonials from '@/components/Testimonials.astro';
 import Placeholder from '@/components/Placeholder.astro';
 import { usePage, t } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
@@ -260,6 +261,9 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     </div>
   </section>
 
+  <!-- 5 bis. Avis (affiché seulement avec de vrais avis, site.showTestimonials) -->
+  <Testimonials />
+
   <!-- 6. Prix -->
   {entry && groupPrice && groupPrice.amountCents !== undefined && (
     <section class="section section--tight" id="prix" aria-labelledby="prix-title">
@@ -309,7 +313,6 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     </div>
   </section>
 
-  {site.showTestimonials && <section class="section" aria-label="Témoignages" />}
 </Base>
 
 <style>

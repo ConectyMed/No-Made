@@ -1,7 +1,7 @@
 ---
 /**
  * Détail d'une session : infos modifiables, participants (ajout depuis le carnet, retrait),
- * montant avec suggestion, statut (prévue / faite / annulée), lien Google Agenda, suppression.
+ * montant avec suggestion, statut (prévue / faite / annulée), export .ics vers l'agenda, suppression.
  * « Faite » = le montant compte dans le chiffre d'affaires.
  */
 import Admin from '@/layouts/Admin.astro';
@@ -11,7 +11,7 @@ import { addParticipant, deleteOuting, getOuting, isOutingStatus, removeParticip
 import { allContactsBrief } from '@/lib/crm/contacts';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { OUTING_STATUS_LABEL } from '@/lib/crm/labels';
-import { formatDateLong, formatDateTime, formatTime, msToParisParts, parisToMs, toGoogleUtc } from '@/lib/dates';
+import { formatDateLong, formatDateTime, formatTime, msToParisParts, parisToMs } from '@/lib/dates';
 import { formatPrice } from '@/lib/format';
 import { site } from '@/data/site';
 
@@ -75,22 +75,6 @@ const suggestion = await suggestAmount(o.offerSlug, people);
 const contacts = await allContactsBrief();
 const inSession = new Set(participants.map((p) => p.contact.id));
 
-const endMs = o.startsAt + (o.durationMin ?? 150) * 60_000;
-const gcal = new URL('https://calendar.google.com/calendar/render');
-gcal.searchParams.set('action', 'TEMPLATE');
-gcal.searchParams.set('text', `${site.shortName} · ${o.offerLabel}`);
-gcal.searchParams.set('dates', `${toGoogleUtc(o.startsAt)}/${toGoogleUtc(endMs)}`);
-if (o.place) gcal.searchParams.set('location', o.place);
-gcal.searchParams.set(
-  'details',
-  [
-    `${people} personne${people > 1 ? 's' : ''} : ${participants.map((p) => `${p.contact.name} (${p.participant.people})`).join(', ') || 'à confirmer'}`,
-    o.notes ?? '',
-    `Admin : ${new URL(`/admin/sessions/${o.id}`, Astro.url.origin)}`,
-  ]
-    .filter(Boolean)
-    .join('\n'),
-);
 const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'annulee' : 'nouvelle';
 ---
 
@@ -142,7 +126,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
           </form>
         )
       }
-      <a href={gcal.toString()} target="_blank" rel="noopener" class="btn-ghost"><Icon name="calendar" size={16} /> Ajouter à Google Agenda</a>
+      <a href={`/admin/sessions/${o.id}.ics`} class="btn-ghost" download><Icon name="calendar" size={16} /> Ajouter à mon agenda (.ics)</a>
     </div>
   </section>
 

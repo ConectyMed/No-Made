@@ -24,7 +24,8 @@ Node 22 ou plus récent.
 | Les textes de l'interface et des pages | `src/i18n/fr.json` |
 | Le nom, la zone, l'email, les réseaux, les liens de la nav | `src/data/site.ts` |
 | Une offre, un prix | `src/content/offers/fr/*.md` |
-| Le prénom, le lien Google Agenda de la visio, la phrase du pied de page | `src/data/site.ts` |
+| Le prénom, le lien de réservation visio (Cal.com), la phrase du pied de page, l'interrupteur des avis | `src/data/site.ts` |
+| Un avis de participant (avec son accord) | `src/content/testimonials/fr/*.md`, modèle `_modele.md` |
 | Une page | `src/pages/<nom>.astro` |
 | L'en-tête, le pied de page, un bouton | `src/components/` |
 | La police (Plus Jakarta Sans) | `public/fonts/` + `@font-face` dans `src/styles/global.css` |
@@ -62,6 +63,6 @@ puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un termin
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | fait |
 | + | Mode sombre : suit le système, bascule discrète dans la nav, choix mémorisé | fait |
 | M5.1 | Admin : base Turso, comptes, connexion, boîte de demandes branchée sur le formulaire | fait |
-| M5.2 | Admin : contacts, sessions, participants, paiement au cochage, lien Google Agenda | fait |
+| M5.2 | Admin : contacts, sessions, participants, paiement au cochage, export .ics vers l'agenda | fait |
 | M5.3 | Admin : tableau de bord (chiffre, sessions, conversion, douze mois, par offre) | fait |
 | M5.4 | Édition du contenu par Anthony : abandonnée (2026-09-28), les modifications passent par l'administrateur du site | — |

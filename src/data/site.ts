@@ -24,12 +24,12 @@ export const site = {
   phone: null as string | null, // affiché seulement si renseigné
 
   /**
-   * Rendez-vous visio avant de réserver (Google Agenda, « planning de rendez-vous »).
-   * Coller ici l'URL de la page de réservation. Une URL calendar.google.com s'affiche dans la page ;
-   * un lien court calendar.app.google s'ouvre dans un nouvel onglet.
+   * Rendez-vous visio avant de réserver. Coller ici l'URL publique de la page de réservation.
+   * Reconnus et affichés dans la page : Cal.com (recommandé, https://cal.com/<utilisateur>/<evenement>),
+   * Calendly, Google Agenda (planning de rendez-vous). Toute autre URL s'ouvre dans un nouvel onglet.
    */
   visio: {
-    url: '[LIEN GOOGLE AGENDA]',
+    url: '[LIEN DE RÉSERVATION VISIO]',
     duration: '20 minutes',
   },
 

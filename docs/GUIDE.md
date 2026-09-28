@@ -50,7 +50,7 @@ Décision : pendant le développement, l'adresse publique et de réception est *
 
 Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. Gratuit jusqu'à 3 000 emails par mois.
 
-1. Crée un compte sur **https://resend.com**.
+1. Compte Resend : **créé** (2026-09-28).
 2. **Domains → Add domain** : ajoute ton domaine. Resend te donne 2 ou 3 enregistrements DNS (DKIM, SPF). Copie-les dans les DNS du domaine (étape 3). Vérification en général sous une heure.
 3. **API Keys → Create API key** : copie la clé (elle commence par `re_`). Elle ne s'affiche qu'une fois.
 4. Dans ton hébergeur (Vercel : Project → Settings → Environment Variables ; Netlify : Site configuration → Environment variables ; Cloudflare : Settings → Variables), ajoute :
@@ -83,7 +83,8 @@ Chaque case correspond à un placeholder jaune. Le build de production refuse de
 - [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
 - [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
 - [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
-- [ ] **Lien Google Agenda** pour la visio (étape 6 bis ci-dessous).
+- [ ] **Lien Cal.com** pour la visio (étape 6 bis ci-dessous). Google Agenda écarté : pas de compte Google.
+- [ ] **Les trois avis** annoncés : prénom, initiale, texte, mois, offre, accord de la personne (étape 6 quater).
 - [ ] **Adresse email publique** (étape 3).
 - [ ] **Instagram** et **Facebook** : les liens, ou « pas de compte » et je retire la ligne.
 - [ ] **Météo et annulation** : que se passe-t-il s'il pleut, si quelqu'un annule la veille, si toi tu annules ? Report, remboursement, acompte ? Deux ou trois phrases suffisent, je rédige.
@@ -92,17 +93,25 @@ Chaque case correspond à un placeholder jaune. Le build de production refuse de
 
 ---
 
-## Étape 6 bis — Le rendez-vous visio avec Google Agenda (15 min, à faire par lui)
+## Étape 6 bis — Le rendez-vous visio avec Cal.com (15 min, à faire par lui)
 
-Le site propose une visio gratuite de 20 minutes avant de réserver. Le calendrier est celui de Google Agenda, gratuit avec un compte Google.
+Le site propose une visio gratuite de 20 minutes avant de réserver. Google Agenda est écarté (pas de compte Google). Cal.com fait la même chose, gratuitement, avec un compte email classique, et se synchronise avec son agenda Outlook.
 
-1. Se connecter à [calendar.google.com](https://calendar.google.com) avec son compte Google (en créer un s'il n'en a pas ; l'adresse Outlook peut servir d'identifiant).
-2. Bouton **Créer** → **Planning de rendez-vous**. Nom : « Échanger en visio, 20 min ». Durée 20 min. Choisir les jours et heures où il accepte des visios, et une marge entre deux rendez-vous.
-3. Dans **Paramètres de réservation**, cocher **Visioconférence Google Meet** : le lien de la visio est créé et envoyé tout seul.
-4. Enregistrer, puis ouvrir le planning et cliquer sur **Partager** → onglet **Intégrer sur un site** → copier **l'URL** qui se trouve dans le code (elle commence par `https://calendar.google.com/calendar/appointments/schedules/`). C'est celle-là qu'il me faut, pas le lien court.
-5. Me l'envoyer. Je la mets dans `src/data/site.ts` (`visio.url`), et le bouton « Réserver un créneau visio » se met à fonctionner : le calendrier s'affiche dans la page, au clic seulement.
+1. Créer un compte sur [cal.com](https://cal.com) avec son adresse email (pas besoin de Google). Choisir un nom d'utilisateur simple, par exemple `nomade` : il apparaîtra dans le lien.
+2. **Settings → Calendars → Add** : connecter **Outlook Calendar** avec son compte Microsoft. Cal.com lira ses indisponibilités et y écrira les rendez-vous pris.
+3. **Settings → Conferencing** : garder **Cal Video** (visio intégrée, gratuite, sans compte pour le visiteur). Microsoft Teams est possible aussi.
+4. **Event Types → New** : nom « Échanger en visio », durée 20 min, lieu Cal Video. Dans **Availability**, ses jours et heures acceptés, et une marge entre deux rendez-vous. Enregistrer.
+5. Copier le lien public de l'événement : `https://cal.com/<utilisateur>/<evenement>`. Me l'envoyer. Je le mets dans `src/data/site.ts` (`visio.url`) : le calendrier s'affiche alors dans la page Contact, au clic seulement, et le bouton « Réserver un créneau visio » se met à fonctionner partout.
 
-Si son compte n'a pas l'option « Planning de rendez-vous », le lien court de partage (`calendar.app.google/…`) marche aussi : le bouton ouvrira alors la page Google dans un nouvel onglet.
+Autres possibilités reconnues par le site si vous préférez : Calendly (plan gratuit, un seul type d'événement, synchronisation Outlook) ou Google Agenda si un compte Google apparaît un jour. Tout autre lien s'ouvrira simplement dans un nouvel onglet.
+
+---
+
+## Étape 6 quater — Les avis de participants
+
+Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Il reste invisible tant qu'il n'y a pas de vrai avis.
+
+Pour chaque avis, envoie-moi : le prénom et l'initiale du nom, le texte tel qu'il a été écrit, le mois de la session, l'offre concernée, d'où vient l'avis (email, message, oral), et la confirmation que la personne est d'accord pour être citée. Je crée un fichier par avis dans `src/content/testimonials/fr/` (modèle : `_modele.md`) et j'active la section. Pas d'étoiles ni de note : le texte et le prénom suffisent, c'est plus crédible.
 
 ---
 
@@ -116,7 +125,7 @@ L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de
 4. **Au quotidien** : Demandes → ouvrir une demande → « Répondre par email » ouvre la boîte mail avec un brouillon, la demande passe en « répondue ». Le statut, les notes sur la demande et sur la personne s'enregistrent dans le bloc Suivi. Le bouton Supprimer sert au droit à l'effacement (RGPD).
 
 5. **Contacts** : une fiche par personne, créée à sa première demande, ou à la main (« Nouveau contact ») pour quelqu'un qui a appelé. Coordonnées, notes, historique des demandes et des sessions. Supprimer une fiche efface aussi ses demandes et ses participations.
-6. **Sessions** : depuis une demande, « Planifier une session » crée la session avec la personne déjà inscrite, le nombre de personnes et un montant suggéré d'après l'offre ; la demande passe en « confirmée ». Ou « Rattacher à une session prévue » si la date existe déjà. Sur la session : participants (ajout depuis le carnet, retrait), date, lieu, durée, notes, montant (avec la suggestion recalculée selon le nombre de personnes, bouton « Utiliser »), et un lien « Ajouter à Google Agenda » prérempli.
+6. **Sessions** : depuis une demande, « Planifier une session » crée la session avec la personne déjà inscrite, le nombre de personnes et un montant suggéré d'après l'offre ; la demande passe en « confirmée ». Ou « Rattacher à une session prévue » si la date existe déjà. Sur la session : participants (ajout depuis le carnet, retrait), date, lieu, durée, notes, montant (avec la suggestion recalculée selon le nombre de personnes, bouton « Utiliser »), et un bouton « Ajouter à mon agenda (.ics) » qu'Outlook ouvre directement.
 7. **Paiement** : quand la session est passée, « Marquer faite » fige son montant, qui compte alors dans le chiffre d'affaires du tableau de bord. « Annuler la session » la garde dans l'historique sans la compter. Les deux sont réversibles.
 
 8. **Tableau de bord** : en haut, ce qui attend (demandes à traiter, réponses attendues, sessions à venir, carnet) ; puis le chiffre du mois avec l'écart au mois précédent, le chiffre de l'année, les personnes emmenées, le taux de demandes converties ; enfin douze mois de chiffre en histogramme, la répartition par offre, les prochaines sessions et les dernières demandes. Tout le chiffre vient des sessions cochées « faite ».

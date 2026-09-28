@@ -87,7 +87,7 @@ export function startOfParisYear(ms = Date.now()): number {
   return parisToMs(date.slice(0, 4) + '-01-01', '00:00') ?? ms;
 }
 
-/** Format Google Agenda : 20261018T070000Z */
+/** Format iCalendar / Google Agenda, en UTC : 20261018T070000Z */
 export function toGoogleUtc(ms: number): string {
   return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
