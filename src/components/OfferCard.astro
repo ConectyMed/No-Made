@@ -15,6 +15,7 @@ interface Props {
   headingLevel?: 'h2' | 'h3';
 }
 const { offer, compact = false, headingLevel: H = 'h3' } = Astro.props;
+const Sub = H === 'h2' ? 'h3' : 'h4'; // les sous-titres suivent le niveau du titre de la carte
 const d = offer.data;
 const requestHref = `/contact/?offre=${encodeURIComponent(d.slug)}#demande`;
 
@@ -57,11 +58,11 @@ const parts = (s: string) =>
     !compact && (
       <div class="offer__details">
         <div>
-          <h4>Pour qui</h4>
+          <Sub>Pour qui</Sub>
           <p class="muted">{d.forWhom}</p>
         </div>
         <div>
-          <h4>Au programme</h4>
+          <Sub>Au programme</Sub>
           <ul>
             {d.includes.map((item) => (
               <li>{parts(item).map((p) => ('ph' in p ? <mark class="placeholder">[{p.ph}]</mark> : p.text))}</li>
@@ -69,7 +70,7 @@ const parts = (s: string) =>
           </ul>
         </div>
         <div>
-          <h4>À prévoir</h4>
+          <Sub>À prévoir</Sub>
           <ul>
             {d.bring.map((item) => (
               <li>{item}</li>
@@ -176,6 +177,7 @@ const parts = (s: string) =>
     border-top: var(--border);
   }
 
+  .offer__details h3,
   .offer__details h4 {
     margin-bottom: var(--space-2);
     font-size: var(--label);

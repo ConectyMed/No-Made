@@ -1,10 +1,118 @@
 ---
+/**
+ * Conditions générales de vente — modèle à compléter. Pas un conseil juridique : à faire relire.
+ * Les offres et prix viennent de src/content/offers pour rester cohérents avec le site.
+ */
+import { getCollection } from 'astro:content';
 import Legal from '@/layouts/Legal.astro';
+import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
+import { site } from '@/data/site';
+import { formatPrice } from '@/lib/format';
 
 const page = usePage('terms');
+const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
-<Legal title={page.title} description={page.description} h1={page.h1}>
-  <p class="muted">Modèle rédigé au jalon M4 : réservation, annulation, remboursement, à compléter.</p>
+<Legal title={page.title} description={page.description} h1={page.h1} updated="[DATE DE MISE À JOUR]">
+  <h2>1. Objet</h2>
+  <p>
+    Les présentes conditions régissent les sessions proposées par {site.name}, <Placeholder name="PRÉNOM NOM" />,
+    entrepreneur individuel, SIRET <Placeholder name="NUMÉRO SIRET" /> (« nous »), à toute personne qui en fait la
+    demande (« toi »). Toute demande de session vaut acceptation de ces conditions.
+  </p>
+
+  <h2>2. Les sessions</h2>
+  <p>Les sessions sont des balades guidées et des temps dehors, en petit groupe, en région {site.areaLong}. Elles ne
+    sont pas des séances d’activité physique ou sportive. Lorsqu’une session comprend une séquence de mobilité, elle
+    est encadrée par <Placeholder name="NOM DU PARTENAIRE" />, éducateur diplômé.</p>
+  <ul>
+    {offers.map((o) => (
+      <li>
+        <strong>{o.data.title}</strong> : {o.data.duration}, {o.data.groupSize.toLowerCase()}.
+        {o.data.pricing.map((p, i) => (
+          <>{i > 0 ? ' ; ' : ' '}{formatPrice(p.amountCents)} {p.label}</>
+        ))}.
+      </li>
+    ))}
+  </ul>
+  <p>
+    Les prix sont indiqués en euros, <Placeholder name="TVA NON APPLICABLE, ART. 293 B DU CGI — À CONFIRMER" />.
+    Pendant la phase de test, ils peuvent évoluer ; le prix applicable est celui indiqué dans notre email de confirmation.
+  </p>
+
+  <h2>3. Demande et confirmation</h2>
+  <p>
+    Tu fais ta demande via le formulaire du site ou par email. Nous te répondons pour convenir ensemble d’une date,
+    d’un lieu de rendez-vous et du nombre de participants. La session est réservée à réception de notre
+    <strong>email de confirmation</strong>, qui récapitule la date, le lieu, le prix et ce qu’il faut prévoir.
+    Aucun paiement n’est demandé en ligne.
+  </p>
+
+  <h2>4. Paiement</h2>
+  <p>
+    <Placeholder name="MODALITÉS DE PAIEMENT : SUR PLACE (ESPÈCES, CARTE), VIREMENT AVANT LA SESSION, ACOMPTE ÉVENTUEL" />.
+    Une facture est remise sur demande.
+  </p>
+
+  <h2>5. Annulation ou report de ta part</h2>
+  <p>
+    <Placeholder name="CONDITIONS D’ANNULATION PAR LE CLIENT : DÉLAI, FRAIS ÉVENTUELS, REPORT POSSIBLE" />.
+    Préviens-nous par email dès que possible : en petit groupe, une absence change la session pour tout le monde.
+  </p>
+
+  <h2>6. Annulation ou report de notre part</h2>
+  <p>
+    Nous pouvons reporter ou annuler une session en cas de météo défavorable, de risque pour la sécurité (vent violent,
+    risque incendie, fermeture des massifs par arrêté préfectoral), de nombre insuffisant de participants ou de force
+    majeure. Nous te proposons alors une nouvelle date ou le remboursement intégral des sommes versées, à ton choix.
+    <Placeholder name="DÉLAI DE PRÉVENANCE MÉTÉO, EX. LA VEILLE À 18H" />.
+  </p>
+
+  <h2>7. Droit de rétractation</h2>
+  <p>
+    Conformément à l’article L221-28 12° du Code de la consommation, le droit de rétractation ne s’applique pas aux
+    prestations de loisirs fournies à une date ou une période déterminée. Les conditions d’annulation de l’article 5
+    s’appliquent.
+  </p>
+
+  <h2>8. Déroulement, aptitude et sécurité</h2>
+  <ul>
+    <li>Les balades se font à un rythme tranquille, sur des sentiers accessibles à toute personne en bonne santé.</li>
+    <li>Tu t’engages à nous signaler avant la session toute condition médicale, blessure ou traitement susceptible
+      d’affecter ta participation, et à respecter les consignes données.</li>
+    <li>Tu viens avec l’équipement indiqué dans l’email de confirmation (chaussures fermées, eau, vêtement adapté).</li>
+    <li>La séquence de mobilité, lorsqu’elle existe, est adaptée à chacun et reste facultative.</li>
+    <li>Nous pouvons interrompre la participation d’une personne dont le comportement met en danger le groupe ou
+      elle-même, sans remboursement.</li>
+  </ul>
+
+  <h2>9. Mineurs</h2>
+  <p>
+    Les mineurs participent uniquement accompagnés d’un parent ou représentant légal présent pendant toute la session,
+    dans le cadre du format parent / ado. <Placeholder name="ÂGE MINIMUM ÉVENTUEL" />.
+  </p>
+
+  <h2>10. Responsabilité et assurance</h2>
+  <p>
+    Nous sommes assurés en responsabilité civile professionnelle auprès de <Placeholder name="NOM DE L’ASSUREUR" />.
+    Cette assurance ne remplace pas ta responsabilité civile personnelle ni une assurance individuelle accident, que nous
+    te recommandons. Nous ne sommes pas responsables des objets personnels perdus ou endommagés.
+  </p>
+
+  <h2>11. Données personnelles</h2>
+  <p>Les données que tu nous transmets servent à traiter ta demande et à organiser la session. Voir la
+    <a href="/confidentialite/">politique de confidentialité</a>.</p>
+
+  <h2>12. Réclamations et médiation</h2>
+  <p>
+    Pour toute réclamation, écris-nous à <a href={`mailto:${site.email}`}>{site.email}</a>. À défaut de solution sous
+    <Placeholder name="DÉLAI, EX. 30 JOURS" />, tu peux saisir gratuitement le médiateur de la consommation :
+    <Placeholder name="NOM DU MÉDIATEUR" />, <Placeholder name="ADRESSE ET SITE DU MÉDIATEUR" />.
+  </p>
+
+  <h2>13. Droit applicable</h2>
+  <p>Les présentes conditions sont soumises au droit français. À défaut d’accord amiable, les tribunaux français sont compétents.</p>
 </Legal>
