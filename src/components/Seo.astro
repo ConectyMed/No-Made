@@ -19,7 +19,7 @@ interface Props {
 const {
   title,
   description = t('meta.defaultDescription'),
-  image = '/og-image.png',
+  image = '/og-image.jpg',
   isHome = false,
   noindex = false,
 } = Astro.props;
@@ -28,6 +28,18 @@ const suffix = t('meta.titleSuffix');
 const fullTitle = isHome ? `${suffix} · ${title}` : `${title} · ${suffix}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
+
+// Données structurées : uniquement des faits réels (pas de note, pas d'avis, pas d'adresse tant qu'elle manque).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: Astro.site?.toString(),
+  email: site.email.startsWith('[') ? undefined : site.email,
+  description: t('meta.defaultDescription'),
+  areaServed: { '@type': 'AdministrativeArea', name: site.areaLong },
+  logo: new URL('/favicon.svg', Astro.site).toString(),
+};
 ---
 
 <meta charset="utf-8" />
@@ -51,8 +63,10 @@ const ogImage = new URL(image, Astro.site);
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-<meta name="theme-color" content="#f9f9f8" />
+<meta name="theme-color" content="#f9f9f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0f1411" media="(prefers-color-scheme: dark)" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <link rel="preload" href="/fonts/plus-jakarta-sans-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+{isHome && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}

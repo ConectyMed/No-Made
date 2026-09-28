@@ -1,0 +1,98 @@
+---
+/** Connexion à l'admin : email + mot de passe. Le middleware renvoie ici les visiteurs non connectés. */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { login, createSession, setSessionCookie } from '@/lib/auth/session';
+
+export const prerender = false;
+
+const suiteRaw = Astro.url.searchParams.get('suite') ?? '/admin';
+const suite = /^\/admin(\/[^/].*)?$/.test(suiteRaw) ? suiteRaw : '/admin';
+
+let error: string | null = null;
+let email = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  email = String(form.get('email') ?? '').trim();
+  const password = String(form.get('password') ?? '');
+  if (!email || !password) {
+    error = 'Email et mot de passe sont nécessaires.';
+  } else {
+    const result = await login(email, password);
+    if (result.ok) {
+      setSessionCookie(Astro.cookies, await createSession(result.user.id));
+      return Astro.redirect(suite, 303);
+    }
+    error =
+      result.reason === 'locked'
+        ? 'Trop d’essais. Le compte est bloqué quinze minutes.'
+        : 'Email ou mot de passe incorrect.';
+  }
+}
+---
+
+<Admin title="Connexion" bare>
+  <div class="login adm-card">
+    <a href="/" class="login__brand"><span class="login__dot" aria-hidden="true"></span>Nó Made Project</a>
+    <h1>Espace admin</h1>
+    <p class="muted">Connecte-toi pour voir les demandes et les sessions.</p>
+
+    {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+    <form method="post" class="login__form">
+      <div class="adm-field">
+        <label for="email">Email ou identifiant</label>
+        <input id="email" name="email" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required value={email} />
+      </div>
+      <div class="adm-field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8" />
+      </div>
+      <Button type="submit" variant="dark" block icon="arrow-right">Se connecter</Button>
+    </form>
+
+    <p class="small login__alt">
+      <a href="/admin/mot-de-passe">Mot de passe oublié, ou première connexion</a>
+    </p>
+  </div>
+</Admin>
+
+<style>
+  .login {
+    width: min(26rem, 100%);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .login__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--green-600);
+    font-size: var(--label);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .login__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--lime);
+  }
+
+  .login h1 {
+    font-size: var(--text-lg);
+  }
+
+  .login__form {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+
+  .login__alt a {
+    color: var(--green-600);
+  }
+</style>

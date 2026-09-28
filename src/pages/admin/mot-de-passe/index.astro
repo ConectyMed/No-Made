@@ -1,0 +1,105 @@
+---
+/**
+ * Demande de lien pour définir ou réinitialiser le mot de passe.
+ * Même réponse que l'adresse soit connue ou non (pas d'énumération des comptes).
+ * Adresses acceptées : comptes existants + ADMIN_EMAILS (première connexion).
+ */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { canSetPassword, createPasswordToken, normalizeEmail } from '@/lib/auth/session';
+import { sendMail } from '@/lib/mail';
+import { isDev } from '@/lib/env';
+import { site } from '@/data/site';
+
+export const prerender = false;
+
+let sent = false;
+let devLink: string | null = null;
+let warn: string | null = null;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const email = normalizeEmail(String(form.get('email') ?? ''));
+  if (email && (await canSetPassword(email))) {
+    const token = await createPasswordToken(email);
+    const link = new URL(`/admin/mot-de-passe/${token}`, Astro.url.origin).toString();
+    const res = await sendMail({
+      to: email,
+      subject: `Ton accès à l’admin ${site.name}`,
+      text: [
+        'Bonjour,',
+        '',
+        `Voici le lien pour définir ton mot de passe de l’admin ${site.name} :`,
+        link,
+        '',
+        'Il est valable une heure. Si tu n’es pas à l’origine de cette demande, ignore cet email.',
+      ].join('\n'),
+    });
+    if (!res.ok) {
+      // Sans email configuré (Resend), le lien est écrit dans les journaux du serveur : on peut le récupérer là.
+      console.warn('[admin] email non envoyé, lien de mot de passe :', link, '·', res.error);
+      warn = 'L’email n’a pas pu partir (envoi non configuré). Le lien est dans les journaux du serveur.';
+    }
+    if (isDev) devLink = link;
+  }
+  sent = true;
+}
+---
+
+<Admin title="Mot de passe" bare>
+  <div class="box adm-card">
+    <h1>Définir mon mot de passe</h1>
+    {
+      sent ? (
+        <>
+          <p class="adm-alert adm-alert--ok" role="status">
+            Si cette adresse est autorisée, un lien vient de partir par email. Il est valable une heure.
+          </p>
+          {warn && <p class="adm-alert adm-alert--err">{warn}</p>}
+          {devLink && (
+            <p class="small">
+              Mode développement : <a href={devLink}>ouvrir le lien</a>
+            </p>
+          )}
+        </>
+      ) : (
+        <>
+          <p class="muted">
+            Première connexion ou mot de passe oublié : indique ton adresse, tu reçois un lien pour choisir un mot de passe.
+          </p>
+          <form method="post" class="box__form">
+            <div class="adm-field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="username" required />
+            </div>
+            <Button type="submit" variant="dark" block icon="send">
+              Recevoir le lien
+            </Button>
+          </form>
+        </>
+      )
+    }
+    <p class="small"><a href="/admin/connexion">Retour à la connexion</a></p>
+  </div>
+</Admin>
+
+<style>
+  .box {
+    width: min(26rem, 100%);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .box h1 {
+    font-size: var(--text-lg);
+  }
+
+  .box__form {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .box a {
+    color: var(--green-600);
+  }
+</style>

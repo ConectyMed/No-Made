@@ -12,7 +12,7 @@ const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
   <div class="container footer__top">
     <div class="footer__brand">
       <a href="/" class="footer__name" aria-label={t('common.home')}>{site.name}</a>
-      <p class="small muted">Balades guidées et sorties nature en petit groupe, région {site.area}.</p>
+      <p class="small muted">{site.tagline} Région {site.area}.</p>
     </div>
 
     <nav aria-label={t('common.footerNav')}>
@@ -92,7 +92,7 @@ const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
     flex-direction: column;
     gap: var(--space-3);
     padding-block: var(--space-4) var(--space-6);
-    border-top: 1px solid rgba(194, 200, 193, 0.25);
+    border-top: var(--border);
   }
 
   .footer__contact {

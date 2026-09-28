@@ -9,9 +9,17 @@
 
 ## 1. Project
 
-**Nó Made Project**: small-group guided nature experiences in the PACA region (France). Guided walks,
-screen-free half-days, and a "Reconnexion" parent / teen format. A partner qualified educator leads any
-physical-exercise or mobility content and is named on the site.
+**Nó Made Project**: outdoor "body / adventure" experiences in the PACA region (France), solo or in a small
+group, plus a "Reconnexion" parent / child format. Each session mixes walking or hiking, functional bodyweight
+preparation, mobility (yoga and animal-movement inspired), and breathing / concentration techniques, adapted to
+each profile. The problems it answers, in the owner's words: get body and mind moving again, regain a good
+physical condition, step out of the "routine" comfort zone, rediscover the nature around us. Audience: adults,
+mostly 30–50, and parent / child duos.
+
+**Voice (decided 2026-09-28):** the site belongs to the one person who leads every session. It speaks in the
+first person ("je"), addresses the visitor as "tu". Nobody else appears: no founder, no partner, no team.
+The person behind the project's setup stays invisible everywhere, including legal pages. No professional
+title ("éducateur", diploma, card number) is displayed anywhere, by decision of the owner.
 
 **v1:** showcase + "request a session" flow. No public calendar, no online payment. Sessions are scheduled
 case by case after contact. **Later:** dated sessions with capacity, live availability, Stripe Checkout.
@@ -20,14 +28,16 @@ case by case after contact. **Later:** dated sessions with capacity, live availa
 
 ## 2. Standing rules (from the project brief, unchanged)
 
-- All copy in French, informal "tu".
-- No invented statistics, testimonials, partner logos or credentials. Real facts only: duration, group size,
-  price, area. Test prices are labelled as such.
-- Sessions are presented as guided walks and nature / connection experiences. Mobility or physical exercise
-  is described only when led by the partner educator, who is named: [NOM DU PARTENAIRE].
-- Placeholders wherever information is missing: [SLOGAN], [NOM DU PARTENAIRE], [DIPLÔME],
-  [NUMÉRO DE CARTE PROFESSIONNELLE], [ADRESSE EMAIL], [LIEN INSTAGRAM], photos.
-- Main CTA label: **"Demander une session"** (there is no booking, so never "Réserver").
+- All copy in French, informal "tu", first person "je" (one voice: the person who leads the sessions).
+- No invented statistics, testimonials, logos or credentials. Real facts only: duration, group size,
+  price, area. Test prices are labelled as such. A price that is not known yet is a placeholder, never a guess.
+- Sessions describe what the owner actually does (walk, bodyweight work, mobility, breathing) and never make
+  a medical or therapeutic claim: no "réhabilitation", "thérapie", "soigne". The training method behind the
+  bodyweight work is not named.
+- Placeholders wherever information is missing: [PRÉNOM], [PARCOURS…], [TARIF SOLO], [LIEN GOOGLE AGENDA],
+  [LIEN INSTAGRAM], photos, legal identity.
+- Main CTA label: **"Demander une session"** (no session booking, so never "Réserver une session").
+  Secondary CTA: **"Réserver un créneau visio"**, a free 20-minute video call before deciding.
 
 ## 3. Visual direction (from the Stitch mockup)
 
@@ -54,6 +64,25 @@ Everything sits inside a centred 80rem container with rounded "frames".
 
 Contrast (AA): white on green-800 > 12:1, green-600 on bg 6.1:1, green-900 on lime > 14:1, ink-2 on white 8:1.
 
+Tokens that never change with the theme: `--on-lime` (text on lime), `--deep` / `--deep-hover` (dark buttons,
+nav CTA, price banner). Hairlines always use `--line` / `--line-strong`, never a literal rgba.
+
+### Dark mode
+
+Same brand (lime, deep green), page turns green-black. Only the semantic tokens change, in the
+`[data-theme="dark"]` block of `tokens.css` (and a mirror under `prefers-color-scheme: dark` for no-JS):
+bg `#0f1411`, surface-low `#151c17`, surface `#1a221c`, ink `#eceeea`, ink-2 `#b7bdb6`, headings `#e4efe4`,
+eyebrows / links lime-dim, glass `rgba(18,26,21,.78)`, hairlines white at 8 % / 16 %.
+
+- Default follows the system. A click on the toggle stores `nomade-theme` = `dark` | `light` in
+  localStorage; a stored choice wins over the system.
+- An inline script in `<head>` sets `data-theme` before first paint (no flash).
+- Toggle: icon-only button (moon / sun, 2.5rem, no background) in the nav pill, before the CTA, on every
+  breakpoint. Label "Passer en mode sombre" / "Passer en mode clair". Colours cross-fade 200 ms on click
+  only, not under reduced motion.
+- `theme-color` metas exist for both schemes and are updated on toggle. Photos and the hero video are
+  left untouched.
+
 ### Typography
 
 - One family: **Plus Jakarta Sans**, self-hosted variable woff2 (latin subset), weights 300–800.
@@ -70,6 +99,8 @@ Contrast (AA): white on green-800 > 12:1, green-600 on bg 6.1:1, green-900 on li
 - Icons: inline SVG, 24px grid, stroke 1.8. No icon font.
 
 ## 4. Nav
+
+Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: toggle, mail icon, burger.
 
 Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
 Left: lime dot + "Nó Made Project". Centre (desktop): Accueil, Offres, À propos, Contact.
@@ -94,31 +125,46 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
 ## 6. Home page sections, in order
 
 1. **Hero** (above).
-2. **L'approche** — uppercase label, headline-xl, four small cards (icon box, title, body-sm, footer
-   "0n / word"): Terrain, Marche, Coopération, Groupe.
+2. **Pourquoi sortir** — uppercase label, headline-xl, four small cards (icon box, title, body-sm, footer
+   "0n / word"): Condition, Routine, Esprit, Nature (the four problems the owner answers).
 3. **Trois temps forts** — three image-top cards (image 16rem high, pill "Temps 0n", headline-md, body,
-   footer row with a note and an icon): Marche · Mobilité with [NOM DU PARTENAIRE] · Respirer et parler.
+   footer row with a note and an icon): Marcher, randonner · Bouger (bodyweight + mobility) · Respirer, se
+   concentrer.
 4. **Reconnexion** — tinted frame, image left with a floating glass badge "Sans écran", label
-   "Format parent / ado", headline-xl, lead, three check bullets, CTA + real price note.
-5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu nous écris ·
+   "Format parent / enfant", headline-xl, lead, three check bullets, CTA + real price note.
+5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu m'écris ·
    On cale une date · On se retrouve dehors.
-6. **Prix** — green-800 banner: label "Prix de test", the entry offer, its price large in lime, CTA,
-   link to /offres.
+6. **Prix** — deep-green banner: label "Prix de test", the entry offer, its group price large in lime, the
+   solo price as a placeholder until known, CTA, link to /offres, link to the visio block.
 7. **Contact** — centred intro and the request form in a white card (see §8).
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
 
-Testimonials: none until real ones exist (`site.showTestimonials`).
+Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
+quote after the three moments (Rousseau, *Les Confessions* IV, on walking and thinking, chosen 2026-09-28),
+one participant quote under the Reconnexion image (parent / child), one after the steps, before the price
+banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
+Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
+2026-09-28, at the representative's request, two **provisional, invented** reviews (`provisional: true`,
+Karim B. and Léa D.) stand in for previews; each carries a visually-hidden "[AVIS PROVISOIRE]" marker that the
+placeholder gate catches, so production stays blocked until the three real reviews replace them.
+First name + initial, month, offer; no stars, no ratings.
 
 ## 7. Other pages
 
 - **/offres** — one detailed card per offer (category pill, duration, group, prices, for whom, programme,
-  what to bring, CTA), practical notes, contact teaser.
-- **/a-propos** — the founder's story (10 years of autonomous travel, BJJ, climbing, boxing, physical
-  preparation, 15 years in hospitality, a taste for passing things on), written as biography, never as
-  session content. Partner educator block: [NOM DU PARTENAIRE], [DIPLÔME], [NUMÉRO DE CARTE PROFESSIONNELLE].
-  One personal photo slot (Machu Picchu photo, provided later).
-- **/contact** — intro, the form, FAQ (native details/summary).
+  what to bring, CTA + "Échanger en visio d'abord" link), practical notes, visio teaser.
+  Offers: `experience-corps-aventure` (2h30, solo or 3–5, 30 € per person in a group, solo price [TARIF SOLO])
+  and `reconnexion-parent-enfant` (3h, duo 60 € or four people 80 €).
+- **/a-propos** — the owner in the first person: "Moi, c'est Anthony", his story in his own facts (10 years
+  of autonomous travel, knowledge of the terrain, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
+  for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why Nó Made exists,
+  a four-item facts list, one portrait slot ([PHOTO À FOURNIR]),
+  then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
+- **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): a booking
+  page (Cal.com recommended since the owner has no Google account; Calendly and Google Calendar also
+  recognised) loaded in an iframe only after a click (no third-party request before), fallback link in a new
+  tab; placeholder [LIEN DE RÉSERVATION VISIO] until the owner provides the URL. Then the FAQ.
 - **/mentions-legales, /cgv, /confidentialite** — three routes on a shared legal layout; templates at M4.
 - **404** in the same style.
 
@@ -157,13 +203,69 @@ Cloudflare Pages. Self-hosted font. No analytics, no cookies, no banner. Offers 
 validated schema; prices in integer cents. `Session` type reserved for v2. Production build fails while
 any [PLACEHOLDER] remains (override for previews).
 
-## 12. Open items
+## 12. Admin (mini CRM), added 2026-09-28
 
-- [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver dehors."
-- [x] The format is spelled "Reconnexion" (2026-09-28). "Reconnexion nature" is the 2h30 walk; the parent / ado half-day is presented as the Reconnexion parent / ado format.
-- [ ] Partner educator: name, diploma, professional card number, separate business or not
+Decided with the owner's representative: a small CRM at `/admin`, for Anthony and the site administrator.
+Not a public feature. Site content (texts, prices, photos) is NOT editable from the admin: Anthony asks the
+site administrator, who changes the files (decided 2026-09-28; the Keystatic step was dropped).
+
+- **Scope**: requests from the form (status: nouvelle → répondue → confirmée / annulée, notes, reply by
+  opening the owner's own mailbox with a prefilled draft, the site never sends), contacts (one card per
+  person, notes, history), planned sessions with participants and an editable amount that counts as
+  revenue when the session is ticked "faite", and a dashboard. Delivered in four steps: 1 base + accounts +
+  requests (done), 2 contacts + sessions + payment (done 2026-09-28), 3 dashboard (done 2026-09-28).
+  A fourth step (Keystatic content editing) was dropped.
+- **Dashboard**: waiting (new requests, awaiting client, upcoming sessions, contacts), money (month revenue
+  with delta vs previous month, year revenue, people taken out, request conversion rate for the year),
+  a twelve-month CSS bar chart, revenue by offer, next five sessions, latest requests. Revenue = amount of
+  sessions with status "faite", by session start date, Europe/Paris months.
+- **Sessions model**: `outings` (offer, start in ms, duration, place, status prévue / faite / annulée,
+  amount in cents, notes) and `participants` (contact, people count, optional source request). A request
+  gets `outing_id` and status "confirmée" when planned or attached. Amount suggestion from the offer's
+  pricing and the total people (`src/lib/crm/pricing.ts`): duo / four-people tariff for the parent-child
+  format, per-person price × people for the adult format, "solo price not set" while [TARIF SOLO] remains.
+  Per-session .ics export (`/admin/sessions/<id>.ics`) for Outlook or any calendar; the earlier Google
+  Calendar link was dropped (no Google account). Times entered and shown in
+  Europe/Paris (`parisToMs` / `msToParisParts`).
+- **Data**: SQLite on Turso (region Ireland, EU), file `data/dev.db` locally. Drizzle ORM; migrations
+  generated by drizzle-kit into `drizzle/` and embedded in the code (`src/lib/db/migrations.ts`), applied
+  on first access. Retention stated in the privacy policy: two years after the last exchange.
+- **Accounts**: email (or plain identifier) + password (scrypt), HttpOnly session cookie 30 days, lock 15 min
+  after 8 failures. Bootstrap (asked 2026-09-28, temporary): while the users table is empty, `admin` /
+  `admin123` (overridable with `ADMIN_BOOTSTRAP_USER` / `ADMIN_BOOTSTRAP_PASSWORD`) creates the first
+  account at first login, flagged `must_change_password`; a red banner stays until it is changed on
+  `/admin/compte`.
+  No sign-up: an address listed in `ADMIN_EMAILS` (or already in the users table) can request a one-hour
+  link at `/admin/mot-de-passe` to set its password; the link is emailed via Resend, or written to the
+  server logs when email is not configured. `scripts/admin-user.mjs` creates an account from a terminal.
+- **Rendering**: server-rendered Astro pages (`prerender = false`), middleware guards `/admin`, no
+  indexing (`X-Robots-Tag`, robots.txt), no caching. Public pages stay static.
+- **Look**: same tokens, light and dark. Sidebar on desktop, top bar on mobile. Status badges:
+  nouvelle (lime), répondue, confirmée (deep green), annulée (struck).
+
+## 13. Open items
+
+- [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver." ("dehors" dropped from the hero title
+      later the same day; the OG image follows).
+- [x] The format is spelled "Reconnexion" (2026-09-28) and is the parent / child half-day. The adult session
+      is "Expérience corps / aventure".
+- [x] One voice, "je" (2026-09-28). The owner's micro-entreprise is the legal entity. No "éducateur" or
+      diploma on the site. The owner answers requests himself on nomadeproject@outlook.fr.
+- [x] Visio before booking (2026-09-28): external booking page (Cal.com recommended), click-to-load, on
+      /contact, linked from the price banner, the offers page and each offer card.
+- [x] Owner: first name (Anthony) and story received 2026-09-28
+- [ ] Owner: portrait photo; full legal name for the legal pages
+- [ ] Solo price
+- [x] Visio booking URL received 2026-09-28: cal.com/nomadeproject/presentation (Google Calendar dropped, no Google account)
+- [ ] Three real testimonials announced 2026-09-28: two replace the provisional ones (files in
+      src/content/testimonials/fr/, then remove `provisional: true`), the third gets its own place
+- [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login done and
+      temporary password changed the same day. Resend variables set on Vercel. Anthony's own account later via `ADMIN_EMAILS`.
+- [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.
+- [x] Admin step 3 (2026-09-28): dashboard.
+- [x] Admin step 4 (Keystatic) dropped 2026-09-28: content changes go through the site administrator.
 - [x] Hero video received and encoded (2026-09-28)
 - [ ] Real photos
 - [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.
-- [ ] Legal status, VAT regime, cancellation and weather policy
+- [ ] Legal identity (name, SIRET, address, VAT), insurer, mediator, cancellation and weather policy
 - [ ] Future languages

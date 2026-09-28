@@ -1,0 +1,178 @@
+---
+/**
+ * Bloc « Tu préfères en parler d'abord ? » : rendez-vous visio via un calendrier externe.
+ * Fournisseurs reconnus d'après l'URL : Cal.com (recommandé, sans compte Google), Calendly,
+ * Google Agenda. Le calendrier ne se charge qu'au clic (aucun contenu tiers avant), avec un lien
+ * de secours qui ouvre la page de réservation dans un nouvel onglet. Tant que l'URL est un
+ * placeholder, le bloc l'affiche tel quel et le contrôle des placeholders le signale.
+ */
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import Placeholder from './Placeholder.astro';
+import { site, VISIO_LABEL } from '@/data/site';
+
+const url = site.visio.url;
+const isPlaceholder = url.startsWith('[');
+
+type Provider = 'cal' | 'calendly' | 'google' | 'link';
+let provider: Provider = 'link';
+let embedSrc: string | null = null;
+let providerName = '';
+
+if (!isPlaceholder) {
+  try {
+    const u = new URL(url);
+    if (/(^|\.)cal\.com$/.test(u.hostname)) {
+      // https://cal.com/<utilisateur>/<evenement> → iframe app.cal.com
+      provider = 'cal';
+      providerName = 'Cal.com';
+      const path = u.pathname.replace(/^\/+|\/+$/g, '');
+      embedSrc = `https://app.cal.com/${path}?embed=true&embedType=inline&layout=month_view`;
+    } else if (/(^|\.)calendly\.com$/.test(u.hostname)) {
+      provider = 'calendly';
+      providerName = 'Calendly';
+      embedSrc = `${u.origin}${u.pathname}?embed_type=Inline&hide_gdpr_banner=1`;
+    } else if (u.hostname === 'calendar.google.com' && u.pathname.includes('/appointments')) {
+      provider = 'google';
+      providerName = 'Google Agenda';
+      u.searchParams.set('gv', 'true');
+      embedSrc = u.toString();
+    }
+  } catch {
+    provider = 'link';
+  }
+}
+---
+
+<section class="visio frame" id="visio" aria-labelledby="visio-title" data-visio>
+  <div class="visio__head">
+    <span class="eyebrow">Avant de réserver</span>
+    <h2 id="visio-title">Tu préfères en parler d’abord ?</h2>
+    <p class="lead">
+      {site.visio.duration} en visio, gratuites et sans engagement, pour voir ensemble ce qui te conviendrait : en solo, en
+      groupe, ou avec ton enfant. Tu choisis un créneau, tu reçois le lien de la visio par email.
+    </p>
+  </div>
+
+  {
+    isPlaceholder ? (
+      <p class="small muted">
+        Lien de réservation : <Placeholder name={url.slice(1, -1)} />
+      </p>
+    ) : (
+      <div class="visio__actions">
+        {embedSrc && (
+          <Button type="button" variant="lime" icon="calendar" data-visio-open aria-expanded="false" aria-controls="visio-frame">
+            {VISIO_LABEL}
+          </Button>
+        )}
+        <a href={url} class:list={['visio__ext', { 'btn-like': !embedSrc }]} target="_blank" rel="noopener">
+          {embedSrc ? 'Ouvrir dans un nouvel onglet' : VISIO_LABEL}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+    )
+  }
+
+  {
+    embedSrc && (
+      <div class="visio__frame" id="visio-frame" hidden data-visio-frame data-src={embedSrc} data-provider={provider}>
+        <p class="small muted visio__note">
+          <Icon name="shield" size={16} />
+          <span>
+            Le calendrier est fourni par {providerName} et ne se charge qu’à ta demande.{' '}
+            <a href="/confidentialite/">Comment on traite tes données</a>.
+          </span>
+        </p>
+      </div>
+    )
+  }
+</section>
+
+<script>
+  const open = document.querySelector<HTMLButtonElement>('[data-visio-open]');
+  const frame = document.querySelector<HTMLElement>('[data-visio-frame]');
+  if (open && frame) {
+    open.addEventListener('click', () => {
+      if (!frame.querySelector('iframe')) {
+        const iframe = document.createElement('iframe');
+        iframe.src = frame.dataset.src ?? '';
+        iframe.title = 'Choisir un créneau visio';
+        iframe.loading = 'lazy';
+        iframe.setAttribute('allow', 'camera; microphone');
+        iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        frame.prepend(iframe);
+      }
+      frame.hidden = false;
+      open.setAttribute('aria-expanded', 'true');
+      frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+</script>
+
+<style>
+  .visio {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    background: var(--surface-low);
+    border: var(--border);
+    scroll-margin-top: var(--header-offset);
+  }
+
+  .visio__head {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .visio__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .visio__ext {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--green-600);
+    font-size: var(--label);
+    font-weight: 600;
+  }
+
+  /* Sans intégration possible : le lien externe prend l'apparence du bouton lime. */
+  .visio__ext.btn-like {
+    min-height: var(--tap-min);
+    padding: 0.7em 1.4em;
+    border-radius: var(--radius-pill);
+    background: var(--lime);
+    color: var(--on-lime);
+    text-decoration: none;
+  }
+
+  .visio__frame {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .visio__frame :global(iframe) {
+    width: 100%;
+    height: min(80vh, 46rem);
+    border: 0;
+    border-radius: var(--radius-box);
+    background: var(--surface);
+  }
+
+  .visio__note {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .visio__note :global(.icon) {
+    color: var(--green-600);
+    flex: none;
+  }
+</style>

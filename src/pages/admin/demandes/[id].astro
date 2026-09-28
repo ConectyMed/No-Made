@@ -1,0 +1,385 @@
+---
+/**
+ * Détail d'une demande : coordonnées, contenu, statut, notes, réponse par email (brouillon prérempli
+ * dans la boîte mail d'Anthony, le site n'envoie rien), suppression (RGPD).
+ */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { deleteRequest, getRequest, isRequestStatus, markRepliedIfNew, updateContactNotes, updateRequest } from '@/lib/crm/requests';
+import { REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
+import { REQUEST_STATUSES } from '@/lib/db/schema';
+import { attachRequest, upcomingBrief } from '@/lib/crm/outings';
+import { formatDateTime } from '@/lib/dates';
+import { site } from '@/data/site';
+
+export const prerender = false;
+
+const id = Astro.params.id ?? '';
+let flash: string | null = null;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = String(form.get('action') ?? '');
+  if (action === 'supprimer') {
+    await deleteRequest(id);
+    return Astro.redirect('/admin/demandes?supprimee=1', 303);
+  }
+  if (action === 'repondu-auto') {
+    await markRepliedIfNew(id);
+    return new Response(null, { status: 204 });
+  }
+  if (action === 'rattacher') {
+    const outingId = String(form.get('outingId') ?? '');
+    if (outingId) await attachRequest(id, outingId);
+    return Astro.redirect(`/admin/sessions/${outingId}?ok=1`, 303);
+  }
+  if (action === 'maj') {
+    const status = form.get('status');
+    await updateRequest(id, {
+      status: isRequestStatus(status) ? status : undefined,
+      notes: String(form.get('notes') ?? ''),
+    });
+    const contactId = String(form.get('contactId') ?? '');
+    if (contactId) await updateContactNotes(contactId, String(form.get('contactNotes') ?? ''));
+    return Astro.redirect(`/admin/demandes/${id}?ok=1`, 303);
+  }
+}
+
+const data = await getRequest(id);
+if (!data) return new Response('Demande introuvable', { status: 404 });
+const { request: r, contact: c, others } = data;
+if (Astro.url.searchParams.get('ok')) flash = 'Enregistré.';
+const upcoming = r.outingId ? [] : await upcomingBrief();
+
+const firstName = c.name.trim().split(/\s+/)[0] || c.name;
+const subject = `Re : ta demande de session ${r.offerLabel}`;
+const body = [
+  `Bonjour ${firstName},`,
+  '',
+  `Merci pour ta demande pour « ${r.offerLabel} », pour ${r.groupSize} personne${r.groupSize > 1 ? 's' : ''}, ${r.preferredPeriod}.`,
+  '',
+  '',
+  '',
+  'À bientôt dehors,',
+  `${site.ownerFirstName} — ${site.name}`,
+].join('\r\n');
+const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+---
+
+<Admin title={`Demande de ${c.name}`}>
+  <p class="back small"><a href="/admin/demandes"><Icon name="arrow-right" size={14} class="back__icon" /> Toutes les demandes</a></p>
+
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Demande</span>
+      <h1>{c.name}</h1>
+      <p>{r.offerLabel} · {r.groupSize} personne{r.groupSize > 1 ? 's' : ''} · reçue le {formatDateTime(r.createdAt)}</p>
+    </div>
+    <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
+  </div>
+
+  {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
+
+  <div class="grid">
+    <section class="adm-card col" aria-labelledby="content-title">
+      <h2 id="content-title">Ce qu’il ou elle a écrit</h2>
+      <dl class="facts">
+        <div><dt>Session souhaitée</dt><dd>{r.offerLabel}</dd></div>
+        <div><dt>Nombre de personnes</dt><dd>{r.groupSize}</dd></div>
+        <div><dt>Période souhaitée</dt><dd>{r.preferredPeriod}</dd></div>
+        <div class="facts__wide"><dt>Message</dt><dd class="msg">{r.message ?? <span class="muted">Aucun message.</span>}</dd></div>
+      </dl>
+
+      <div class="actions">
+        <a href={mailto} class="btn btn--lime" data-reply>
+          <Icon name="send" size={18} />
+          Répondre par email
+        </a>
+        <span class="small muted">Ouvre ta boîte mail avec un brouillon. Le site n’envoie rien.</span>
+      </div>
+    </section>
+
+    <aside class="col side">
+      <section class="adm-card session" aria-labelledby="session-title">
+        <h2 id="session-title">Session</h2>
+        {
+          r.outingId ? (
+            <p>
+              Rattachée à une session. <a href={`/admin/sessions/${r.outingId}`} class="strong">Voir la session</a>
+            </p>
+          ) : (
+            <>
+              <a href={`/admin/sessions/nouvelle?demande=${r.id}`} class="btn-ghost">
+                <Icon name="calendar" size={16} /> Planifier une session
+              </a>
+              {upcoming.length > 0 && (
+                <form method="post" class="attach">
+                  <input type="hidden" name="action" value="rattacher" />
+                  <div class="adm-field">
+                    <label for="outingId">Ou rattacher à une session prévue</label>
+                    <select id="outingId" name="outingId" required>
+                      <option value="">Choisir…</option>
+                      {upcoming.map((u) => (
+                        <option value={u.id}>{u.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <Button type="submit" variant="dark">Rattacher</Button>
+                </form>
+              )}
+            </>
+          )
+        }
+      </section>
+
+      <section class="adm-card" aria-labelledby="contact-title">
+        <h2 id="contact-title">Contact <a href={`/admin/contacts/${c.id}`} class="small fiche">voir la fiche</a></h2>
+        <dl class="facts facts--tight">
+          <div><dt>Email</dt><dd><a href={`mailto:${c.email}`}>{c.email}</a></dd></div>
+          <div><dt>Téléphone</dt><dd>{c.phone ? <a href={`tel:${c.phone.replace(/\s/g, '')}`}>{c.phone}</a> : <span class="muted">non renseigné</span>}</dd></div>
+          <div><dt>Première demande</dt><dd>{formatDateTime(c.createdAt)}</dd></div>
+        </dl>
+        {
+          others.length > 0 && (
+            <>
+              <h3 class="sub">Autres demandes</h3>
+              <ul class="others" role="list">
+                {others.map((o) => (
+                  <li>
+                    <a href={`/admin/demandes/${o.id}`}>{o.offerLabel}</a>
+                    <span class="small muted"> · {formatDateTime(o.createdAt)} · {REQUEST_STATUS_LABEL[o.status]}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </section>
+    </aside>
+
+    <section class="adm-card col col--full" aria-labelledby="follow-title">
+      <h2 id="follow-title">Suivi</h2>
+      <form method="post" class="follow">
+        <input type="hidden" name="action" value="maj" />
+        <input type="hidden" name="contactId" value={c.id} />
+        <div class="adm-field">
+          <label for="status">Statut</label>
+          <select id="status" name="status">
+            {REQUEST_STATUSES.map((s) => <option value={s} selected={s === r.status}>{REQUEST_STATUS_LABEL[s]}</option>)}
+          </select>
+        </div>
+        <div class="adm-field">
+          <label for="notes">Notes sur cette demande</label>
+          <textarea id="notes" name="notes" rows="4" placeholder="Ce que tu as répondu, la date proposée, ce qu’il reste à caler…">{r.notes ?? ''}</textarea>
+        </div>
+        <div class="adm-field">
+          <label for="contactNotes">Notes sur la personne</label>
+          <textarea id="contactNotes" name="contactNotes" rows="3" placeholder="Niveau, préférences, ce qu’il faut savoir la prochaine fois…">{c.notes ?? ''}</textarea>
+        </div>
+        <div class="follow__foot">
+          <Button type="submit" variant="dark" icon="check">Enregistrer</Button>
+          <span class="small muted">
+            {r.repliedAt && <>Répondue le {formatDateTime(r.repliedAt)} · </>}
+            Mis à jour le {formatDateTime(r.updatedAt)}
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <section class="col col--full danger" aria-labelledby="danger-title">
+      <h2 id="danger-title" class="visually-hidden">Suppression</h2>
+      <form method="post" data-confirm="Supprimer définitivement cette demande ? Le contact est supprimé aussi s’il n’a rien d’autre.">
+        <input type="hidden" name="action" value="supprimer" />
+        <button type="submit" class="btn-ghost btn-danger">Supprimer cette demande</button>
+        <span class="small muted">Pour une demande de suppression de données (RGPD), ou un doublon.</span>
+      </form>
+    </section>
+  </div>
+</Admin>
+
+<script>
+  // « Répondre » ouvre la boîte mail ; on passe la demande en « répondue » si elle était nouvelle.
+  document.querySelector<HTMLAnchorElement>('[data-reply]')?.addEventListener('click', () => {
+    const fd = new FormData();
+    fd.set('action', 'repondu-auto');
+    navigator.sendBeacon?.(location.pathname, fd) || fetch(location.pathname, { method: 'POST', body: fd, keepalive: true });
+    setTimeout(() => location.reload(), 1500);
+  });
+  document.querySelectorAll<HTMLFormElement>('form[data-confirm]').forEach((f) => {
+    f.addEventListener('submit', (e) => {
+      if (!confirm(f.dataset.confirm ?? 'Confirmer ?')) e.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .back a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--green-600);
+    text-decoration: none;
+    margin-bottom: var(--space-4);
+  }
+
+  .back :global(.back__icon) {
+    transform: rotate(180deg);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .col h2 {
+    font-size: var(--text-md);
+    margin-bottom: var(--space-4);
+  }
+
+  .fiche {
+    margin-left: 0.5rem;
+    color: var(--green-600);
+    font-weight: 500;
+  }
+
+  .sub {
+    font-size: var(--label);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  .facts {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .facts div {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .facts dt {
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--green-600);
+  }
+
+  .facts dd {
+    color: var(--ink);
+  }
+
+  .facts dd a {
+    color: var(--green-900);
+  }
+
+  .msg {
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: var(--border);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    min-height: var(--tap-min);
+    padding: 0.7em 1.4em;
+    border-radius: var(--radius-pill);
+    font-size: var(--label);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn--lime {
+    background: var(--lime);
+    color: var(--on-lime);
+  }
+
+  .btn--lime:hover {
+    background: var(--lime-dim);
+  }
+
+  .side {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+
+  .session {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .session .strong {
+    color: var(--green-900);
+    font-weight: 600;
+  }
+
+  .attach {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    justify-items: start;
+  }
+
+  .others li + li {
+    margin-top: 0.4rem;
+  }
+
+  .others a {
+    color: var(--green-900);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .follow {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .follow__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .danger form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  @media (min-width: 56em) {
+    .grid {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    }
+
+    .col--full {
+      grid-column: 1 / -1;
+    }
+
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .facts--tight {
+      grid-template-columns: 1fr;
+    }
+
+    .facts__wide {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

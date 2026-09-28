@@ -12,6 +12,8 @@ import { z } from 'astro/zod';
 import { getCollection } from 'astro:content';
 import { sendMail, mailConfig, escapeHtml } from '@/lib/mail';
 import { env, isDev } from '@/lib/env';
+import { site } from '@/data/site';
+import { createRequest } from '@/lib/crm/requests';
 import type { SessionRequest } from '@/lib/types';
 
 export const prerender = false;
@@ -28,7 +30,7 @@ const schema = z.object({
   preferredPeriod: z.string().trim().min(2, 'Indique une période souhaitée.').max(200),
   message: z.string().trim().max(2000).optional().or(z.literal('')),
   consent: z.union([z.literal('on'), z.literal('true'), z.literal(true)], {
-    errorMap: () => ({ message: 'Il faut accepter le traitement de ta demande.' }),
+    error: 'Il faut accepter le traitement de ta demande.',
   }),
   // anti-spam
   website: z.string().max(200).optional().or(z.literal('')),
@@ -117,6 +119,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     consent: true,
   };
 
+  // --- Enregistrement dans l'admin (mini CRM). Un échec de la base ne doit pas perdre la demande :
+  //     l'email part quand même, l'erreur est journalisée.
+  let requestId: string | null = null;
+  try {
+    requestId = await createRequest(req, offerLabel);
+  } catch (e) {
+    console.error('[contact] enregistrement en base impossible :', e);
+  }
+  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}`, request.url).toString() : null;
+
   // --- Email au propriétaire
   const { to } = mailConfig();
   const owner = to ?? (isDev ? 'dev@localhost' : undefined);
@@ -144,34 +156,36 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 <table style="border-collapse:collapse">${rows.join('')}</table>
 <p style="margin:16px 0 4px;color:#424843">Message :</p>
 <p style="white-space:pre-wrap;margin:0">${escapeHtml(req.message ?? '-')}</p>
-<p style="margin-top:24px;font-size:12px;color:#737973">Réponds directement à cet email pour écrire à ${escapeHtml(req.name)}.</p>
+<p style="margin-top:24px;font-size:12px;color:#737973">Réponds directement à cet email pour écrire à ${escapeHtml(req.name)}.${adminUrl ? ` <a href="${adminUrl}">Voir dans l’admin</a>.` : ''}</p>
 </div>`;
 
   const sent = await sendMail({
     to: owner,
     replyTo: req.email,
     subject: `Demande de session : ${offerLabel} — ${req.name}`,
-    text: `Nouvelle demande de session\n\n${lines.join('\n')}`,
+    text: `Nouvelle demande de session\n\n${lines.join('\n')}${adminUrl ? `\n\nDans l’admin : ${adminUrl}` : ''}`,
     html,
   });
 
   if (!sent.ok) {
     console.error('[contact] envoi impossible :', sent.error);
-    return respond(request, 502, { ok: false, error: 'L’envoi a échoué. Réessaie dans un moment ou écris-nous directement.' }, errUrl);
+    return respond(request, 502, { ok: false, error: 'L’envoi a échoué. Réessaie dans un moment ou écris-moi directement.' }, errUrl);
   }
 
-  // --- Accusé de réception au demandeur (français, tutoiement). Son échec n'est pas bloquant.
+  // --- Accusé de réception au demandeur (français, tutoiement, en « je »). Son échec n'est pas bloquant.
+  // Le prénom vient de site.ts : tant que c'est un placeholder, il apparaît aussi sur À propos et bloque la production.
   const ack = await sendMail({
     to: req.email,
-    subject: 'On a bien reçu ta demande — Nó Made Project',
+    subject: 'J’ai bien reçu ta demande — Nó Made Project',
     text: [
       `Bonjour ${req.name},`,
       '',
-      `On a bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
-      'On te répond par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+      `J’ai bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
+      'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+      `Si tu préfères qu’on en parle d’abord, tu peux réserver un créneau visio ici : ${new URL('/contact/#visio', request.url).toString()}`,
       '',
       'À bientôt dehors,',
-      'Nó Made Project',
+      `${site.ownerFirstName} — Nó Made Project`,
     ].join('\n'),
   });
   if (!ack.ok) console.warn('[contact] accusé de réception non envoyé :', ack.error);

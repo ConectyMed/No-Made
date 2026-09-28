@@ -14,3 +14,6 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# base locale de l'admin
+data/

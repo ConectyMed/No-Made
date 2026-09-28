@@ -6,7 +6,7 @@ import PageIntro from '@/components/PageIntro.astro';
 import OfferCard from '@/components/OfferCard.astro';
 import Button from '@/components/Button.astro';
 import { usePage } from '@/i18n';
-import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
+import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 
 const page = usePage('offers');
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
@@ -31,13 +31,16 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
           <li>Les sessions ont lieu en région {site.area}. Le point de rendez-vous est précisé par email.</li>
           <li>Pas de calendrier public pour l’instant : on cale chaque date ensemble, après ta demande.</li>
           <li>Le paiement se règle après confirmation, pas en ligne. Les conditions sont dans les <a href="/cgv/">CGV</a>.</li>
-          <li>Ce sont des balades et des temps dehors, pas des séances de sport. La séquence mobilité de la demi-journée est encadrée par l’éducateur partenaire.</li>
+          <li>Aucun niveau requis : j’adapte le rythme et l’intensité à ton profil, en solo comme en groupe. Pour le format parent / enfant, à l’âge de chacun.</li>
         </ul>
       </div>
       <div class="teaser frame" data-reveal style="--reveal-delay: 120ms">
         <h2 class="teaser__title">Une question avant de choisir ?</h2>
-        <p class="teaser__text">Écris-nous, on te répond simplement. Tu peux aussi directement demander une session.</p>
-        <Button href={CTA_HREF} variant="lime" icon="arrow-right">{CTA_LABEL}</Button>
+        <p class="teaser__text">On se fait une visio de {site.visio.duration}, gratuite et sans engagement. Ou tu m’écris directement.</p>
+        <div class="teaser__cta">
+          <Button href={VISIO_HREF} variant="lime" icon="video">{VISIO_LABEL}</Button>
+          <a href={CTA_HREF} class="teaser__link label">{CTA_LABEL}</a>
+        </div>
       </div>
     </div>
   </section>
@@ -86,7 +89,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     justify-items: start;
     align-content: start;
     padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
-    background: var(--green-800);
+    background: var(--deep);
     color: var(--on-dark);
   }
 
@@ -99,6 +102,17 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     color: var(--on-dark-muted);
     font-size: var(--body-sm);
     max-width: 36ch;
+  }
+
+  .teaser__cta {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .teaser__link {
+    color: var(--on-dark);
+    text-underline-offset: 0.2em;
   }
 
   @media (min-width: 56em) {

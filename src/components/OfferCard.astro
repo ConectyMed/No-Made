@@ -1,13 +1,14 @@
 ---
 /**
  * Carte d'offre : pilule catégorie, titre, résumé, durée / groupe / prix, puis en version détaillée
- * pour qui, programme, à prévoir. Bouton "Demander cette session".
+ * pour qui, programme, à prévoir. Bouton "Demander cette session" et lien vers la visio.
  */
 import type { CollectionEntry } from 'astro:content';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import { formatPrice } from '@/lib/format';
 import { t } from '@/i18n';
+import { VISIO_HREF } from '@/data/site';
 
 interface Props {
   offer: CollectionEntry<'offers'>;
@@ -15,10 +16,11 @@ interface Props {
   headingLevel?: 'h2' | 'h3';
 }
 const { offer, compact = false, headingLevel: H = 'h3' } = Astro.props;
+const Sub = H === 'h2' ? 'h3' : 'h4'; // les sous-titres suivent le niveau du titre de la carte
 const d = offer.data;
 const requestHref = `/contact/?offre=${encodeURIComponent(d.slug)}#demande`;
 
-/** "[NOM DU PARTENAIRE]" → marque de placeholder visible. */
+/** "[TEXTE ENTRE CROCHETS]" → marque de placeholder visible. */
 const parts = (s: string) =>
   s.split(/(\[[^\]]+\])/g).map((p) => (/^\[[^\]]+\]$/.test(p) ? { ph: p.slice(1, -1) } : { text: p }));
 ---
@@ -46,7 +48,12 @@ const parts = (s: string) =>
       <dd>
         {d.pricing.map((p) => (
           <span class="offer__price-line">
-            <strong>{formatPrice(p.amountCents)}</strong> <span class="muted">{p.label}</span>
+            {p.amountCents !== undefined ? (
+              <strong>{formatPrice(p.amountCents)}</strong>
+            ) : (
+              <mark class="placeholder">[{p.placeholder}]</mark>
+            )}{' '}
+            <span class="muted">{p.label}</span>
           </span>
         ))}
       </dd>
@@ -57,11 +64,11 @@ const parts = (s: string) =>
     !compact && (
       <div class="offer__details">
         <div>
-          <h4>Pour qui</h4>
+          <Sub>Pour qui</Sub>
           <p class="muted">{d.forWhom}</p>
         </div>
         <div>
-          <h4>Au programme</h4>
+          <Sub>Au programme</Sub>
           <ul>
             {d.includes.map((item) => (
               <li>{parts(item).map((p) => ('ph' in p ? <mark class="placeholder">[{p.ph}]</mark> : p.text))}</li>
@@ -69,7 +76,7 @@ const parts = (s: string) =>
           </ul>
         </div>
         <div>
-          <h4>À prévoir</h4>
+          <Sub>À prévoir</Sub>
           <ul>
             {d.bring.map((item) => (
               <li>{item}</li>
@@ -80,18 +87,12 @@ const parts = (s: string) =>
     )
   }
 
-  {
-    d.partnerLed && (
-      <p class="offer__partner small muted">
-        La séquence mobilité est encadrée par{' '}
-        {parts(d.partnerName ?? '').map((p) => ('ph' in p ? <mark class="placeholder">[{p.ph}]</mark> : p.text))}
-        , éducateur diplômé. <a href="/a-propos/#partenaire">En savoir plus</a>
-      </p>
-    )
-  }
-
   <footer class="offer__foot">
     <Button href={requestHref} variant="dark" icon="arrow-right">{t('common.requestThisSession')}</Button>
+    <a href={VISIO_HREF} class="offer__visio label">
+      <Icon name="video" size={16} />
+      {t('common.visioFirst')}
+    </a>
     {d.testPrice && <span class="small muted">Prix de test, susceptibles de changer.</span>}
   </footer>
 </article>
@@ -176,6 +177,7 @@ const parts = (s: string) =>
     border-top: var(--border);
   }
 
+  .offer__details h3,
   .offer__details h4 {
     margin-bottom: var(--space-2);
     font-size: var(--label);
@@ -196,8 +198,16 @@ const parts = (s: string) =>
     margin-top: 0.3em;
   }
 
-  .offer__partner a {
+  .offer__visio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     color: var(--green-600);
+    text-decoration: none;
+  }
+
+  .offer__visio:hover {
+    text-decoration: underline;
   }
 
   .offer__foot {

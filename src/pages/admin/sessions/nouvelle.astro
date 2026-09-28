@@ -1,0 +1,113 @@
+---
+/**
+ * Nouvelle session. Depuis une demande (?demande=id) : offre et nombre de personnes préremplis,
+ * la personne est ajoutée comme participante et la demande passe en « confirmée ».
+ */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { createOuting, attachRequest } from '@/lib/crm/outings';
+import { getRequest } from '@/lib/crm/requests';
+import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
+import { parisToMs } from '@/lib/dates';
+
+export const prerender = false;
+
+const offers = await offerOptions();
+const fromRequestId = Astro.url.searchParams.get('demande');
+const fromRequest = fromRequestId ? await getRequest(fromRequestId) : null;
+
+let error: string | null = null;
+const v = {
+  offerSlug: fromRequest?.request.offerSlug ?? offers[0]?.slug ?? '',
+  date: '',
+  time: '09:00',
+  duration: '',
+  place: '',
+  notes: fromRequest ? `Demande de ${fromRequest.contact.name} : ${fromRequest.request.preferredPeriod}` : '',
+  amount: '',
+};
+if (fromRequest) {
+  const s = await suggestAmount(fromRequest.request.offerSlug, fromRequest.request.groupSize);
+  if (s.amountCents !== null) v.amount = String(s.amountCents / 100);
+}
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  v.offerSlug = String(form.get('offerSlug') ?? '');
+  v.date = String(form.get('date') ?? '');
+  v.time = String(form.get('time') ?? '');
+  v.duration = String(form.get('duration') ?? '');
+  v.place = String(form.get('place') ?? '');
+  v.notes = String(form.get('notes') ?? '');
+  v.amount = String(form.get('amount') ?? '');
+  const offer = offers.find((o) => o.slug === v.offerSlug);
+  const startsAt = parisToMs(v.date, v.time);
+  const amountCents = parseEuros(v.amount);
+  if (!offer) error = 'Choisis une offre.';
+  else if (!startsAt) error = 'La date ou l’heure est illisible.';
+  else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
+  else {
+    const durationMin = v.duration.trim() ? Number(v.duration) || null : offer.durationMin;
+    const id = await createOuting({ offerSlug: offer.slug, offerLabel: offer.label, startsAt, durationMin, place: v.place, notes: v.notes, amountCents });
+    if (fromRequest) await attachRequest(fromRequest.request.id, id);
+    return Astro.redirect(`/admin/sessions/${id}?creee=1`, 303);
+  }
+}
+---
+
+<Admin title="Nouvelle session">
+  <p class="back small"><a href={fromRequest ? `/admin/demandes/${fromRequest.request.id}` : '/admin/sessions'}>← {fromRequest ? 'Retour à la demande' : 'Le planning'}</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Sessions</span>
+      <h1>Nouvelle session</h1>
+      {fromRequest && <p>Pour <strong>{fromRequest.contact.name}</strong>, {fromRequest.request.groupSize} personne{fromRequest.request.groupSize > 1 ? 's' : ''}. Elle sera ajoutée aux participants et sa demande passera en « confirmée ».</p>}
+    </div>
+  </div>
+
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <form method="post" class="adm-card form">
+    <div class="adm-field">
+      <label for="offerSlug">Offre</label>
+      <select id="offerSlug" name="offerSlug" required>
+        {offers.map((o) => <option value={o.slug} selected={o.slug === v.offerSlug} data-duration={o.durationMin ?? ''}>{o.label}</option>)}
+      </select>
+    </div>
+    <div class="row3">
+      <div class="adm-field">
+        <label for="date">Date</label>
+        <input id="date" name="date" type="date" required value={v.date} />
+      </div>
+      <div class="adm-field">
+        <label for="time">Heure de rendez-vous</label>
+        <input id="time" name="time" type="time" required value={v.time} />
+      </div>
+      <div class="adm-field">
+        <label for="duration">Durée (minutes)</label>
+        <input id="duration" name="duration" type="number" min="15" step="5" placeholder="celle de l’offre" value={v.duration} />
+      </div>
+    </div>
+    <div class="adm-field">
+      <label for="place">Lieu de rendez-vous</label>
+      <input id="place" name="place" type="text" maxlength="200" placeholder="Ex. parking du Tholonet, Sainte-Victoire" value={v.place} />
+    </div>
+    <div class="adm-field">
+      <label for="amount">Montant prévu (€)</label>
+      <input id="amount" name="amount" type="text" inputmode="decimal" placeholder="0" value={v.amount} />
+      <span class="small muted">Prérempli d’après l’offre quand on part d’une demande. Tu peux le corriger à tout moment, y compris après.</span>
+    </div>
+    <div class="adm-field">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="3">{v.notes}</textarea>
+    </div>
+    <div><Button type="submit" variant="dark" icon="calendar">Créer la session</Button></div>
+  </form>
+</Admin>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+  .form { display: grid; gap: var(--space-5); max-width: 48rem; }
+  .row3 { display: grid; gap: var(--space-5); }
+  @media (min-width: 40em) { .row3 { grid-template-columns: 1.4fr 1fr 7rem; } }
+</style>

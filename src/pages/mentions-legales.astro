@@ -1,10 +1,72 @@
 ---
+/**
+ * Mentions légales — modèle à compléter (LCEN art. 6-III, Code de la consommation, Code du sport).
+ * Ceci n'est pas un conseil juridique : fais relire avant mise en ligne.
+ */
 import Legal from '@/layouts/Legal.astro';
+import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
+import { site } from '@/data/site';
 
 const page = usePage('legalNotice');
 ---
 
-<Legal title={page.title} description={page.description} h1={page.h1}>
-  <p class="muted">Modèle rédigé au jalon M4, à compléter avec les informations de l’entreprise.</p>
+<Legal title={page.title} description={page.description} h1={page.h1} updated="[DATE DE MISE À JOUR]">
+  <h2>Éditeur du site</h2>
+  <p>
+    Le site <strong>{site.name}</strong> est édité par <Placeholder name="PRÉNOM NOM" />, entrepreneur individuel
+    (micro-entreprise) <Placeholder name="À CONFIRMER : STATUT JURIDIQUE" />.
+  </p>
+  <ul>
+    <li>SIRET : <Placeholder name="NUMÉRO SIRET" /></li>
+    <li>Adresse : <Placeholder name="ADRESSE POSTALE" /></li>
+    <li>Email : <a href={`mailto:${site.email}`}>{site.email}</a></li>
+    <li>Téléphone : <Placeholder name="TÉLÉPHONE (FACULTATIF)" /></li>
+    <li>TVA : <Placeholder name="TVA NON APPLICABLE, ART. 293 B DU CGI — À CONFIRMER" /></li>
+    <li>Directeur de la publication : <Placeholder name="PRÉNOM NOM" /></li>
+  </ul>
+
+  <h2>Hébergement</h2>
+  <p>
+    Le site est hébergé par Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis,
+    <a href="https://vercel.com" rel="noopener">vercel.com</a>. Les emails du formulaire de contact sont acheminés par
+    Resend Inc., 2261 Market Street #5039, San Francisco, CA 94114, États-Unis, <a href="https://resend.com" rel="noopener">resend.com</a>.
+    Les demandes reçues sont enregistrées dans une base de données hébergée par Turso (<a href="https://turso.tech" rel="noopener">turso.tech</a>)
+    sur des serveurs situés en Irlande.
+  </p>
+
+  <h2>Activité</h2>
+  <p>
+    {site.name} propose des sorties nature en région {site.areaLong} : marche et randonnée, préparation physique au
+    poids du corps, mobilité, respiration et concentration, en solo, en petit groupe ou en format parent / enfant.
+    Les sessions sont encadrées par <Placeholder name="PRÉNOM NOM" /> en personne.
+  </p>
+
+  <h2>Assurance</h2>
+  <p>
+    Responsabilité civile professionnelle souscrite auprès de <Placeholder name="NOM DE L’ASSUREUR" />, contrat
+    n° <Placeholder name="NUMÉRO DE CONTRAT" />, couvrant les prestations en <Placeholder name="ZONE GÉOGRAPHIQUE COUVERTE" />.
+  </p>
+
+  <h2>Médiation de la consommation</h2>
+  <p>
+    Conformément aux articles L612-1 et suivants du Code de la consommation, tu peux recourir gratuitement à un
+    médiateur de la consommation en cas de litige non résolu avec moi :
+    <Placeholder name="NOM DU MÉDIATEUR" />, <Placeholder name="ADRESSE ET SITE DU MÉDIATEUR" />.
+    La plateforme européenne de règlement en ligne des litiges est accessible sur
+    <a href="https://ec.europa.eu/consumers/odr" rel="noopener">ec.europa.eu/consumers/odr</a>.
+  </p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    Les textes, la marque « {site.name} », la vidéo et les images du site sont protégés. Toute reproduction sans
+    accord écrit est interdite. Les visuels marqués « image provisoire » sont des images de synthèse temporaires.
+  </p>
+
+  <h2>Données personnelles et cookies</h2>
+  <p>
+    Le site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience. Le calendrier de rendez-vous visio
+    ne se charge que si tu cliques dessus. Les données du formulaire et de la prise de rendez-vous sont
+    traitées comme décrit dans la <a href="/confidentialite/">politique de confidentialité</a>.
+  </p>
 </Legal>

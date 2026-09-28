@@ -1,8 +1,9 @@
 ---
-/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug) et FAQ. */
+/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug), rendez-vous visio, FAQ. */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import ContactForm from '@/components/ContactForm.astro';
+import VisioBooking from '@/components/VisioBooking.astro';
 import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
 import { site } from '@/data/site';
@@ -12,15 +13,23 @@ const page = usePage('contact');
 const faq = [
   {
     q: 'Où ont lieu les sessions ?',
-    a: `En région ${site.area}, sur des sentiers choisis selon la saison et le groupe. Le point de rendez-vous exact est précisé par email une fois la date calée.`,
+    a: `En région ${site.area}, sur des sentiers que je choisis selon la saison, ton niveau et le groupe. Le point de rendez-vous exact est précisé par email une fois la date calée.`,
   },
   {
     q: 'Faut-il être sportif ?',
-    a: 'Non. Ce sont des balades à un rythme tranquille, avec des pauses. La séquence mobilité de la demi-journée est encadrée par l’éducateur partenaire et s’adapte à chacun.',
+    a: 'Non. Je m’adapte à ton profil : le rythme de marche, l’intensité du travail au poids du corps, la mobilité. On progresse, on ne force pas.',
+  },
+  {
+    q: 'Peut-on venir seul ?',
+    a: 'Oui. L’Expérience corps / aventure existe en solo, avec un accompagnement personnalisé, ou en petit groupe de trois à cinq. La Reconnexion se fait en duo parent / enfant, ou à quatre.',
+  },
+  {
+    q: 'Et si je veux en parler avant de réserver ?',
+    a: `Réserve un créneau visio de ${site.visio.duration}, gratuit et sans engagement. On fait le point sur ce que tu cherches, et je te dis ce que je te propose.`,
   },
   {
     q: 'Comment ça se passe pour payer ?',
-    a: 'Pas de paiement en ligne pour l’instant. On confirme la date par email, et le règlement se fait ensuite. Les conditions sont dans les CGV.',
+    a: 'Pas de paiement en ligne pour l’instant. Je confirme la date par email, et le règlement se fait ensuite. Les conditions sont dans les CGV.',
   },
   {
     q: 'Et s’il pleut ?',
@@ -28,7 +37,7 @@ const faq = [
   },
   {
     q: 'Qu’est-ce qu’il faut apporter ?',
-    a: 'Des chaussures fermées, de l’eau, une couche de plus selon la météo. Pour la demi-journée, une tenue confortable et un encas. Le téléphone reste dans le sac.',
+    a: 'Une tenue confortable, des chaussures fermées, de l’eau, une couche de plus selon la météo. Pour la demi-journée, un encas. Le téléphone reste dans le sac.',
   },
 ];
 ---
@@ -45,11 +54,17 @@ const faq = [
     </div>
   </section>
 
+  <section class="section section--top0" aria-label="Rendez-vous visio">
+    <div class="container wrap" data-reveal>
+      <VisioBooking />
+    </div>
+  </section>
+
   <section class="section section--top0" id="faq" aria-labelledby="faq-title">
     <div class="container wrap">
       <div class="section-head">
         <span class="eyebrow">Questions fréquentes</span>
-        <h2 id="faq-title">Avant de nous écrire</h2>
+        <h2 id="faq-title">Avant de m’écrire</h2>
       </div>
       <div class="faq">
         {faq.map((item) => (

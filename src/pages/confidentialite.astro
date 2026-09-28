@@ -1,10 +1,118 @@
 ---
+/** Politique de confidentialité (RGPD) — modèle à compléter. Pas un conseil juridique : à faire relire. */
 import Legal from '@/layouts/Legal.astro';
+import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
+import { site } from '@/data/site';
 
 const page = usePage('privacy');
 ---
 
-<Legal title={page.title} description={page.description} h1={page.h1}>
-  <p class="muted">Modèle RGPD rédigé au jalon M4 : données du formulaire, finalités, durées, droits.</p>
+<Legal title={page.title} description={page.description} h1={page.h1} updated="[DATE DE MISE À JOUR]">
+  <p class="lead">
+    Version courte : je ne collecte que ce que tu écris dans le formulaire, ou ce que tu saisis pour réserver un
+    créneau visio, uniquement pour te répondre et organiser ta session. Pas de cookie, pas de traceur, pas de revente.
+  </p>
+
+  <h2>1. Qui est responsable</h2>
+  <p>
+    <Placeholder name="PRÉNOM NOM" />, entrepreneur individuel, <Placeholder name="ADRESSE POSTALE" />,
+    <a href={`mailto:${site.email}`}>{site.email}</a>. Pas de délégué à la protection des données désigné.
+  </p>
+
+  <h2>2. Quelles données, pourquoi</h2>
+  <table>
+    <thead>
+      <tr><th>Données</th><th>Pourquoi</th><th>Base légale</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prénom et nom, email, téléphone (facultatif), session souhaitée, nombre de personnes, période, message</td>
+        <td>Répondre à ta demande, convenir d’une date, organiser la session</td>
+        <td>Mesures précontractuelles à ta demande (art. 6.1.b RGPD)</td>
+      </tr>
+      <tr>
+        <td>Nom, email et créneau choisi, si tu réserves un rendez-vous visio (saisis chez le service de réservation)</td>
+        <td>Organiser la visio et t’envoyer le lien</td>
+        <td>Mesures précontractuelles à ta demande (art. 6.1.b RGPD)</td>
+      </tr>
+      <tr>
+        <td>Horodatage du formulaire, champ technique anti-robot</td>
+        <td>Écarter les envois automatisés</td>
+        <td>Intérêt légitime : sécurité du service (art. 6.1.f)</td>
+      </tr>
+      <tr>
+        <td>Adresse IP et journaux techniques de l’hébergeur</td>
+        <td>Fonctionnement et sécurité du site</td>
+        <td>Intérêt légitime (art. 6.1.f)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Aucune donnée sensible n’est demandée. Si tu me signales une information de santé utile pour la session, elle
+    n’est utilisée que pour adapter la sortie et n’est pas conservée au-delà.</p>
+
+  <h2>3. Qui y a accès</h2>
+  <ul>
+    <li><strong>Moi</strong>, pour te répondre. Personne d’autre n’encadre les sessions.</li>
+    <li><strong>Resend</strong> (États-Unis), qui achemine l’email du formulaire jusqu’à ma boîte et l’accusé de
+      réception jusqu’à toi. Transfert encadré par les clauses contractuelles types de la Commission européenne.</li>
+    <li><strong>Vercel</strong> (États-Unis), qui héberge le site et exécute le formulaire. Mêmes garanties.</li>
+    <li><strong>Turso</strong>, qui héberge la base de données où sont enregistrées les demandes, sur des serveurs situés
+      en Irlande (Union européenne).</li>
+    <li><strong>Microsoft</strong>, fournisseur de ma boîte email (Outlook).</li>
+    <li><strong>Cal.com</strong>, le service de prise de rendez-vous, uniquement si tu réserves un créneau visio : le
+      calendrier ne se charge que quand tu cliques dessus, et la réservation se fait chez Cal.com selon sa
+      <a href="https://cal.com/privacy" rel="noopener">politique de confidentialité</a>.</li>
+  </ul>
+  <p>Aucune donnée n’est vendue ni transmise à des fins publicitaires.</p>
+
+  <h2>4. Combien de temps</h2>
+  <p>
+    Les demandes sont conservées <strong>deux ans après notre dernier échange</strong>, puis supprimées. Tu peux demander
+    leur suppression avant, à tout moment. Les documents comptables (factures) sont conservés 10 ans conformément à la loi.
+  </p>
+
+  <h2>5. Tes droits</h2>
+  <p>
+    Tu peux demander l’accès à tes données, leur rectification, leur effacement, la limitation du traitement, t’opposer
+    au traitement fondé sur l’intérêt légitime, et demander leur portabilité. Écris à
+    <a href={`mailto:${site.email}`}>{site.email}</a> ; je réponds sous un mois. Tu peux aussi saisir la CNIL :
+    <a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>.
+  </p>
+
+  <h2>6. Cookies et mesure d’audience</h2>
+  <p>
+    Le site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ou de publicité. Il n’intègre aucun
+    contenu tiers (polices, vidéos, cartes) chargé automatiquement. Le seul contenu externe est le calendrier de
+    rendez-vous visio, affiché uniquement si tu cliques sur le bouton prévu, et il peut alors déposer ses propres cookies.
+    <Placeholder name="SI TURNSTILE EST ACTIVÉ : MENTIONNER CLOUDFLARE TURNSTILE (ANTI-ROBOT, SANS COOKIE PUBLICITAIRE)" />
+  </p>
+
+  <h2>7. Sécurité</h2>
+  <p>Le site est servi en HTTPS. L’accès à la boîte email et aux services techniques est protégé par mot de passe et
+    authentification à deux facteurs <Placeholder name="À CONFIRMER" />.</p>
+
+  <h2>8. Mise à jour</h2>
+  <p>Cette politique peut évoluer ; la date en haut de page indique la dernière version.</p>
 </Legal>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--body-sm);
+  }
+
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    border-bottom: var(--border);
+  }
+
+  th {
+    color: var(--green-900);
+    font-weight: 600;
+  }
+</style>

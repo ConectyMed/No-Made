@@ -1,0 +1,178 @@
+---
+/** Liste des demandes : filtre par statut, recherche, tri du plus récent au plus ancien. */
+import Admin from '@/layouts/Admin.astro';
+import Icon from '@/components/Icon.astro';
+import { countRequestsByStatus, isRequestStatus, listRequests } from '@/lib/crm/requests';
+import { REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
+import { REQUEST_STATUSES } from '@/lib/db/schema';
+import { formatDateTime, formatRelative } from '@/lib/dates';
+
+export const prerender = false;
+
+const statutParam = Astro.url.searchParams.get('statut') ?? 'toutes';
+const statut = isRequestStatus(statutParam) ? statutParam : 'toutes';
+const q = Astro.url.searchParams.get('q') ?? '';
+const [rows, counts] = await Promise.all([listRequests({ status: statut, q }), countRequestsByStatus()]);
+const tabs = [{ key: 'toutes', label: 'Toutes' }, ...REQUEST_STATUSES.map((s) => ({ key: s, label: REQUEST_STATUS_LABEL[s] }))];
+const href = (key: string) => `/admin/demandes?statut=${key}${q ? `&q=${encodeURIComponent(q)}` : ''}`;
+---
+
+<Admin title="Demandes">
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Demandes</span>
+      <h1>Les demandes de session</h1>
+      <p>Chaque envoi du formulaire arrive ici. Ouvre une demande pour répondre, noter, et suivre où elle en est.</p>
+    </div>
+    <form method="get" class="search" role="search">
+      <input type="hidden" name="statut" value={statut} />
+      <label for="q" class="visually-hidden">Rechercher</label>
+      <input id="q" name="q" type="search" placeholder="Nom, email, période…" value={q} />
+      <button type="submit" aria-label="Rechercher"><Icon name="arrow-right" size={18} /></button>
+    </form>
+  </div>
+
+  <nav class="tabs" aria-label="Filtrer par statut">
+    {
+      tabs.map((t) => (
+        <a href={href(t.key)} class="tab" aria-current={t.key === statut ? 'page' : undefined}>
+          {t.label} <span class="tab__n">{counts[t.key as keyof typeof counts]}</span>
+        </a>
+      ))
+    }
+  </nav>
+
+  <section class="adm-card">
+    {
+      rows.length === 0 ? (
+        <p class="adm-empty">{q ? 'Rien ne correspond à cette recherche.' : 'Aucune demande dans cette catégorie.'}</p>
+      ) : (
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Qui</th>
+              <th>Session</th>
+              <th>Pers.</th>
+              <th>Période souhaitée</th>
+              <th>Reçue</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr>
+                <td>
+                  <a href={`/admin/demandes/${r.id}`}>{r.contactName}</a>
+                  <br />
+                  <span class="small">{r.contactEmail}</span>
+                </td>
+                <td>{r.offerLabel}</td>
+                <td>{r.groupSize}</td>
+                <td class="period">{r.preferredPeriod}</td>
+                <td>
+                  <time datetime={new Date(r.createdAt).toISOString()} title={formatDateTime(r.createdAt)}>
+                    {formatRelative(r.createdAt)}
+                  </time>
+                </td>
+                <td>
+                  <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .search {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .search input {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    width: min(18rem, 60vw);
+  }
+
+  .search button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--deep);
+    color: var(--on-dark);
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0 0.9rem;
+    border-radius: var(--radius-pill);
+    border: var(--border);
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .tab[aria-current='page'] {
+    background: var(--green-900);
+    color: var(--bg);
+    border-color: transparent;
+  }
+
+  .tab__n {
+    padding: 0.05em 0.5em;
+    border-radius: var(--radius-pill);
+    background: var(--surface-low);
+    color: var(--ink-2);
+    font-weight: 700;
+  }
+
+  .tab[aria-current='page'] .tab__n {
+    background: rgba(255, 255, 255, 0.18);
+    color: inherit;
+  }
+
+  .period {
+    max-width: 22ch;
+  }
+
+  @media (max-width: 48em) {
+    .adm-table thead {
+      display: none;
+    }
+
+    .adm-table tr {
+      display: grid;
+      gap: 0.25rem;
+      padding: var(--space-3) 0;
+      border-bottom: var(--border);
+    }
+
+    .adm-table td {
+      padding: 0;
+      border: 0;
+    }
+  }
+</style>

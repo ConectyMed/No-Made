@@ -46,11 +46,13 @@ Décision : pendant le développement, l'adresse publique et de réception est *
 
 ---
 
-## Étape 4 — Resend, pour recevoir les demandes par email (20 min)
+## Étape 4 — Resend, pour recevoir les demandes par email : fait (28 septembre 2026)
+
+Compte créé, les trois variables sont dans Vercel. Reste, au lancement, la vérification du domaine (point 2) pour que l'accusé de réception parte vers n'importe quelle adresse.
 
 Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. Gratuit jusqu'à 3 000 emails par mois.
 
-1. Crée un compte sur **https://resend.com**.
+1. Compte Resend : **créé** (2026-09-28).
 2. **Domains → Add domain** : ajoute ton domaine. Resend te donne 2 ou 3 enregistrements DNS (DKIM, SPF). Copie-les dans les DNS du domaine (étape 3). Vérification en général sous une heure.
 3. **API Keys → Create API key** : copie la clé (elle commence par `re_`). Elle ne s'affiche qu'une fois.
 4. Dans ton hébergeur (Vercel : Project → Settings → Environment Variables ; Netlify : Site configuration → Environment variables ; Cloudflare : Settings → Variables), ajoute :
@@ -79,13 +81,58 @@ Les cinq visuels actuels sont générés par IA et portent un badge « image pro
 
 Chaque case correspond à un placeholder jaune. Le build de production refuse de partir tant qu'il en reste (`docs/PLACEHOLDERS.md` en donne la liste à jour après chaque `npm run build`).
 
-- [ ] **Éducateur partenaire** : prénom, nom, diplôme exact (intitulé officiel), numéro de carte professionnelle, et s'il exerce en son nom propre ou via une structure.
-- [ ] **Toi** : prénom et nom à afficher sur À propos, et la photo personnelle (Machu Picchu).
+- [x] **Lui** : prénom et parcours reçus (Anthony). Pas de diplôme ni de titre, et pas un mot sur le bar : c'est décidé.
+- [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
+- [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
+- [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
+- [x] **Lien Cal.com** pour la visio : reçu le 28 septembre 2026 (`cal.com/nomadeproject/presentation`), en place.
+- [ ] **Les trois avis** annoncés : prénom, initiale, texte, mois, offre, accord de la personne (étape 6 quater).
 - [ ] **Adresse email publique** (étape 3).
 - [ ] **Instagram** et **Facebook** : les liens, ou « pas de compte » et je retire la ligne.
 - [ ] **Météo et annulation** : que se passe-t-il s'il pleut, si quelqu'un annule la veille, si toi tu annules ? Report, remboursement, acompte ? Deux ou trois phrases suffisent, je rédige.
 - [ ] **Statut juridique** pour les pages légales : micro-entreprise (à confirmer), nom ou dénomination, SIRET, adresse, TVA applicable ou non (mention « TVA non applicable, art. 293 B du CGI » en micro-entreprise), médiateur de la consommation choisi, assureur responsabilité civile professionnelle.
 - [ ] **Langues futures** éventuelles (anglais ?), pour préparer la configuration.
+
+---
+
+## Étape 6 bis — Le rendez-vous visio avec Cal.com (15 min, à faire par lui)
+
+Le site propose une visio gratuite de 20 minutes avant de réserver. Google Agenda est écarté (pas de compte Google). Cal.com fait la même chose, gratuitement, avec un compte email classique, et se synchronise avec son agenda Outlook.
+
+1. Créer un compte sur [cal.com](https://cal.com) avec son adresse email (pas besoin de Google). Choisir un nom d'utilisateur simple, par exemple `nomade` : il apparaîtra dans le lien.
+2. **Settings → Calendars → Add** : connecter **Outlook Calendar** avec son compte Microsoft. Cal.com lira ses indisponibilités et y écrira les rendez-vous pris.
+3. **Settings → Conferencing** : garder **Cal Video** (visio intégrée, gratuite, sans compte pour le visiteur). Microsoft Teams est possible aussi.
+4. **Event Types → New** : nom « Échanger en visio », durée 20 min, lieu Cal Video. Dans **Availability**, ses jours et heures acceptés, et une marge entre deux rendez-vous. Enregistrer.
+5. Copier le lien public de l'événement : `https://cal.com/<utilisateur>/<evenement>`. Me l'envoyer. Je le mets dans `src/data/site.ts` (`visio.url`) : le calendrier s'affiche alors dans la page Contact, au clic seulement, et le bouton « Réserver un créneau visio » se met à fonctionner partout.
+
+Autres possibilités reconnues par le site si vous préférez : Calendly (plan gratuit, un seul type d'événement, synchronisation Outlook) ou Google Agenda si un compte Google apparaît un jour. Tout autre lien s'ouvrira simplement dans un nouvel onglet.
+
+---
+
+## Étape 6 quater — Les avis de participants
+
+Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Depuis le 28 septembre 2026, deux **avis provisoires, inventés pour la maquette** (fichiers `karim-b.md`, `lea-d.md`) sont glissés dans la page comme des citations ; la troisième citation est de Rousseau, libre de droits, et peut rester. Ils portent un marqueur invisible `[AVIS PROVISOIRE]` : la production reste bloquée tant qu'ils sont là, comme pour les images provisoires.
+
+Pour chaque avis, envoie-moi : le prénom et l'initiale du nom, le texte tel qu'il a été écrit, le mois de la session, l'offre concernée, d'où vient l'avis (email, message, oral), et la confirmation que la personne est d'accord pour être citée. Je crée un fichier par avis dans `src/content/testimonials/fr/` (modèle : `_modele.md`) et j'active la section. Pas d'étoiles ni de note : le texte et le prénom suffisent, c'est plus crédible.
+
+---
+
+## Étape 6 ter — L'espace admin (mini CRM)
+
+L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de l'email, et servira à suivre les sessions.
+
+1. **Base de données** : fait (Turso, Irlande). Vérifie dans Vercel → Settings → Environment Variables que `TURSO_DATABASE_URL` et `TURSO_AUTH_TOKEN` existent pour les trois environnements. Si l'intégration les a nommées autrement, dis-le-moi.
+2. **Première connexion** : faite le 28 septembre 2026, mot de passe temporaire changé. Le mécanisme de compte de démarrage est désormais inactif (un compte existe). Pour changer de mot de passe : **Mon compte**.
+3. **Le compte d'Anthony**, quand il en voudra un à lui : ajoute une variable `ADMIN_EMAILS` avec son adresse (et la tienne si tu veux un compte séparé), pour les trois environnements, Redeploy, puis il va sur `/admin/mot-de-passe`, saisit son adresse et reçoit un lien valable une heure. Tant que Resend n'est pas configuré (étape 4), l'email ne part pas et le lien est écrit dans les journaux de la fonction, sur Vercel → Deployments → le déploiement → Functions. Solution de repli depuis ton ordinateur : `TURSO_DATABASE_URL=… TURSO_AUTH_TOKEN=… node scripts/admin-user.mjs adresse "Prénom"`.
+4. **Au quotidien** : Demandes → ouvrir une demande → « Répondre par email » ouvre la boîte mail avec un brouillon, la demande passe en « répondue ». Le statut, les notes sur la demande et sur la personne s'enregistrent dans le bloc Suivi. Le bouton Supprimer sert au droit à l'effacement (RGPD).
+
+5. **Contacts** : une fiche par personne, créée à sa première demande, ou à la main (« Nouveau contact ») pour quelqu'un qui a appelé. Coordonnées, notes, historique des demandes et des sessions. Supprimer une fiche efface aussi ses demandes et ses participations.
+6. **Sessions** : depuis une demande, « Planifier une session » crée la session avec la personne déjà inscrite, le nombre de personnes et un montant suggéré d'après l'offre ; la demande passe en « confirmée ». Ou « Rattacher à une session prévue » si la date existe déjà. Sur la session : participants (ajout depuis le carnet, retrait), date, lieu, durée, notes, montant (avec la suggestion recalculée selon le nombre de personnes, bouton « Utiliser »), et un bouton « Ajouter à mon agenda (.ics) » qu'Outlook ouvre directement.
+7. **Paiement** : quand la session est passée, « Marquer faite » fige son montant, qui compte alors dans le chiffre d'affaires du tableau de bord. « Annuler la session » la garde dans l'historique sans la compter. Les deux sont réversibles.
+
+8. **Tableau de bord** : en haut, ce qui attend (demandes à traiter, réponses attendues, sessions à venir, carnet) ; puis le chiffre du mois avec l'écart au mois précédent, le chiffre de l'année, les personnes emmenées, le taux de demandes converties ; enfin douze mois de chiffre en histogramme, la répartition par offre, les prochaines sessions et les dernières demandes. Tout le chiffre vient des sessions cochées « faite ».
+
+Le contenu du site (textes, prix, photos) ne se modifie pas depuis l'admin : Anthony te transmet ses changements, tu me les passes ou tu modifies les fichiers indiqués dans le README.
 
 ---
 
@@ -95,7 +142,7 @@ Quand les étapes 1, 2 et 4 sont faites :
 
 1. Ouvre le site sur l'URL de prévisualisation donnée par l'hébergeur.
 2. Remplis le formulaire avec ta propre adresse et envoie.
-3. Tu dois recevoir l'email « Demande de session : … » dans la minute, et ton adresse de test doit recevoir « On a bien reçu ta demande ».
+3. Tu dois recevoir l'email « Demande de session : … » dans la minute, et ton adresse de test doit recevoir « J'ai bien reçu ta demande ».
 4. Réponds directement à l'email reçu : la réponse part vers le demandeur.
 
 Si rien n'arrive : vérifie les trois variables de l'étape 4, puis les journaux de la fonction chez l'hébergeur. Dis-moi ce que tu vois.

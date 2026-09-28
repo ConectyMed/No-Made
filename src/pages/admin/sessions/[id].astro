@@ -1,0 +1,255 @@
+---
+/**
+ * Détail d'une session : infos modifiables, participants (ajout depuis le carnet, retrait),
+ * montant avec suggestion, statut (prévue / faite / annulée), export .ics vers l'agenda, suppression.
+ * « Faite » = le montant compte dans le chiffre d'affaires.
+ */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { addParticipant, deleteOuting, getOuting, isOutingStatus, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
+import { allContactsBrief } from '@/lib/crm/contacts';
+import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
+import { OUTING_STATUS_LABEL } from '@/lib/crm/labels';
+import { formatDateLong, formatDateTime, formatTime, msToParisParts, parisToMs } from '@/lib/dates';
+import { formatPrice } from '@/lib/format';
+import { site } from '@/data/site';
+
+export const prerender = false;
+
+const id = Astro.params.id ?? '';
+let error: string | null = null;
+const offers = await offerOptions();
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = String(form.get('action') ?? '');
+  if (action === 'supprimer') {
+    await deleteOuting(id);
+    return Astro.redirect('/admin/sessions?supprimee=1', 303);
+  }
+  if (action === 'statut') {
+    const s = form.get('status');
+    if (isOutingStatus(s)) await setOutingStatus(id, s);
+    return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
+  }
+  if (action === 'participant') {
+    const contactId = String(form.get('contactId') ?? '');
+    const people = Math.max(1, Number(form.get('people') ?? 1) || 1);
+    if (contactId) await addParticipant(id, contactId, people);
+    return Astro.redirect(`/admin/sessions/${id}?ok=1#participants`, 303);
+  }
+  if (action === 'retirer') {
+    await removeParticipant(String(form.get('participantId') ?? ''));
+    return Astro.redirect(`/admin/sessions/${id}?ok=1#participants`, 303);
+  }
+  if (action === 'maj') {
+    const offer = offers.find((o) => o.slug === String(form.get('offerSlug') ?? ''));
+    const startsAt = parisToMs(String(form.get('date') ?? ''), String(form.get('time') ?? ''));
+    const amountCents = parseEuros(String(form.get('amount') ?? ''));
+    const duration = String(form.get('duration') ?? '').trim();
+    if (!offer) error = 'Choisis une offre.';
+    else if (!startsAt) error = 'La date ou l’heure est illisible.';
+    else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
+    else {
+      await updateOuting(id, {
+        offerSlug: offer.slug,
+        offerLabel: offer.label,
+        startsAt,
+        durationMin: duration ? Number(duration) || null : offer.durationMin,
+        place: String(form.get('place') ?? ''),
+        notes: String(form.get('notes') ?? ''),
+        amountCents,
+      });
+      return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
+    }
+  }
+}
+
+const data = await getOuting(id);
+if (!data) return new Response('Session introuvable', { status: 404 });
+const { outing: o, participants, people } = data;
+const flash = Astro.url.searchParams.get('creee') ? 'Session créée.' : Astro.url.searchParams.get('ok') ? 'Enregistré.' : null;
+const parts = msToParisParts(o.startsAt);
+const suggestion = await suggestAmount(o.offerSlug, people);
+const contacts = await allContactsBrief();
+const inSession = new Set(participants.map((p) => p.contact.id));
+
+const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'annulee' : 'nouvelle';
+---
+
+<Admin title={`Session du ${formatDateLong(o.startsAt)}`}>
+  <p class="back small"><a href="/admin/sessions">← Le planning</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Session</span>
+      <h1>{formatDateLong(o.startsAt)}, {formatTime(o.startsAt)}</h1>
+      <p>{o.offerLabel}{o.place ? ` · ${o.place}` : ''} · {people} personne{people > 1 ? 's' : ''}</p>
+    </div>
+    <span class:list={['badge', `badge--${badge}`]}>{OUTING_STATUS_LABEL[o.status]}</span>
+  </div>
+
+  {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <section class="adm-card status" aria-labelledby="status-title">
+    <h2 id="status-title" class="visually-hidden">Statut</h2>
+    <div class="status__row">
+      {
+        o.status !== 'faite' ? (
+          <form method="post">
+            <input type="hidden" name="action" value="statut" />
+            <input type="hidden" name="status" value="faite" />
+            <Button type="submit" variant="lime" icon="check">Marquer faite · {formatPrice(o.amountCents)} encaissés</Button>
+          </form>
+        ) : (
+          <form method="post">
+            <input type="hidden" name="action" value="statut" />
+            <input type="hidden" name="status" value="prevue" />
+            <span class="done">Faite{o.doneAt ? ` le ${formatDateTime(o.doneAt)}` : ''} · {formatPrice(o.amountCents)} comptés dans le chiffre.</span>
+            <button type="submit" class="btn-ghost">Remettre en prévue</button>
+          </form>
+        )
+      }
+      {
+        o.status !== 'annulee' ? (
+          <form method="post" data-confirm="Annuler cette session ? Elle reste dans l’historique, sans compter dans le chiffre.">
+            <input type="hidden" name="action" value="statut" />
+            <input type="hidden" name="status" value="annulee" />
+            <button type="submit" class="btn-ghost">Annuler la session</button>
+          </form>
+        ) : (
+          <form method="post">
+            <input type="hidden" name="action" value="statut" />
+            <input type="hidden" name="status" value="prevue" />
+            <button type="submit" class="btn-ghost">Remettre en prévue</button>
+          </form>
+        )
+      }
+      <a href={`/admin/sessions/${o.id}.ics`} class="btn-ghost" download><Icon name="calendar" size={16} /> Ajouter à mon agenda (.ics)</a>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="adm-card" id="participants" aria-labelledby="part-title">
+      <h2 id="part-title">Participants <span class="count">{people}</span></h2>
+      {
+        participants.length === 0 ? (
+          <p class="muted small">Personne pour l’instant. Ajoute quelqu’un du carnet ci-dessous, ou rattache une demande depuis sa fiche.</p>
+        ) : (
+          <ul class="plist" role="list">
+            {participants.map(({ participant: p, contact: c }) => (
+              <li>
+                <div>
+                  <a href={`/admin/contacts/${c.id}`}>{c.name}</a>
+                  <span class="small muted">
+                    {' '}· {p.people} pers.{p.requestId && <> · <a href={`/admin/demandes/${p.requestId}`}>demande</a></>}
+                  </span>
+                </div>
+                <form method="post">
+                  <input type="hidden" name="action" value="retirer" />
+                  <input type="hidden" name="participantId" value={p.id} />
+                  <button type="submit" class="link-danger small" aria-label={`Retirer ${c.name}`}>Retirer</button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <form method="post" class="addp">
+        <input type="hidden" name="action" value="participant" />
+        <div class="adm-field">
+          <label for="contactId">Ajouter une personne du carnet</label>
+          <select id="contactId" name="contactId" required>
+            <option value="">Choisir…</option>
+            {contacts.filter((c) => !inSession.has(c.id)).map((c) => <option value={c.id}>{c.name} — {c.email}</option>)}
+          </select>
+        </div>
+        <div class="adm-field addp__n">
+          <label for="people">Pers.</label>
+          <input id="people" name="people" type="number" min="1" max="10" value="1" />
+        </div>
+        <Button type="submit" variant="dark">Ajouter</Button>
+      </form>
+      <p class="small muted">Quelqu’un qui n’est pas dans le carnet : <a href="/admin/contacts/nouveau">crée d’abord son contact</a>.</p>
+    </section>
+
+    <form method="post" class="adm-card form" aria-labelledby="info-title">
+      <input type="hidden" name="action" value="maj" />
+      <h2 id="info-title">Infos</h2>
+      <div class="adm-field">
+        <label for="offerSlug">Offre</label>
+        <select id="offerSlug" name="offerSlug">
+          {offers.map((op) => <option value={op.slug} selected={op.slug === o.offerSlug}>{op.label}</option>)}
+        </select>
+      </div>
+      <div class="row3">
+        <div class="adm-field"><label for="date">Date</label><input id="date" name="date" type="date" required value={parts.date} /></div>
+        <div class="adm-field"><label for="time">Heure</label><input id="time" name="time" type="time" required value={parts.time} /></div>
+        <div class="adm-field"><label for="duration">Durée (min)</label><input id="duration" name="duration" type="number" min="15" step="5" value={o.durationMin ?? ''} /></div>
+      </div>
+      <div class="adm-field">
+        <label for="place">Lieu de rendez-vous</label>
+        <input id="place" name="place" type="text" maxlength="200" value={o.place ?? ''} />
+      </div>
+      <div class="adm-field">
+        <label for="amount">Montant (€)</label>
+        <input id="amount" name="amount" type="text" inputmode="decimal" value={String(o.amountCents / 100).replace('.', ',')} data-amount />
+        <span class="small muted">
+          {suggestion.amountCents !== null ? (
+            <>Suggestion d’après l’offre : <strong>{formatPrice(suggestion.amountCents)}</strong> ({suggestion.reason}). <button type="button" class="linkbtn" data-suggest={suggestion.amountCents / 100}>Utiliser</button></>
+          ) : (
+            <>Suggestion : {suggestion.reason}.</>
+          )}
+        </span>
+      </div>
+      <div class="adm-field">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3">{o.notes ?? ''}</textarea>
+      </div>
+      <div><Button type="submit" variant="dark" icon="check">Enregistrer</Button></div>
+    </form>
+  </div>
+
+  <form method="post" class="danger" data-confirm="Supprimer cette session ? Les demandes rattachées sont détachées, rien d’autre n’est perdu.">
+    <input type="hidden" name="action" value="supprimer" />
+    <button type="submit" class="btn-ghost btn-danger">Supprimer la session</button>
+  </form>
+</Admin>
+
+<script>
+  document.querySelector<HTMLButtonElement>('[data-suggest]')?.addEventListener('click', (e) => {
+    const v = (e.currentTarget as HTMLButtonElement).dataset.suggest ?? '';
+    const input = document.querySelector<HTMLInputElement>('[data-amount]');
+    if (input) input.value = v.replace('.', ',');
+  });
+  document.querySelectorAll<HTMLFormElement>('form[data-confirm]').forEach((f) => {
+    f.addEventListener('submit', (e) => {
+      if (!confirm(f.dataset.confirm ?? 'Confirmer ?')) e.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+  .status { margin-bottom: var(--space-5); }
+  .status__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); }
+  .status__row form { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  .done { font-weight: 600; color: var(--green-900); }
+  .grid { display: grid; gap: var(--space-5); }
+  h2 { font-size: var(--text-md); margin-bottom: var(--space-4); display: flex; align-items: center; gap: 0.5rem; }
+  .count { font-size: var(--label-sm); padding: 0.1em 0.6em; border-radius: var(--radius-pill); background: var(--lime-soft); color: var(--green-600); }
+  .plist { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .plist li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: var(--border); }
+  .plist a { color: var(--green-900); font-weight: 600; text-decoration: none; }
+  .plist .small a { color: var(--green-600); font-weight: 500; }
+  .link-danger { color: var(--danger); font-weight: 600; }
+  .addp { display: grid; gap: var(--space-3); align-items: end; grid-template-columns: minmax(0, 1fr) 5rem auto; }
+  .form { display: grid; gap: var(--space-4); }
+  .row3 { display: grid; gap: var(--space-4); }
+  .linkbtn { color: var(--green-600); font-weight: 600; text-decoration: underline; }
+  .danger { margin-top: var(--space-6); }
+  @media (min-width: 40em) { .row3 { grid-template-columns: 1.4fr 1fr 7rem; } }
+  @media (min-width: 64em) { .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+  @media (max-width: 30em) { .addp { grid-template-columns: 1fr 1fr; } .addp .adm-field:first-child { grid-column: 1 / -1; } }
+</style>
