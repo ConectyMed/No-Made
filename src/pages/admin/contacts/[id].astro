@@ -1,0 +1,152 @@
+---
+/** Fiche contact : coordonnées modifiables, notes, historique des demandes et des sessions, suppression RGPD. */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { deleteContact, getContact, updateContact } from '@/lib/crm/contacts';
+import { OUTING_STATUS_LABEL, REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
+import { formatDateTime } from '@/lib/dates';
+import { formatPrice } from '@/lib/format';
+
+export const prerender = false;
+
+const id = Astro.params.id ?? '';
+let error: string | null = null;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = String(form.get('action') ?? '');
+  if (action === 'supprimer') {
+    await deleteContact(id);
+    return Astro.redirect('/admin/contacts?supprime=1', 303);
+  }
+  if (action === 'maj') {
+    const res = await updateContact(id, {
+      name: String(form.get('name') ?? ''),
+      email: String(form.get('email') ?? ''),
+      phone: String(form.get('phone') ?? ''),
+      notes: String(form.get('notes') ?? ''),
+    });
+    if ('ok' in res) return Astro.redirect(`/admin/contacts/${id}?ok=1`, 303);
+    error = res.error;
+  }
+}
+
+const data = await getContact(id);
+if (!data) return new Response('Contact introuvable', { status: 404 });
+const { contact: c, requests, participations } = data;
+const ok = Astro.url.searchParams.get('ok') === '1';
+---
+
+<Admin title={c.name}>
+  <p class="back small"><a href="/admin/contacts">← Tous les contacts</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Contact</span>
+      <h1>{c.name}</h1>
+      <p>Dans le carnet depuis le {formatDateTime(c.createdAt)}.</p>
+    </div>
+    <div class="quick">
+      <a href={`mailto:${c.email}`} class="btn-ghost">Écrire un email</a>
+      {c.phone && <a href={`tel:${c.phone.replace(/\s/g, '')}`} class="btn-ghost">Appeler</a>}
+    </div>
+  </div>
+
+  {ok && <p class="adm-alert adm-alert--ok" role="status">Enregistré.</p>}
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <div class="grid">
+    <form method="post" class="adm-card form">
+      <input type="hidden" name="action" value="maj" />
+      <h2>Coordonnées</h2>
+      <div class="adm-field">
+        <label for="name">Prénom et nom</label>
+        <input id="name" name="name" type="text" required maxlength="120" value={c.name} />
+      </div>
+      <div class="adm-field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required maxlength="200" value={c.email} />
+      </div>
+      <div class="adm-field">
+        <label for="phone">Téléphone</label>
+        <input id="phone" name="phone" type="tel" maxlength="30" value={c.phone ?? ''} />
+      </div>
+      <div class="adm-field">
+        <label for="notes">Notes sur la personne</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Niveau, préférences, ce qu’il faut savoir la prochaine fois…">{c.notes ?? ''}</textarea>
+      </div>
+      <div><Button type="submit" variant="dark" icon="check">Enregistrer</Button></div>
+    </form>
+
+    <div class="col">
+      <section class="adm-card">
+        <h2>Demandes <span class="count">{requests.length}</span></h2>
+        {
+          requests.length === 0 ? (
+            <p class="muted small">Aucune demande.</p>
+          ) : (
+            <ul class="hist" role="list">
+              {requests.map((r) => (
+                <li>
+                  <a href={`/admin/demandes/${r.id}`}>{r.offerLabel}</a>
+                  <span class="small muted">
+                    {formatDateTime(r.createdAt)} · {r.groupSize} pers. · {REQUEST_STATUS_LABEL[r.status]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+
+      <section class="adm-card">
+        <h2>Sessions <span class="count">{participations.length}</span></h2>
+        {
+          participations.length === 0 ? (
+            <p class="muted small">Aucune session pour l’instant.</p>
+          ) : (
+            <ul class="hist" role="list">
+              {participations.map(({ participant: p, outing: o }) => (
+                <li>
+                  <a href={`/admin/sessions/${o.id}`}>{o.offerLabel}</a>
+                  <span class="small muted">
+                    {formatDateTime(o.startsAt)} · {p.people} pers. · {OUTING_STATUS_LABEL[o.status]}
+                    {o.status === 'faite' && <> · {formatPrice(o.amountCents)}</>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+    </div>
+  </div>
+
+  <form method="post" class="danger" data-confirm="Supprimer cette personne, ses demandes et ses participations ? C’est définitif.">
+    <input type="hidden" name="action" value="supprimer" />
+    <button type="submit" class="btn-ghost btn-danger">Supprimer ce contact</button>
+    <span class="small muted">Droit à l’effacement (RGPD). Les sessions restent, sans cette personne.</span>
+  </form>
+</Admin>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-confirm]').forEach((f) => {
+    f.addEventListener('submit', (e) => {
+      if (!confirm(f.dataset.confirm ?? 'Confirmer ?')) e.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+  .quick { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .grid { display: grid; gap: var(--space-5); }
+  .form { display: grid; gap: var(--space-4); }
+  .col { display: grid; gap: var(--space-5); align-content: start; }
+  h2 { font-size: var(--text-md); margin-bottom: var(--space-3); display: flex; align-items: center; gap: 0.5rem; }
+  .count { font-size: var(--label-sm); padding: 0.1em 0.6em; border-radius: var(--radius-pill); background: var(--surface-low); color: var(--ink-2); }
+  .hist { display: grid; gap: var(--space-3); }
+  .hist li { display: grid; gap: 0.1rem; }
+  .hist a { color: var(--green-900); font-weight: 600; text-decoration: none; }
+  .danger { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-6); }
+  @media (min-width: 56em) { .grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+</style>

@@ -62,6 +62,6 @@ puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un termin
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | fait |
 | + | Mode sombre : suit le système, bascule discrète dans la nav, choix mémorisé | fait |
 | M5.1 | Admin : base Turso, comptes, connexion, boîte de demandes branchée sur le formulaire | fait |
-| M5.2 | Admin : contacts, sessions, paiement au cochage | à venir |
+| M5.2 | Admin : contacts, sessions, participants, paiement au cochage, lien Google Agenda | fait |
 | M5.3 | Admin : tableau de bord | à venir |
 | M5.4 | Contenu du site éditable en brouillon (Keystatic) | à venir |

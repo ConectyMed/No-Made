@@ -20,8 +20,8 @@ const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const nav: { href: string; label: string; icon: IconName; soon?: boolean }[] = [
   { href: '/admin', label: 'Tableau de bord', icon: 'leaf' },
   { href: '/admin/demandes', label: 'Demandes', icon: 'mail' },
-  { href: '/admin/contacts', label: 'Contacts', icon: 'users', soon: true },
-  { href: '/admin/sessions', label: 'Sessions', icon: 'calendar', soon: true },
+  { href: '/admin/contacts', label: 'Contacts', icon: 'users' },
+  { href: '/admin/sessions', label: 'Sessions', icon: 'calendar' },
 ];
 const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path.startsWith(href));
 ---

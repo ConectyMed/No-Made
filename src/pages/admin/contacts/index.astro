@@ -1,0 +1,127 @@
+---
+/** Contacts : une ligne par personne, avec le nombre de demandes et de sessions. Recherche. */
+import Admin from '@/layouts/Admin.astro';
+import Icon from '@/components/Icon.astro';
+import { listContacts } from '@/lib/crm/contacts';
+import { formatRelative } from '@/lib/dates';
+
+export const prerender = false;
+
+const q = Astro.url.searchParams.get('q') ?? '';
+const rows = await listContacts(q);
+const flash = Astro.url.searchParams.get('supprime') ? 'Contact supprimé.' : null;
+---
+
+<Admin title="Contacts">
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Contacts</span>
+      <h1>Les personnes</h1>
+      <p>Une fiche par personne, créée automatiquement à sa première demande. Tu peux aussi en ajouter une à la main.</p>
+    </div>
+    <div class="tools">
+      <form method="get" class="search" role="search">
+        <label for="q" class="visually-hidden">Rechercher</label>
+        <input id="q" name="q" type="search" placeholder="Nom, email, téléphone…" value={q} />
+        <button type="submit" aria-label="Rechercher"><Icon name="arrow-right" size={18} /></button>
+      </form>
+      <a href="/admin/contacts/nouveau" class="btn-ghost">Nouveau contact</a>
+    </div>
+  </div>
+
+  {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
+
+  <section class="adm-card">
+    {
+      rows.length === 0 ? (
+        <p class="adm-empty">{q ? 'Personne ne correspond à cette recherche.' : 'Aucun contact pour l’instant.'}</p>
+      ) : (
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Contact</th>
+              <th>Demandes</th>
+              <th>Sessions</th>
+              <th>Dernière activité</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((c) => (
+              <tr>
+                <td>
+                  <a href={`/admin/contacts/${c.id}`}>{c.name}</a>
+                </td>
+                <td>
+                  {c.email}
+                  {c.phone && (
+                    <>
+                      <br />
+                      <span class="small">{c.phone}</span>
+                    </>
+                  )}
+                </td>
+                <td>{c.requests}</td>
+                <td>{c.outings}</td>
+                <td>{formatRelative(c.lastSeen)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .search {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .search input {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    width: min(16rem, 55vw);
+  }
+
+  .search button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--deep);
+    color: var(--on-dark);
+  }
+
+  @media (max-width: 48em) {
+    .adm-table thead {
+      display: none;
+    }
+
+    .adm-table tr {
+      display: grid;
+      gap: 0.25rem;
+      padding: var(--space-3) 0;
+      border-bottom: var(--border);
+    }
+
+    .adm-table td {
+      padding: 0;
+      border: 0;
+    }
+  }
+</style>

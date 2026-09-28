@@ -1,0 +1,63 @@
+---
+/** Nouveau contact à la main (quelqu'un qui a appelé, un ami d'un participant…). */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { createContact } from '@/lib/crm/contacts';
+
+export const prerender = false;
+
+let error: string | null = null;
+const values = { name: '', email: '', phone: '', notes: '' };
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  values.name = String(form.get('name') ?? '');
+  values.email = String(form.get('email') ?? '');
+  values.phone = String(form.get('phone') ?? '');
+  values.notes = String(form.get('notes') ?? '');
+  const res = await createContact(values);
+  if ('id' in res) return Astro.redirect(`/admin/contacts/${res.id}`, 303);
+  error = res.error;
+}
+---
+
+<Admin title="Nouveau contact">
+  <p class="back small"><a href="/admin/contacts">← Tous les contacts</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Contacts</span>
+      <h1>Nouveau contact</h1>
+    </div>
+  </div>
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+  <form method="post" class="adm-card form">
+    <div class="row">
+      <div class="adm-field">
+        <label for="name">Prénom et nom</label>
+        <input id="name" name="name" type="text" required maxlength="120" value={values.name} />
+      </div>
+      <div class="adm-field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required maxlength="200" value={values.email} />
+      </div>
+    </div>
+    <div class="row">
+      <div class="adm-field">
+        <label for="phone">Téléphone <span class="muted">(facultatif)</span></label>
+        <input id="phone" name="phone" type="tel" maxlength="30" value={values.phone} />
+      </div>
+    </div>
+    <div class="adm-field">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="3" placeholder="Comment tu l’as connu, ce qu’il cherche…">{values.notes}</textarea>
+    </div>
+    <div><Button type="submit" variant="dark" icon="check">Créer le contact</Button></div>
+  </form>
+</Admin>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+  .form { display: grid; gap: var(--space-5); max-width: 48rem; margin-top: var(--space-2); }
+  .row { display: grid; gap: var(--space-5); }
+  @media (min-width: 40em) { .row { grid-template-columns: 1fr 1fr; } }
+</style>

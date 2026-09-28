@@ -9,6 +9,7 @@ import Icon from '@/components/Icon.astro';
 import { deleteRequest, getRequest, isRequestStatus, markRepliedIfNew, updateContactNotes, updateRequest } from '@/lib/crm/requests';
 import { REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
 import { REQUEST_STATUSES } from '@/lib/db/schema';
+import { attachRequest, upcomingBrief } from '@/lib/crm/outings';
 import { formatDateTime } from '@/lib/dates';
 import { site } from '@/data/site';
 
@@ -28,6 +29,11 @@ if (Astro.request.method === 'POST') {
     await markRepliedIfNew(id);
     return new Response(null, { status: 204 });
   }
+  if (action === 'rattacher') {
+    const outingId = String(form.get('outingId') ?? '');
+    if (outingId) await attachRequest(id, outingId);
+    return Astro.redirect(`/admin/sessions/${outingId}?ok=1`, 303);
+  }
   if (action === 'maj') {
     const status = form.get('status');
     await updateRequest(id, {
@@ -44,6 +50,7 @@ const data = await getRequest(id);
 if (!data) return new Response('Demande introuvable', { status: 404 });
 const { request: r, contact: c, others } = data;
 if (Astro.url.searchParams.get('ok')) flash = 'Enregistré.';
+const upcoming = r.outingId ? [] : await upcomingBrief();
 
 const firstName = c.name.trim().split(/\s+/)[0] || c.name;
 const subject = `Re : ta demande de session ${r.offerLabel}`;
@@ -94,8 +101,40 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
     </section>
 
     <aside class="col side">
+      <section class="adm-card session" aria-labelledby="session-title">
+        <h2 id="session-title">Session</h2>
+        {
+          r.outingId ? (
+            <p>
+              Rattachée à une session. <a href={`/admin/sessions/${r.outingId}`} class="strong">Voir la session</a>
+            </p>
+          ) : (
+            <>
+              <a href={`/admin/sessions/nouvelle?demande=${r.id}`} class="btn-ghost">
+                <Icon name="calendar" size={16} /> Planifier une session
+              </a>
+              {upcoming.length > 0 && (
+                <form method="post" class="attach">
+                  <input type="hidden" name="action" value="rattacher" />
+                  <div class="adm-field">
+                    <label for="outingId">Ou rattacher à une session prévue</label>
+                    <select id="outingId" name="outingId" required>
+                      <option value="">Choisir…</option>
+                      {upcoming.map((u) => (
+                        <option value={u.id}>{u.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <Button type="submit" variant="dark">Rattacher</Button>
+                </form>
+              )}
+            </>
+          )
+        }
+      </section>
+
       <section class="adm-card" aria-labelledby="contact-title">
-        <h2 id="contact-title">Contact</h2>
+        <h2 id="contact-title">Contact <a href={`/admin/contacts/${c.id}`} class="small fiche">voir la fiche</a></h2>
         <dl class="facts facts--tight">
           <div><dt>Email</dt><dd><a href={`mailto:${c.email}`}>{c.email}</a></dd></div>
           <div><dt>Téléphone</dt><dd>{c.phone ? <a href={`tel:${c.phone.replace(/\s/g, '')}`}>{c.phone}</a> : <span class="muted">non renseigné</span>}</dd></div>
@@ -198,6 +237,12 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
     margin-bottom: var(--space-4);
   }
 
+  .fiche {
+    margin-left: 0.5rem;
+    color: var(--green-600);
+    font-weight: 500;
+  }
+
   .sub {
     font-size: var(--label);
     margin: var(--space-5) 0 var(--space-2);
@@ -261,6 +306,30 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
 
   .btn--lime:hover {
     background: var(--lime-dim);
+  }
+
+  .side {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+
+  .session {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .session .strong {
+    color: var(--green-900);
+    font-weight: 600;
+  }
+
+  .attach {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    justify-items: start;
   }
 
   .others li + li {

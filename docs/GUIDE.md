@@ -115,7 +115,11 @@ L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de
 3. **Le compte d'Anthony**, quand il en voudra un à lui : ajoute une variable `ADMIN_EMAILS` avec son adresse (et la tienne si tu veux un compte séparé), pour les trois environnements, Redeploy, puis il va sur `/admin/mot-de-passe`, saisit son adresse et reçoit un lien valable une heure. Tant que Resend n'est pas configuré (étape 4), l'email ne part pas et le lien est écrit dans les journaux de la fonction, sur Vercel → Deployments → le déploiement → Functions. Solution de repli depuis ton ordinateur : `TURSO_DATABASE_URL=… TURSO_AUTH_TOKEN=… node scripts/admin-user.mjs adresse "Prénom"`.
 4. **Au quotidien** : Demandes → ouvrir une demande → « Répondre par email » ouvre la boîte mail avec un brouillon, la demande passe en « répondue ». Le statut, les notes sur la demande et sur la personne s'enregistrent dans le bloc Suivi. Le bouton Supprimer sert au droit à l'effacement (RGPD).
 
-À venir : contacts et sessions avec le paiement au cochage (étape 2), tableau de bord (étape 3), édition du contenu du site en brouillon (étape 4).
+5. **Contacts** : une fiche par personne, créée à sa première demande, ou à la main (« Nouveau contact ») pour quelqu'un qui a appelé. Coordonnées, notes, historique des demandes et des sessions. Supprimer une fiche efface aussi ses demandes et ses participations.
+6. **Sessions** : depuis une demande, « Planifier une session » crée la session avec la personne déjà inscrite, le nombre de personnes et un montant suggéré d'après l'offre ; la demande passe en « confirmée ». Ou « Rattacher à une session prévue » si la date existe déjà. Sur la session : participants (ajout depuis le carnet, retrait), date, lieu, durée, notes, montant (avec la suggestion recalculée selon le nombre de personnes, bouton « Utiliser »), et un lien « Ajouter à Google Agenda » prérempli.
+7. **Paiement** : quand la session est passée, « Marquer faite » fige son montant, qui compte alors dans le chiffre d'affaires du tableau de bord. « Annuler la session » la garde dans l'historique sans la compter. Les deux sont réversibles.
+
+À venir : tableau de bord complet (étape 3), édition du contenu du site en brouillon (étape 4).
 
 ---
 
