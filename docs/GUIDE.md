@@ -73,6 +73,8 @@ Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. 
 
 Reçue et intégrée. Source en `assets/source/hero-source.mp4` (1280×720, 8 s, sans son), encodages et poster dans `public/hero/`. Si tu remplaces la vidéo un jour : même format, même dossier, puis `npm run video` régénère tout (il faut ffmpeg sur la machine).
 
+Depuis le 28/09, le hero est en deux colonnes : le texte à gauche, la vidéo à droite qui fond dans le cadre, trois petites cartes (Marcher, Bouger, Respirer) posées dessus, et quatre repères en bas (2h30, 3h, 20 min, 0 écran). Les durées viennent des fiches d'offres et du bloc visio : si tu changes une durée dans `src/content/offers/fr/`, le hero suit. Aucun chiffre du type « 500 sorties, 1 000 participants » : on n'en a pas, on n'en invente pas.
+
 Premières vraies photos reçues le 28 septembre 2026, dans `src/assets/photos/`, métadonnées retirées : l'escalier de montagne (accueil, « Marcher, randonner », Pérou), le coucher de soleil sur les rochers face à la mer (accueil, « Respirer, se concentrer », lieu à confirmer), le lac d'altitude (accueil, cadre Reconnexion, Pérou) et son portrait assis sur un rocher (À propos, Pérou). Les photos du Pérou portent une petite légende « Pérou », pour ne pas laisser croire que c'est la région : à retirer si tu préfères.
 
 Un visuel reste généré par IA, avec le badge « image provisoire » qui bloque la production : la carte « Bouger » (accueil). Il manque donc une photo d'Anthony en train de faire un exercice au poids du corps ou de mobilité, dehors. Une photo parent / enfant en nature (avec l'accord des personnes) serait aussi la bienvenue pour le cadre Reconnexion, où le lac tient lieu d'ambiance en attendant.
