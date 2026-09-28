@@ -1,7 +1,8 @@
 ---
 /**
  * Nav flottante en pilule (design.md §4) : point lime + nom à gauche, liens au centre sur desktop,
- * CTA vert profond à droite. Mobile : nom, CTA icône, burger → panneau plein écran.
+ * CTA vert profond à droite, précédé d'une bascule clair / sombre discrète (icône seule).
+ * Mobile : nom, bascule, CTA icône, burger → panneau plein écran.
  * Le panneau est un frère de <header> pour que le backdrop-filter ne le contienne pas.
  */
 import Button from './Button.astro';
@@ -35,6 +36,17 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     </nav>
 
     <div class="header__actions">
+      <button
+        class="theme"
+        type="button"
+        aria-label={t('common.themeDark')}
+        data-label-dark={t('common.themeDark')}
+        data-label-light={t('common.themeLight')}
+        data-theme-toggle
+      >
+        <Icon name="moon" size={18} class="theme__moon" />
+        <Icon name="sun" size={18} class="theme__sun" />
+      </button>
       <Button href={CTA_HREF} variant="dark" icon="arrow-right" class="header__cta">{CTA_LABEL}</Button>
       <a href={CTA_HREF} class="header__cta-icon" aria-label={CTA_LABEL}>
         <Icon name="mail" size={20} />
@@ -100,6 +112,47 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     menu.addEventListener('click', (e) => (e.target as HTMLElement).closest('a') && setOpen(false));
     mq.addEventListener('change', (e) => e.matches && open && setOpen(false));
   }
+
+  /* ---------- Thème clair / sombre ---------- */
+  const themeBtn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  if (themeBtn) {
+    const root = document.documentElement;
+    const KEY = 'nomade-theme';
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const labels = { dark: themeBtn.dataset.labelDark ?? '', light: themeBtn.dataset.labelLight ?? '' };
+
+    const apply = (theme: 'dark' | 'light') => {
+      root.setAttribute('data-theme', theme);
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? labels.light : labels.dark);
+      const color = getComputedStyle(root).getPropertyValue('--bg').trim();
+      document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((m) => (m.content = color));
+    };
+
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(KEY);
+    } catch {}
+    apply((saved ?? (systemDark.matches ? 'dark' : 'light')) === 'dark' ? 'dark' : 'light');
+
+    themeBtn.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.classList.add('theme-switching');
+      apply(next);
+      try {
+        localStorage.setItem(KEY, next);
+      } catch {}
+      window.setTimeout(() => root.classList.remove('theme-switching'), 250);
+    });
+
+    // Sans choix explicite, on suit le système s'il change en cours de route.
+    systemDark.addEventListener('change', (e) => {
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem(KEY);
+      } catch {}
+      if (!stored) apply(e.matches ? 'dark' : 'light');
+    });
+  }
 </script>
 
 <style>
@@ -112,7 +165,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     width: 92%;
     max-width: var(--content-max);
     border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--glass-strong);
     box-shadow: var(--shadow);
   }
 
@@ -136,6 +189,18 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     font-size: var(--text-sm-h);
     font-weight: 600;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 24em) {
+    .header__inner {
+      gap: var(--space-2);
+      padding-left: 1rem;
+    }
+
+    .brand {
+      font-size: var(--body);
+    }
   }
 
   .brand__dot {
@@ -191,13 +256,40 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     display: none !important;
   }
 
+  /* Bascule de thème : discrète, sans fond, prend une teinte au survol. */
+  .theme {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    color: var(--ink-2);
+    transition:
+      color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .theme:hover {
+    color: var(--green-900);
+    background: var(--surface-low);
+  }
+
+  .theme :global(.theme__sun),
+  :global(html[data-theme='dark']) .theme :global(.theme__moon) {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme :global(.theme__sun) {
+    display: block;
+  }
+
   .header__cta-icon {
     display: grid;
     place-items: center;
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background: var(--green-800);
+    background: var(--deep);
     color: var(--on-dark);
   }
 
@@ -227,7 +319,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     inset: 0;
     z-index: 50;
     padding: calc(var(--header-h) + 2rem) var(--gutter) var(--space-8);
-    background: rgba(249, 249, 248, 0.96);
+    background: var(--menu-bg);
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     overflow-y: auto;

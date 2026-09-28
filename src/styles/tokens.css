@@ -40,8 +40,29 @@
   --on-dark: var(--p-white);
   --on-dark-muted: rgba(255, 255, 255, 0.82);
   --glass: rgba(255, 255, 255, 0.85);
+  --glass-strong: rgba(255, 255, 255, 0.8); /* nav flottante */
+  --menu-bg: rgba(249, 249, 248, 0.96); /* panneau mobile */
   --shadow: 0 10px 30px -10px rgba(30, 53, 39, 0.05);
   --shadow-hover: 0 18px 40px -16px rgba(30, 53, 39, 0.16);
+  --shadow-deep: 0 25px 50px -12px rgba(8, 32, 19, 0.25);
+
+  /* Couleurs qui ne changent PAS avec le thème : texte sur lime, surfaces vert profond. */
+  --on-lime: var(--p-green-900);
+  --deep: var(--p-green-800); /* boutons "dark", bandeau prix, CTA nav */
+  --deep-hover: var(--p-green-900);
+  --ink-3: #8a908a; /* gros numéros estompés, ≥ 3:1 sur la surface (grand texte) */
+  --lime-soft: rgba(197, 242, 96, 0.3);
+  --focus-ring: rgba(197, 242, 96, 0.7);
+  --input-placeholder: rgba(66, 72, 67, 0.45);
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23424843' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --danger: #93000a;
+  --danger-line: #ffdad6;
+  --danger-bg: #fff5f4;
+  --ph-line: #b8860b;
+  --ph-bg: rgba(197, 242, 96, 0.4);
+  --ph-ink: #4a4200;
+
+  color-scheme: light;
 
   /* ---------- Typographie ---------- */
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -93,4 +114,90 @@
   --header-h: 4rem;
   --header-offset: 6rem; /* header flottant + marge */
   --tap-min: 2.75rem;
+}
+
+/*
+  ---------- 3. Mode sombre ----------
+  Même palette de marque (lime, vert profond), page vert-noir. Seuls les tokens sémantiques changent.
+  Appliqué par `data-theme="dark"` (choix de la personne, mémorisé), ou par défaut si le système est
+  sombre et qu'aucun choix n'a été fait (`:root:not([data-theme="light"])`, aussi valable sans JS).
+*/
+:root[data-theme='dark'] {
+  --bg: #0f1411;
+  --surface-low: #151c17;
+  --surface: #1a221c;
+  --surface-high: #263029;
+  --ink: #eceeea;
+  --ink-2: #b7bdb6;
+  --ink-3: #737b73;
+  --green-900: #e4efe4; /* titres, texte fort */
+  --green-800: #2a4a36;
+  --green-600: var(--p-lime-dim); /* étiquettes, liens, petites icônes */
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --outline: #8c948c;
+  --focus: var(--p-lime);
+
+  --glass: rgba(18, 26, 21, 0.78);
+  --glass-strong: rgba(18, 26, 21, 0.82);
+  --menu-bg: rgba(15, 20, 17, 0.96);
+  --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35);
+  --shadow-hover: 0 18px 40px -16px rgba(0, 0, 0, 0.55);
+  --shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  --deep: #22402d;
+  --deep-hover: #2c5039;
+  --lime-soft: rgba(197, 242, 96, 0.14);
+  --focus-ring: rgba(197, 242, 96, 0.45);
+  --input-placeholder: rgba(183, 189, 182, 0.5);
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23b7bdb6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --danger: #ffb4ab;
+  --danger-line: rgba(255, 180, 171, 0.4);
+  --danger-bg: rgba(147, 0, 10, 0.22);
+  --ph-line: #d9a520;
+  --ph-bg: rgba(197, 242, 96, 0.16);
+  --ph-ink: #ecdc7a;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f1411;
+    --surface-low: #151c17;
+    --surface: #1a221c;
+    --surface-high: #263029;
+    --ink: #eceeea;
+    --ink-2: #b7bdb6;
+    --ink-3: #737b73;
+    --green-900: #e4efe4;
+    --green-800: #2a4a36;
+    --green-600: var(--p-lime-dim);
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --outline: #8c948c;
+    --focus: var(--p-lime);
+
+    --glass: rgba(18, 26, 21, 0.78);
+    --glass-strong: rgba(18, 26, 21, 0.82);
+    --menu-bg: rgba(15, 20, 17, 0.96);
+    --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35);
+    --shadow-hover: 0 18px 40px -16px rgba(0, 0, 0, 0.55);
+    --shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    --deep: #22402d;
+    --deep-hover: #2c5039;
+    --lime-soft: rgba(197, 242, 96, 0.14);
+    --focus-ring: rgba(197, 242, 96, 0.45);
+    --input-placeholder: rgba(183, 189, 182, 0.5);
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23b7bdb6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    --danger: #ffb4ab;
+    --danger-line: rgba(255, 180, 171, 0.4);
+    --danger-bg: rgba(147, 0, 10, 0.22);
+    --ph-line: #d9a520;
+    --ph-bg: rgba(197, 242, 96, 0.16);
+    --ph-ink: #ecdc7a;
+
+    color-scheme: dark;
+  }
 }

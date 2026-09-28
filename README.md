@@ -20,6 +20,7 @@ Node 22 ou plus récent.
 | Je veux changer… | Fichier |
 |---|---|
 | Les couleurs, les tailles de texte, les arrondis | `src/styles/tokens.css` (couche « palette brute » seulement) |
+| Les couleurs du mode sombre | `src/styles/tokens.css`, bloc `[data-theme='dark']` (et son miroir `prefers-color-scheme`) |
 | Les textes de l'interface et des pages | `src/i18n/fr.json` |
 | Le nom, la zone, l'email, les réseaux, les liens de la nav | `src/data/site.ts` |
 | Une offre, un prix | `src/content/offers/fr/*.md` (à partir du jalon M2) |
@@ -50,4 +51,5 @@ Toute information manquante est écrite entre crochets et en majuscules : `[SLOG
 | M1 | Hero vidéo : encodages, boucle fondue, poster, entrée, pause, mouvement réduit | fait |
 | M2 | Accueil complet, Offres, À propos (design v2, images provisoires) | fait |
 | M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | fait (clés Resend à renseigner) |
-| M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | à venir |
+| M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | fait |
+| + | Mode sombre : suit le système, bascule discrète dans la nav, choix mémorisé | fait |

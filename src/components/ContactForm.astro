@@ -205,7 +205,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
   .field select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23424843' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: var(--select-arrow);
     background-repeat: no-repeat;
     background-position: right 1.1rem center;
     padding-right: 3rem;
@@ -213,15 +213,15 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
   .field input::placeholder,
   .field textarea::placeholder {
-    color: rgba(66, 72, 67, 0.45);
+    color: var(--input-placeholder);
   }
 
   .field input:focus-visible,
   .field select:focus-visible,
   .field textarea:focus-visible {
     outline: none;
-    border-color: var(--green-800);
-    box-shadow: 0 0 0 3px rgba(197, 242, 96, 0.7);
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
   .field--check {
@@ -234,7 +234,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     width: 1.25rem;
     height: 1.25rem;
     margin-top: 0.15rem;
-    accent-color: var(--green-800);
+    accent-color: var(--deep);
   }
 
   .field--check label {
@@ -272,7 +272,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   }
 
   .form__status[data-kind='err'] {
-    color: #93000a;
+    color: var(--danger);
   }
 
   .notice {
@@ -295,12 +295,12 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
   .notice--ok {
     border-color: var(--lime);
-    background: rgba(197, 242, 96, 0.25);
+    background: var(--lime-soft);
   }
 
   .notice--err {
-    border-color: #ffdad6;
-    background: #fff5f4;
+    border-color: var(--danger-line);
+    background: var(--danger-bg);
   }
 
   .form__note {

@@ -54,6 +54,25 @@ Everything sits inside a centred 80rem container with rounded "frames".
 
 Contrast (AA): white on green-800 > 12:1, green-600 on bg 6.1:1, green-900 on lime > 14:1, ink-2 on white 8:1.
 
+Tokens that never change with the theme: `--on-lime` (text on lime), `--deep` / `--deep-hover` (dark buttons,
+nav CTA, price banner). Hairlines always use `--line` / `--line-strong`, never a literal rgba.
+
+### Dark mode
+
+Same brand (lime, deep green), page turns green-black. Only the semantic tokens change, in the
+`[data-theme="dark"]` block of `tokens.css` (and a mirror under `prefers-color-scheme: dark` for no-JS):
+bg `#0f1411`, surface-low `#151c17`, surface `#1a221c`, ink `#eceeea`, ink-2 `#b7bdb6`, headings `#e4efe4`,
+eyebrows / links lime-dim, glass `rgba(18,26,21,.78)`, hairlines white at 8 % / 16 %.
+
+- Default follows the system. A click on the toggle stores `nomade-theme` = `dark` | `light` in
+  localStorage; a stored choice wins over the system.
+- An inline script in `<head>` sets `data-theme` before first paint (no flash).
+- Toggle: icon-only button (moon / sun, 2.5rem, no background) in the nav pill, before the CTA, on every
+  breakpoint. Label "Passer en mode sombre" / "Passer en mode clair". Colours cross-fade 200 ms on click
+  only, not under reduced motion.
+- `theme-color` metas exist for both schemes and are updated on toggle. Photos and the hero video are
+  left untouched.
+
 ### Typography
 
 - One family: **Plus Jakarta Sans**, self-hosted variable woff2 (latin subset), weights 300–800.
@@ -70,6 +89,8 @@ Contrast (AA): white on green-800 > 12:1, green-600 on bg 6.1:1, green-900 on li
 - Icons: inline SVG, 24px grid, stroke 1.8. No icon font.
 
 ## 4. Nav
+
+Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: toggle, mail icon, burger.
 
 Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
 Left: lime dot + "Nó Made Project". Centre (desktop): Accueil, Offres, À propos, Contact.

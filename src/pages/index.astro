@@ -496,7 +496,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
   .pillar__foot {
     padding-top: var(--space-4);
-    border-top: 1px solid rgba(194, 200, 193, 0.3);
+    border-top: var(--border);
     color: var(--green-600);
   }
 
@@ -552,7 +552,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     align-items: center;
     gap: var(--space-3);
     padding-top: var(--space-4);
-    border-top: 1px solid rgba(194, 200, 193, 0.3);
+    border-top: var(--border);
   }
 
   .moment :global(.moment__icon) {
@@ -605,7 +605,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   .reconnex__label {
     padding: 0.35rem 0.8rem;
     border-radius: var(--radius-pill);
-    background: rgba(197, 242, 96, 0.3);
+    background: var(--lime-soft);
     border: 1px solid var(--lime);
   }
 
@@ -636,7 +636,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     margin-top: 0.1rem;
     border-radius: 50%;
     background: var(--lime);
-    color: var(--green-900);
+    color: var(--on-lime);
   }
 
   .reconnex__cta {
@@ -662,7 +662,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     font-size: 3.25rem;
     font-weight: 700;
     line-height: 1;
-    color: #8a908a; /* gris estompé mais ≥ 3:1 sur blanc (grand texte, AA) */
+    color: var(--ink-3); /* gris estompé mais ≥ 3:1 sur la surface (grand texte, AA) */
   }
 
   .step h3 {
@@ -677,10 +677,10 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   .price {
     position: relative;
     padding: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
-    background: var(--green-800);
+    background: var(--deep);
     color: var(--on-dark);
-    border: 1px solid rgba(194, 200, 193, 0.2);
-    box-shadow: 0 25px 50px -12px rgba(8, 32, 19, 0.25);
+    border: var(--border);
+    box-shadow: var(--shadow-deep);
   }
 
   .price__glow {
@@ -713,7 +713,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     padding: 0.3rem 0.75rem;
     border-radius: var(--radius-pill);
     background: var(--lime);
-    color: var(--green-900);
+    color: var(--on-lime);
   }
 
   .price__title {
@@ -724,7 +724,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
   .price__desc {
     font-size: var(--body-lg);
-    color: rgba(232, 232, 231, 0.9);
+    color: var(--on-dark-muted);
     line-height: 1.55;
   }
 
@@ -739,7 +739,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     display: block;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--surface-high);
+    color: var(--on-dark-muted);
   }
 
   .price__amount strong {
@@ -753,7 +753,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   .price__per {
     margin-left: 0.25rem;
     font-size: var(--text-sm-h);
-    color: var(--surface-high);
+    color: var(--on-dark-muted);
   }
 
   .price__link {
