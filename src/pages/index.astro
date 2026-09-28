@@ -1,391 +1,755 @@
 ---
 /**
- * Accueil, selon le wireframe de design.md §7 :
- * 1. hero (statique jusqu'au jalon M1 : la vidéo remplacera le dégradé)
- * 2. offres : cartes à gauche, texte + carte lime à droite
- * 3. comment ça marche : 3 étapes
- * 4. les trois piliers : texte à gauche, 3 cartes photo à droite
- * 5. témoignages : rien tant que site.showTestimonials est false
+ * Accueil (design.md v2 §6) : hero, l'approche, trois temps forts, Reconnex, déroulement,
+ * prix, formulaire. Les images sont provisoires et étiquetées ; la vidéo remplacera l'image du hero (M1).
  */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
-import Eyebrow from '@/components/Eyebrow.astro';
-import Headline from '@/components/Headline.astro';
 import Button from '@/components/Button.astro';
-import OfferCard from '@/components/OfferCard.astro';
-import HighlightCard from '@/components/HighlightCard.astro';
-import PhotoCard from '@/components/PhotoCard.astro';
+import Icon from '@/components/Icon.astro';
+import type { IconName } from '@/components/Icon.astro';
+import ProvisionalImage from '@/components/ProvisionalImage.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
+import { formatPrice } from '@/lib/format';
+
+import heroImg from '@/assets/provisoire/sentier-aube.png';
+import marcheImg from '@/assets/provisoire/groupe-marche.png';
+import mobiliteImg from '@/assets/provisoire/mobilite.png';
+import respirationImg from '@/assets/provisoire/respiration.png';
+import reconnexImg from '@/assets/provisoire/parent-ado.png';
 
 const page = usePage('home');
+const h1Lines = page.h1.split('\n');
 
-// Le champ `slug` sert d'identifiant, donc on filtre la langue sur le chemin du fichier.
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const entry = offers[0]; // Reconnex nature, 2h30
+const halfDay = offers.find((o) => o.data.slug === 'demi-journee-hors-ecran');
+const duoPrice = halfDay?.data.pricing[0];
 
-// Faits réels uniquement (design.md §4 et §8), valables pour les deux offres.
-const facts = [
-  { value: '2h30 à 3h', label: 'par session' },
-  { value: '3 à 5', label: 'personnes' },
-  { value: 'dès 30 €', label: 'par personne' },
-  { value: site.area, label: 'notre terrain' },
+const specs: { icon: IconName; text: string }[] = [
+  { icon: 'pin', text: `Région ${site.area}` },
+  { icon: 'users', text: '3 à 5 personnes' },
+  { icon: 'leaf', text: '100 % dehors' },
 ];
 
-const steps = [
+const pillars: { icon: IconName; title: string; text: string; foot: string }[] = [
   {
-    title: 'Tu nous écris',
-    text: 'Tu choisis une session, tu nous dis pour combien de personnes et quand tu es disponible.',
+    icon: 'leaf',
+    title: 'Dehors, sur de vrais sentiers',
+    text: 'Des chemins de la région PACA, choisis selon la saison et le groupe. Loin du bruit, sans aller loin.',
+    foot: '01 / Terrain',
   },
   {
-    title: 'On cale une date',
-    text: 'On te répond par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.',
+    icon: 'walk',
+    title: 'Marcher, sans chrono',
+    text: 'Un rythme tranquille et des pauses pour regarder. Pas de kilomètres à faire, pas de performance.',
+    foot: '02 / Marche',
   },
   {
-    title: 'On marche',
-    text: 'Rendez-vous au départ du sentier. Le téléphone reste dans le sac, le reste suit.',
-  },
-];
-
-const pillars = [
-  {
-    title: 'Marche en nature',
-    text: 'Des sentiers de la région, à un rythme tranquille, avec des pauses pour regarder.',
-    photoAlt: 'un sentier de garrigue au petit matin, personnes de dos',
-    tone: 'moss',
-    icon: 'path',
-  },
-  {
-    title: 'Coopération',
-    text: 'Des exercices simples à faire ensemble, sans compétition, dehors.',
-    photoAlt: 'un petit groupe qui franchit un passage ensemble, vu de loin',
-    tone: 'sand',
     icon: 'hands',
+    title: 'Faire ensemble',
+    text: 'Quelques exercices simples à faire à plusieurs, sans compétition. Juste de quoi se parler autrement.',
+    foot: '03 / Coopération',
   },
   {
-    title: 'Reconnex parents / ados',
-    text: 'Une demi-journée pour un parent et un ado, sans écran, côte à côte.',
-    photoAlt: 'un parent et un adolescent qui marchent côte à côte, de dos',
-    tone: 'sky',
-    icon: 'family',
+    icon: 'chat',
+    title: 'Petit groupe',
+    text: 'Trois à cinq personnes, pour que chacun ait la place de parler et d’écouter.',
+    foot: '04 / Groupe',
   },
-] as const;
+];
 ---
 
 <Base title={page.title} description={page.description} isHome bodyClass="page-home">
   <!-- 1. Hero -->
   <section class="hero" aria-labelledby="hero-title">
-    <div class="hero__frame">
-      <div class="hero__media" aria-hidden="true">
-        <!-- M1 : poster + vidéo en boucle. Ici, un dégradé provisoire de ciel vers --bg. -->
-      </div>
+    <div class="container">
+      <div class="hero__frame frame">
+        <div class="hero__media" aria-hidden="true">
+          <!-- M1 : poster + vidéo en boucle à la place de cette image provisoire -->
+          <ProvisionalImage src={heroImg} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="eager" badge="top-left" />
+        </div>
+        <div class="hero__shade" aria-hidden="true"></div>
 
-      <div class="hero__content">
-        <Eyebrow>{page.eyebrow}</Eyebrow>
-        <Headline as="h1" id="hero-title" text={page.h1} class="hero__title" />
-        <p class="hero__lead">{page.lead}</p>
-        <Button href={CTA_HREF} size="lg">{CTA_LABEL}</Button>
-      </div>
+        <div class="hero__content">
+          <span class="hero__tag glass">
+            <span class="hero__tag-dot" aria-hidden="true"></span>
+            {page.tag}
+          </span>
 
-      <ul class="facts" role="list">
-        {
-          facts.map((f) => (
-            <li class="fact">
-              <span class="fact__value serif">{f.value}</span>
-              <span class="fact__label small muted">{f.label}</span>
-            </li>
-          ))
-        }
+          <h1 id="hero-title" class="hero__title" data-proposal="slogan">
+            {h1Lines.map((line, i) => (
+              <>
+                {line}
+                {i < h1Lines.length - 1 && <br />}
+              </>
+            ))}
+          </h1>
+          <p class="hero__lead">{page.lead}</p>
+
+          <div class="hero__cta">
+            <Button href={CTA_HREF} variant="lime" size="lg" icon="arrow-right">{CTA_LABEL}</Button>
+            <Button href="#approche" variant="glass" size="lg" icon="chevron-down">Découvrir le format</Button>
+          </div>
+
+          <ul class="specs glass" role="list">
+            {specs.map((s) => (
+              <li>
+                <Icon name={s.icon} size={18} class="specs__icon" />
+                <span>{s.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. L'approche -->
+  <section class="section" id="approche" aria-labelledby="approche-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">L’approche Nó Made</span>
+        <h2 id="approche-title">Une sortie simple, dehors, en petit groupe.</h2>
+      </div>
+      <ul class="pillars" role="list">
+        {pillars.map((p, i) => (
+          <li class="pillar card card--hover" data-reveal style={`--reveal-delay: ${i * 70}ms`}>
+            <div>
+              <span class="pillar__icon"><Icon name={p.icon} size={24} /></span>
+              <h3 class="pillar__title">{p.title}</h3>
+              <p class="pillar__text small muted">{p.text}</p>
+            </div>
+            <span class="pillar__foot label-sm">{p.foot}</span>
+          </li>
+        ))}
       </ul>
     </div>
   </section>
 
-  <!-- 2. Offres -->
-  <section class="section offers" aria-labelledby="offers-title">
-    <div class="container offers__grid">
-      <div class="section-head offers__head" data-reveal>
-        <Eyebrow>Les sessions</Eyebrow>
-        <Headline as="h2" id="offers-title" text="Deux façons de sortir" highlight="sortir" />
-        <p class="muted">
-          Deux formats en phase de test : une balade guidée de 2h30, et une demi-journée hors écran.
-          Petits groupes, sentiers de la région {site.area}.
-        </p>
-        <a href="/offres/" class="text-link">Voir les offres en détail</a>
+  <!-- 3. Trois temps forts -->
+  <section class="section" id="temps-forts" aria-labelledby="temps-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Trois temps forts</span>
+        <h2 id="temps-title">Ce qu’on fait pendant une session</h2>
       </div>
+      <div class="moments">
+        <article class="moment card card--hover" data-reveal>
+          <div class="moment__media">
+            <ProvisionalImage src={marcheImg} alt="Un petit groupe qui marche sur un sentier, vu de dos" />
+            <span class="moment__pill glass label-sm">Temps 01</span>
+          </div>
+          <div class="moment__body">
+            <div>
+              <h3>Marcher</h3>
+              <p class="muted">On part d’un point de rendez-vous et on marche à un rythme tranquille. On s’arrête quand un endroit le mérite. Pas de montre, pas d’objectif.</p>
+            </div>
+            <div class="moment__foot small muted">
+              <span>Rythme tranquille · sentiers de la région</span>
+              <Icon name="walk" size={20} class="moment__icon" />
+            </div>
+          </div>
+        </article>
 
-      <div class="offers__cards">
-        {offers.map((offer, i) => <div data-reveal style={`--reveal-delay: ${i * 90}ms`}><OfferCard offer={offer} compact /></div>)}
-      </div>
+        <article class="moment card card--hover" data-reveal style="--reveal-delay: 80ms">
+          <div class="moment__media">
+            <ProvisionalImage src={mobiliteImg} alt="Une personne qui fait un exercice de mobilité en plein air" />
+            <span class="moment__pill glass label-sm">Temps 02</span>
+          </div>
+          <div class="moment__body">
+            <div>
+              <h3>Bouger, avec <Placeholder name="NOM DU PARTENAIRE" /></h3>
+              <p class="muted">Dans la demi-journée, une séquence de mobilité douce encadrée par <Placeholder name="NOM DU PARTENAIRE" />, éducateur diplômé. Adaptée à chacun, sans forcer.</p>
+            </div>
+            <div class="moment__foot small muted">
+              <span>Uniquement dans la demi-journée</span>
+              <Icon name="hands" size={20} class="moment__icon" />
+            </div>
+          </div>
+        </article>
 
-      <div class="offers__cta" data-reveal style="--reveal-delay: 120ms">
-        <HighlightCard />
+        <article class="moment card card--hover" data-reveal style="--reveal-delay: 160ms">
+          <div class="moment__media">
+            <ProvisionalImage src={respirationImg} alt="Une personne qui respire calmement face aux collines" />
+            <span class="moment__pill glass label-sm">Temps 03</span>
+          </div>
+          <div class="moment__body">
+            <div>
+              <h3>Respirer et parler</h3>
+              <p class="muted">On finit par un temps posé : on respire, on parle de ce qu’on a vécu, sans téléphone. C’est souvent le moment qu’on retient.</p>
+            </div>
+            <div class="moment__foot small muted">
+              <span>Fin de session · en petit groupe</span>
+              <Icon name="chat" size={20} class="moment__icon" />
+            </div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- 3. Comment ça marche -->
-  <section class="section how" aria-labelledby="how-title">
+  <!-- 4. Reconnex -->
+  <section class="section" id="reconnex" aria-labelledby="reconnex-title">
     <div class="container">
-      <div class="section-head" data-reveal>
-        <Eyebrow>Comment ça marche</Eyebrow>
-        <Headline as="h2" id="how-title" text="Trois étapes, pas plus" highlight="Trois" />
+      <div class="reconnex frame" data-reveal>
+        <div class="reconnex__visual">
+          <div class="reconnex__img frame">
+            <ProvisionalImage src={reconnexImg} alt="Un parent et un adolescent assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
+          </div>
+          <span class="reconnex__badge glass label-sm">
+            <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
+            Sans écran
+          </span>
+        </div>
+        <div class="reconnex__text">
+          <span class="reconnex__label eyebrow">Format parent / ado</span>
+          <h2 id="reconnex-title">Reconnex : une demi-journée parent / ado, sans écran</h2>
+          <p class="lead">Trois heures dehors, à deux. On marche, on fait quelques exercices ensemble, et on prend le temps de parler.</p>
+          <ul class="checks" role="list">
+            <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Sans pression :</strong> des exercices simples, à ton rythme et au sien.</span></li>
+            <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Téléphones dans le sac :</strong> l’attention va à l’autre et au sentier.</span></li>
+            <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Un vrai temps à deux :</strong> loin de la maison, loin des écrans.</span></li>
+          </ul>
+          <div class="reconnex__cta">
+            <Button href={`/contact/?offre=${halfDay?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnex</Button>
+            {duoPrice && (
+              <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · prix de test</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Déroulement -->
+  <section class="section" id="deroulement" aria-labelledby="deroulement-title">
+    <div class="container">
+      <div class="section-head section-head--center" data-reveal>
+        <span class="eyebrow">Déroulement</span>
+        <h2 id="deroulement-title">Trois étapes, pas plus</h2>
       </div>
       <ol class="steps" role="list">
-        {
-          steps.map((s, i) => (
-            <li class="step card" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
-              <span class="step__num serif" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <h3 class="step__title">{s.title}</h3>
-              <p class="step__text muted">{s.text}</p>
-            </li>
-          ))
-        }
+        {[
+          { t: 'Tu nous écris', d: 'Le formulaire ci-dessous : la session qui t’intéresse, le nombre de personnes, tes disponibilités.' },
+          { t: 'On cale une date', d: 'On te répond par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.' },
+          { t: 'On se retrouve dehors', d: 'Chaussures fermées, de l’eau dans le sac. Le téléphone reste dedans, le reste suit.' },
+        ].map((s, i) => (
+          <li class="step card" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+            <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{s.t}</h3>
+            <p class="muted">{s.d}</p>
+          </li>
+        ))}
       </ol>
     </div>
   </section>
 
-  <!-- 4. Les trois piliers -->
-  <section class="section pillars" aria-labelledby="pillars-title">
-    <div class="container pillars__grid">
-      <div class="section-head pillars__head" data-reveal>
-        <Eyebrow>Ce qu’on fait</Eyebrow>
-        <Headline as="h2" id="pillars-title" text="Marcher, coopérer, se retrouver dehors." highlight="dehors" />
-        <p class="muted">
-          Pas de discours, pas de performance. On sort, on marche, on fait quelques choses ensemble, on parle.
-          La partie physique, quand il y en a, est encadrée par l’éducateur partenaire.
-        </p>
-        <div class="pillars__actions">
-          <Button href={CTA_HREF}>{CTA_LABEL}</Button>
-          <Button href="/a-propos/" variant="secondary">Qui est derrière</Button>
+  <!-- 6. Prix -->
+  {entry && (
+    <section class="section section--tight" id="prix" aria-labelledby="prix-title">
+      <div class="container">
+        <div class="price frame" data-reveal>
+          <div class="price__glow" aria-hidden="true"></div>
+          <div class="price__grid">
+            <div class="price__text">
+              <span class="price__pill label-sm">Prix de test</span>
+              <h3 id="prix-title" class="price__title">{entry.data.title} : {entry.data.duration} en petit groupe</h3>
+              <p class="price__desc">{entry.data.summary}</p>
+            </div>
+            <div class="price__side">
+              <div class="price__amount">
+                <span class="label-sm price__amount-label">{entry.data.groupSize}</span>
+                <div>
+                  <strong>{formatPrice(entry.data.pricing[0].amountCents)}</strong>
+                  <span class="price__per">/ {entry.data.pricing[0].label.replace(/^par /, '')}</span>
+                </div>
+              </div>
+              <Button href={`/contact/?offre=${entry.data.slug}#demande`} variant="lime" size="lg" icon="arrow-right">Demander cette session</Button>
+              <a href="/offres/" class="price__link label-sm">Voir les deux offres</a>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="pillars__cards">
-        {
-          pillars.map((p, i) => (
-            <div data-reveal style={`--reveal-delay: ${i * 90}ms`}>
-              <PhotoCard title={p.title} text={p.text} photoAlt={p.photoAlt} tone={p.tone} icon={p.icon} />
-            </div>
-          ))
-        }
+    </section>
+  )}
+
+  <!-- 7. Contact -->
+  <section class="section" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section-head section-head--center" data-reveal>
+        <span class="eyebrow">Prends contact</span>
+        <h2 id="contact-title">Envie de sortir ? Écris-nous.</h2>
+        <p class="lead">Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email.</p>
+      </div>
+      <div class="contact__form" data-reveal>
+        <ContactForm />
       </div>
     </div>
   </section>
 
-  <!-- 5. Témoignages : uniquement de vrais témoignages, jamais avant (design.md §2, §7) -->
   {site.showTestimonials && <section class="section" aria-label="Témoignages" />}
 </Base>
 
 <style>
   /* ---------- Hero ---------- */
   .hero {
-    padding: var(--space-3);
+    padding-bottom: var(--space-6);
   }
 
   .hero__frame {
     position: relative;
-    display: grid;
-    grid-template-rows: 1fr auto; /* texte en haut, tuiles collées en bas du cadre */
-    gap: clamp(2.5rem, 2rem + 4vw, 5rem);
-    min-height: calc(100svh - var(--header-h) - 2 * var(--space-3));
-    padding: clamp(3rem, 2rem + 5vw, 6.5rem) var(--gutter) var(--space-4);
-    border-radius: var(--radius-card);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: min(85svh, 660px);
+    padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+    border: var(--border);
+    box-shadow: var(--shadow);
     isolation: isolate;
+  }
+
+  @media (max-width: 40em) {
+    .hero__frame {
+      min-height: 580px;
+    }
   }
 
   .hero__media {
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(90% 60% at 50% 100%, rgba(79, 107, 58, 0.16), transparent 70%),
-      linear-gradient(to bottom, var(--sky) 0%, #f1f2ec 55%, var(--bg) 100%);
+    z-index: 0;
+  }
+
+  .hero__media :global(.prov) {
+    border-radius: 0;
+  }
+
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(8, 32, 19, 0.9) 0%, rgba(8, 32, 19, 0.5) 45%, transparent 100%);
   }
 
   .hero__content {
+    position: relative;
+    z-index: 2;
     display: grid;
-    align-self: start;
-    align-content: start;
-    justify-items: center;
-    text-align: center;
-    gap: var(--space-5);
+    gap: var(--space-4);
+    justify-items: start;
+    max-width: 48rem;
+    color: var(--on-dark);
+  }
+
+  .hero__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-pill);
+    color: var(--green-900);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: var(--space-2);
+  }
+
+  .hero__tag-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--lime);
   }
 
   .hero__title {
-    font-size: var(--text-display);
-    max-width: 16ch;
+    color: var(--on-dark);
+    max-width: 18ch;
   }
 
   .hero__lead {
-    font-size: var(--text-lg);
-    color: var(--muted);
-    max-width: 34rem;
+    font-size: var(--body-lg);
+    line-height: 1.55;
+    color: var(--on-dark-muted);
+    max-width: 40rem;
   }
 
-  .facts {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-3);
-    align-self: end;
-    margin-top: auto;
-  }
-
-  .fact {
-    display: grid;
-    gap: var(--space-1);
-    padding: var(--space-5);
-    background: rgba(255, 255, 255, 0.82);
-    border: var(--border);
-    border-radius: var(--radius-inner);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-  }
-
-  .fact__value {
-    font-size: var(--text-2xl);
-    line-height: 1.05;
-    letter-spacing: var(--tracking-heading);
-  }
-
-  /* ---------- Offres ---------- */
-  /* Mobile : titre, cartes, carte lime. Desktop : cartes à gauche, titre + carte lime à droite. */
-  .offers__grid {
-    display: grid;
-    grid-template-areas:
-      'head'
-      'cards'
-      'cta';
-    gap: var(--space-6);
-  }
-
-  .offers__head {
-    grid-area: head;
-    margin-bottom: 0;
-  }
-
-  .offers__cards {
-    grid-area: cards;
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .offers__cta {
-    grid-area: cta;
-  }
-
-  .text-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    color: var(--moss);
-    font-weight: 500;
-    text-decoration: none;
-    min-height: var(--tap-min);
-  }
-
-  .text-link::after {
-    content: '→';
-    transition: transform var(--dur-fast) var(--ease-out);
-  }
-
-  .text-link:hover::after {
-    transform: translateX(3px);
-  }
-
-  .text-link:hover {
-    text-decoration: underline;
-  }
-
-  /* ---------- Étapes ---------- */
-  .steps {
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .step {
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-6) var(--space-5);
-  }
-
-  .step__num {
-    font-size: var(--text-2xl);
-    color: var(--moss);
-    line-height: 1;
-    margin-bottom: var(--space-3);
-  }
-
-  .step__text {
-    font-size: var(--text-sm);
-  }
-
-  /* ---------- Piliers ---------- */
-  .pillars__grid {
-    display: grid;
-    gap: var(--space-6);
-  }
-
-  .pillars__head {
-    margin-bottom: 0;
-  }
-
-  .pillars__actions {
+  .hero__cta {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-    margin-top: var(--space-2);
+    margin-block: var(--space-2) var(--space-5);
   }
 
-  .pillars__cards {
+  .specs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.25rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
+    color: var(--green-900);
+    font-size: var(--label-sm);
+    font-weight: 600;
+  }
+
+  .specs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .specs li + li {
+    position: relative;
+  }
+
+  .specs :global(.specs__icon) {
+    color: var(--green-600);
+  }
+
+  /* ---------- Piliers ---------- */
+  .pillars {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-6);
+  }
+
+  .pillar__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: var(--space-5);
+    border-radius: var(--radius-box);
+    background: var(--surface-low);
+    color: var(--green-900);
+  }
+
+  .pillar__title {
+    font-size: var(--text-sm-h);
+    margin-bottom: var(--space-2);
+  }
+
+  .pillar__foot {
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(194, 200, 193, 0.3);
+    color: var(--green-600);
+  }
+
+  /* ---------- Temps forts ---------- */
+  .moments {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .moment {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .moment__media {
+    position: relative;
+    height: 16rem;
+    border-radius: 0;
+  }
+
+  .moment__media :global(.prov) {
+    border-radius: 0;
+  }
+
+  .moment__pill {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-pill);
+    color: var(--green-900);
+    font-weight: 500;
+  }
+
+  .moment__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding: var(--space-6);
+  }
+
+  .moment__body h3 {
+    margin-bottom: var(--space-3);
+  }
+
+  .moment__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(194, 200, 193, 0.3);
+  }
+
+  .moment :global(.moment__icon) {
+    color: var(--green-600);
+  }
+
+  /* ---------- Reconnex ---------- */
+  .reconnex {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+    padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+    background: var(--surface-low);
+    border: var(--border);
+  }
+
+  .reconnex__visual {
+    position: relative;
+  }
+
+  .reconnex__img {
+    aspect-ratio: 16 / 11;
+    border: var(--border);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .reconnex__badge {
+    position: absolute;
+    right: 0.5rem;
+    bottom: -0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-pill);
+    color: var(--green-900);
+    box-shadow: var(--shadow);
+  }
+
+  .reconnex :global(.reconnex__badge-icon) {
+    color: var(--green-600);
+  }
+
+  .reconnex__text {
     display: grid;
     gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .reconnex__label {
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-pill);
+    background: rgba(197, 242, 96, 0.3);
+    border: 1px solid var(--lime);
+  }
+
+  .checks {
+    display: grid;
+    gap: var(--space-4);
+    margin-block: var(--space-2);
+  }
+
+  .checks li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    color: var(--ink-2);
+  }
+
+  .checks strong {
+    color: var(--green-900);
+    font-weight: 600;
+  }
+
+  .checks__dot {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.1rem;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--green-900);
+  }
+
+  .reconnex__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  /* ---------- Déroulement ---------- */
+  .steps {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .step {
+    padding: var(--space-6);
+  }
+
+  .step__num {
+    display: block;
+    margin-bottom: var(--space-4);
+    font-size: 3.25rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--surface-high);
+  }
+
+  .step h3 {
+    margin-bottom: var(--space-3);
+  }
+
+  /* ---------- Prix ---------- */
+  .section--tight {
+    padding-block: var(--space-8);
+  }
+
+  .price {
+    position: relative;
+    padding: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    background: var(--green-800);
+    color: var(--on-dark);
+    border: 1px solid rgba(194, 200, 193, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(8, 32, 19, 0.25);
+  }
+
+  .price__glow {
+    position: absolute;
+    right: -6rem;
+    top: -6rem;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 50%;
+    background: rgba(197, 242, 96, 0.1);
+    filter: blur(64px);
+    pointer-events: none;
+  }
+
+  .price__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .price__text {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    max-width: 40rem;
+  }
+
+  .price__pill {
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--lime);
+    color: var(--green-900);
+  }
+
+  .price__title {
+    color: var(--on-dark);
+    font-size: var(--text-xl);
+    letter-spacing: -0.02em;
+  }
+
+  .price__desc {
+    font-size: var(--body-lg);
+    color: rgba(232, 232, 231, 0.9);
+    line-height: 1.55;
+  }
+
+  .price__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .price__amount-label {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--surface-high);
+  }
+
+  .price__amount strong {
+    font-size: var(--text-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--lime);
+    line-height: 1.1;
+  }
+
+  .price__per {
+    margin-left: 0.25rem;
+    font-size: var(--text-sm-h);
+    color: var(--surface-high);
+  }
+
+  .price__link {
+    color: var(--on-dark-muted);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact__form {
+    max-width: 44rem;
+    margin-inline: auto;
   }
 
   /* ---------- Desktop ---------- */
   @media (min-width: 40em) {
-    .facts {
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-4);
-    }
-
-    .fact {
-      border-radius: calc(var(--radius-card) * 0.75);
+    .pillars {
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .steps {
       grid-template-columns: repeat(3, 1fr);
     }
-
-    .pillars__cards {
-      grid-template-columns: repeat(3, 1fr);
-    }
   }
 
   @media (min-width: 64em) {
-    .hero {
-      padding: var(--space-4);
+    .pillars {
+      grid-template-columns: repeat(4, 1fr);
     }
 
-    .offers__grid {
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      grid-template-rows: auto 1fr;
-      grid-template-areas:
-        'cards head'
-        'cards cta';
-      gap: var(--space-5) var(--space-8);
-      align-items: start;
+    .moments {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
     }
 
-    .offers__cards {
+    .reconnex {
       grid-template-columns: 1fr 1fr;
-      align-items: start;
+      gap: var(--space-9);
     }
 
-    .pillars__grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
-      gap: var(--space-8);
+    .price__grid {
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
+      gap: var(--space-8);
+    }
+
+    .price__side {
+      align-items: flex-end;
+      text-align: right;
     }
   }
 </style>

@@ -1,134 +1,124 @@
 ---
-/** Pied de page : 4 colonnes (Explorer, Infos pratiques, Légal, Suivre) et copyright (design.md §6). */
+/** Pied de page (design.md §6.8) : cadre teinté arrondi en haut, marque + une ligne, liens, copyright. */
 import Placeholder from './Placeholder.astro';
-import { site, nav, legalLinks, CTA_LABEL, CTA_HREF } from '@/data/site';
+import { site, nav, legalLinks } from '@/data/site';
 import { t } from '@/i18n';
 
 const year = new Date().getFullYear();
+const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
 ---
 
 <footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div class="footer__brand">
-        <a href="/" class="footer__name" aria-label={t('common.home')}>{site.shortName}</a>
-        <p class="small muted footer__tag">
-          Balades guidées et expériences nature en petit groupe, en région {site.area}.
-        </p>
-      </div>
-
-      <nav class="footer__col" aria-label={t('footer.explore')}>
-        <h2 class="footer__title">{t('footer.explore')}</h2>
-        <ul role="list">
-          {nav.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-
-      <div class="footer__col">
-        <h2 class="footer__title">{t('footer.practical')}</h2>
-        <ul role="list">
-          <li>{t('footer.area')}</li>
-          <li><a href={CTA_HREF}>{CTA_LABEL}</a></li>
-          <li><a href="/contact/#faq">{t('footer.faq')}</a></li>
-          <li><Placeholder name="ADRESSE EMAIL" /></li>
-        </ul>
-      </div>
-
-      <nav class="footer__col" aria-label={t('footer.legal')}>
-        <h2 class="footer__title">{t('footer.legal')}</h2>
-        <ul role="list">
-          {legalLinks.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-
-      <div class="footer__col">
-        <h2 class="footer__title">{t('footer.follow')}</h2>
-        <ul role="list">
-          {site.social.map((s) => (
-            <li>
-              {s.label} : <Placeholder name={s.placeholder.replace(/^\[|\]$/g, '')} />
-            </li>
-          ))}
-        </ul>
-      </div>
+  <div class="container footer__top">
+    <div class="footer__brand">
+      <a href="/" class="footer__name" aria-label={t('common.home')}>{site.name}</a>
+      <p class="small muted">Balades guidées et sorties nature en petit groupe, région {site.area}.</p>
     </div>
 
-    <p class="footer__copy small muted">© {year} {t('footer.copyright')}</p>
+    <nav aria-label={t('common.footerNav')}>
+      <ul class="footer__links" role="list">
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+        {site.social.map((s) => (
+          <li>
+            {s.label} : <Placeholder name={s.placeholder.replace(/^\[|\]$/g, '')} />
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container footer__bottom small muted">
+    <p>© {year} {site.name} — Région {site.area}. Tous droits réservés.</p>
+    <p class="footer__contact">
+      <span class="footer__dot" aria-hidden="true"></span>
+      <Placeholder name="ADRESSE EMAIL" />
+    </p>
   </div>
 </footer>
 
 <style>
   .footer {
-    margin-top: var(--section-gap);
-    padding-block: var(--space-8) var(--space-6);
+    margin-top: var(--space-10);
+    background: var(--surface-low);
     border-top: var(--border);
-    background: var(--surface);
-    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    border-radius: var(--radius-frame) var(--radius-frame) 0 0;
   }
 
-  .footer__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-7) var(--space-5);
+  .footer__top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-9) var(--space-6);
   }
 
   .footer__brand {
-    grid-column: 1 / -1;
-    max-width: 22rem;
+    max-width: 26rem;
+    display: grid;
+    gap: var(--space-2);
   }
 
   .footer__name {
+    font-size: var(--text-md);
     font-weight: 600;
-    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+    color: var(--green-900);
     text-decoration: none;
   }
 
-  .footer__tag {
-    margin-top: var(--space-3);
-  }
-
-  .footer__title {
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    font-size: var(--label-sm);
     font-weight: 600;
-    margin-bottom: var(--space-4);
+    color: var(--ink-2);
   }
 
-  .footer__col ul {
-    display: grid;
+  .footer__links a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--dur-fast) ease;
+  }
+
+  .footer__links a:hover {
+    color: var(--green-900);
+    text-decoration: underline;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
-    font-size: var(--text-sm);
-    color: var(--muted);
+    padding-block: var(--space-4) var(--space-6);
+    border-top: 1px solid rgba(194, 200, 193, 0.25);
   }
 
-  .footer__col a {
-    text-decoration: none;
-    color: var(--muted);
-    transition: color var(--dur-fast) var(--ease-out);
+  .footer__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
-  .footer__col a:hover {
-    color: var(--ink);
-  }
-
-  .footer__copy {
-    margin-top: var(--space-8);
-    padding-top: var(--space-5);
-    border-top: var(--border);
-    font-size: var(--text-xs);
+  .footer__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--lime);
   }
 
   @media (min-width: 48em) {
-    .footer__grid {
-      grid-template-columns: 1.6fr repeat(4, 1fr);
+    .footer__top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .footer__brand {
-      grid-column: auto;
+    .footer__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
   }
 </style>

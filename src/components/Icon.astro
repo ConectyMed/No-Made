@@ -1,0 +1,78 @@
+---
+/**
+ * Icônes en SVG inline (grille 24, trait 1.8). Pas de police d'icônes externe.
+ * Décoratives par défaut (aria-hidden) ; passer `label` pour une icône porteuse de sens.
+ */
+export type IconName =
+  | 'arrow-right'
+  | 'chevron-down'
+  | 'pin'
+  | 'users'
+  | 'leaf'
+  | 'walk'
+  | 'hands'
+  | 'chat'
+  | 'wind'
+  | 'check'
+  | 'phone-off'
+  | 'send'
+  | 'shield'
+  | 'menu'
+  | 'close'
+  | 'clock'
+  | 'euro'
+  | 'mail';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  label?: string;
+  class?: string;
+}
+const { name, size = 20, label, class: className } = Astro.props;
+
+const paths: Record<IconName, string> = {
+  'arrow-right': '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+  'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+  pin: '<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  users: '<circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M15 20a4.5 4.5 0 0 1 6 0"/>',
+  leaf: '<path d="M5 19c8 0 14-6 14-15-9 0-15 6-15 14 0 .3 0 .7.1 1Z"/><path d="M5 19c2-5 5-8 9-10"/>',
+  walk: '<circle cx="13" cy="4.5" r="1.8"/><path d="M10 21l2-6 3 2v4"/><path d="M8.5 13 10 9l3.5-1 2.5 3 3 1"/><path d="m10 9-1 4-2.5 2"/>',
+  hands: '<path d="M3 12l4-4 5 5"/><path d="M21 12l-4-4-5 5"/><path d="M8 13v5a4 4 0 0 0 8 0v-5"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/>',
+  wind: '<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h16a3 3 0 1 1-3 3"/><path d="M3 16h7a2.5 2.5 0 1 1-2.5 2.5"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  'phone-off': '<path d="M8 3h8a1 1 0 0 1 1 1v9"/><path d="M17 17v3a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V7"/><path d="m3 3 18 18"/>',
+  send: '<path d="M21 3 10 14"/><path d="M21 3 14 21l-4-7-7-4 18-7Z"/>',
+  shield: '<path d="M12 3 5 6v6c0 4.5 3 8 7 9 4-1 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/>',
+  menu: '<path d="M4 8h16"/><path d="M4 16h16"/>',
+  close: '<path d="m6 6 12 12"/><path d="m18 6-12 12"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  euro: '<path d="M18 6.5A7 7 0 0 0 7 12a7 7 0 0 0 11 5.5"/><path d="M4 10.5h9"/><path d="M4 13.5h9"/>',
+  mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
+};
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  set:html={paths[name]}
+/>
+
+<style>
+  .icon {
+    flex: none;
+    display: inline-block;
+    vertical-align: middle;
+  }
+</style>

@@ -1,32 +1,137 @@
 ---
-/** Contact / Demande de session. M0 : en-tête de page. M3 : formulaire, envoi d'email, FAQ. */
+/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug) et FAQ. */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
+import { site } from '@/data/site';
 
 const page = usePage('contact');
+
+const faq = [
+  {
+    q: 'Où ont lieu les sessions ?',
+    a: `En région ${site.area}, sur des sentiers choisis selon la saison et le groupe. Le point de rendez-vous exact est précisé par email une fois la date calée.`,
+  },
+  {
+    q: 'Faut-il être sportif ?',
+    a: 'Non. Ce sont des balades à un rythme tranquille, avec des pauses. La séquence mobilité de la demi-journée est encadrée par l’éducateur partenaire et s’adapte à chacun.',
+  },
+  {
+    q: 'Comment ça se passe pour payer ?',
+    a: 'Pas de paiement en ligne pour l’instant. On confirme la date par email, et le règlement se fait ensuite. Les conditions sont dans les CGV.',
+  },
+  {
+    q: 'Et s’il pleut ?',
+    a: null, // politique météo / annulation à définir
+  },
+  {
+    q: 'Qu’est-ce qu’il faut apporter ?',
+    a: 'Des chaussures fermées, de l’eau, une couche de plus selon la météo. Pour la demi-journée, une tenue confortable et un encas. Le téléphone reste dans le sac.',
+  },
+];
 ---
 
 <Base title={page.title} description={page.description}>
-  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
 
-  <section class="section" aria-label="Formulaire de demande">
-    <div class="container">
-      <div class="card notice">
-        <p class="muted">Le formulaire de demande et la FAQ arrivent au jalon M3.</p>
+  <section class="section section--top0" aria-label="Formulaire de demande">
+    <div class="container wrap">
+      <ContactForm selected={null} id="demande" />
+      <p class="small muted alt">
+        Tu préfères écrire directement ? <Placeholder name="ADRESSE EMAIL" />
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--top0" id="faq" aria-labelledby="faq-title">
+    <div class="container wrap">
+      <div class="section-head">
+        <span class="eyebrow">Questions fréquentes</span>
+        <h2 id="faq-title">Avant de nous écrire</h2>
+      </div>
+      <div class="faq">
+        {faq.map((item) => (
+          <details class="faq__item card">
+            <summary class="faq__q">{item.q}</summary>
+            <p class="faq__a muted">
+              {item.a ?? <><Placeholder name="CONDITIONS MÉTÉO ET ANNULATION" /> (à définir dans les CGV).</>}
+            </p>
+          </details>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section" id="faq" aria-labelledby="faq-title">
-    <div class="container">
-      <h2 id="faq-title" class="visually-hidden">Questions fréquentes</h2>
-    </div>
-  </section>
+  <script>
+    // Pré-sélection de l'offre depuis l'URL (?offre=slug), sans rendu serveur.
+    const slug = new URLSearchParams(location.search).get('offre');
+    const select = document.querySelector<HTMLSelectElement>('#demande-offer');
+    if (slug && select && [...select.options].some((o) => o.value === slug)) select.value = slug;
+  </script>
 </Base>
 
 <style>
-  .notice {
-    padding: var(--space-6);
+  .section--top0 {
+    padding-top: 0;
+  }
+
+  .wrap {
+    max-width: calc(44rem + 2 * var(--gutter));
+  }
+
+  .alt {
+    margin-top: var(--space-4);
+    text-align: center;
+  }
+
+  .faq {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .faq__item {
+    padding: 0 var(--space-5);
+  }
+
+  .faq__q {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 3.5rem;
+    padding-block: var(--space-4);
+    font-weight: 600;
+    color: var(--green-900);
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q::after {
+    content: '+';
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: var(--surface-low);
+    color: var(--green-600);
+    font-weight: 500;
+    transition: transform var(--dur-base) ease;
+  }
+
+  .faq__item[open] .faq__q::after {
+    transform: rotate(45deg);
+  }
+
+  .faq__a {
+    padding-bottom: var(--space-5);
+    max-width: 60ch;
   }
 </style>

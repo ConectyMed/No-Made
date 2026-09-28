@@ -1,26 +1,161 @@
 ---
-/** À propos. M0 : en-tête de page. M2 : parcours + éducateur partenaire (placeholders). */
+/**
+ * À propos : le parcours du fondateur (biographie, jamais présenté comme contenu de session)
+ * et l'éducateur partenaire (placeholders tant que les informations manquent).
+ */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
+import PlaceholderImage from '@/components/PlaceholderImage.astro';
+import Placeholder from '@/components/Placeholder.astro';
+import Button from '@/components/Button.astro';
 import { usePage } from '@/i18n';
+import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
 
 const page = usePage('about');
 ---
 
 <Base title={page.title} description={page.description}>
-  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
 
-  <section class="section" aria-label="Parcours">
+  <section class="section section--top0" aria-labelledby="story-title">
+    <div class="container story">
+      <div class="story__photo frame" data-reveal>
+        <PlaceholderImage alt="photo personnelle, Machu Picchu / Huayna Picchu (à fournir)" ratio="4 / 5" tone="sky" />
+      </div>
+      <div class="story__text prose" data-reveal style="--reveal-delay: 100ms">
+        <h2 id="story-title">Le parcours</h2>
+        <p>
+          Dix ans de voyages en autonomie, sac sur le dos. Quinze ans dans l’hôtellerie et la restauration, à
+          accueillir des gens et à faire en sorte que ça se passe bien. Et depuis longtemps, le goût de transmettre.
+        </p>
+        <p>
+          À côté de ça, une pratique personnelle du jiu-jitsu brésilien, de l’escalade, de la boxe et de la
+          préparation physique. Ce n’est pas ce qu’on fait pendant les sessions : ça m’a surtout appris à écouter un
+          corps, un rythme, un groupe.
+        </p>
+        <p>
+          Nó Made Project est né de quelque chose de simple : sortir, marcher, poser le téléphone et parler. En
+          petit groupe, sur les sentiers de la région {site.area}. Rien de plus, et c’est déjà beaucoup.
+        </p>
+        <p class="small muted">Prénom, nom et photo : <Placeholder name="À COMPLÉTER" /></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--top0" id="partenaire" aria-labelledby="partner-title">
     <div class="container">
-      <div class="card notice">
-        <p class="muted">Le parcours et la présentation de l’éducateur partenaire arrivent au jalon M2.</p>
+      <div class="partner frame" data-reveal>
+        <div class="partner__text">
+          <span class="eyebrow">L’éducateur partenaire</span>
+          <h2 id="partner-title">La partie physique, c’est <Placeholder name="NOM DU PARTENAIRE" /></h2>
+          <p class="lead">
+            Quand une session comprend de la mobilité ou de l’exercice physique, c’est <Placeholder name="NOM DU PARTENAIRE" />,
+            éducateur diplômé, qui l’encadre. Pas moi.
+          </p>
+          <dl class="partner__facts">
+            <div>
+              <dt>Diplôme</dt>
+              <dd><Placeholder name="DIPLÔME" /></dd>
+            </div>
+            <div>
+              <dt>Carte professionnelle</dt>
+              <dd><Placeholder name="NUMÉRO DE CARTE PROFESSIONNELLE" /></dd>
+            </div>
+            <div>
+              <dt>Intervient sur</dt>
+              <dd>La séquence mobilité de la <a href="/offres/#demi-journee-hors-ecran">Demi-journée hors écran</a></dd>
+            </div>
+          </dl>
+          <Button href={CTA_HREF} variant="dark" icon="arrow-right">{CTA_LABEL}</Button>
+        </div>
+        <div class="partner__photo frame">
+          <PlaceholderImage alt="portrait de l’éducateur partenaire (à fournir)" ratio="4 / 5" tone="moss" />
+        </div>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .notice {
-    padding: var(--space-6);
+  .section--top0 {
+    padding-top: 0;
+  }
+
+  .story {
+    display: grid;
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .story__photo {
+    max-width: 22rem;
+    border: var(--border);
+  }
+
+  .story__text h2 {
+    margin-top: 0;
+    font-size: var(--text-xl);
+    color: var(--green-900);
+  }
+
+  .partner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+    padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+    background: var(--surface-low);
+    border: var(--border);
+  }
+
+  .partner__text {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .partner__facts {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    margin-block: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(194, 200, 193, 0.5);
+  }
+
+  .partner__facts div {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .partner__facts dt {
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--green-600);
+  }
+
+  .partner__facts dd {
+    color: var(--ink-2);
+  }
+
+  .partner__facts a {
+    color: var(--green-600);
+  }
+
+  .partner__photo {
+    max-width: 24rem;
+    border: var(--border);
+    justify-self: center;
+  }
+
+  @media (min-width: 56em) {
+    .story {
+      grid-template-columns: 22rem minmax(0, 1fr);
+      gap: var(--space-9);
+    }
+
+    .partner {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: var(--space-9);
+    }
   }
 </style>

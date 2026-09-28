@@ -1,12 +1,12 @@
 ---
-/** Offres : une carte détaillée par session, alimentée par src/content/offers/fr. */
+/** Offres : une carte détaillée par session (src/content/offers/fr), infos pratiques, contact. */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import OfferCard from '@/components/OfferCard.astro';
-import HighlightCard from '@/components/HighlightCard.astro';
+import Button from '@/components/Button.astro';
 import { usePage } from '@/i18n';
-import { site } from '@/data/site';
+import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
 
 const page = usePage('offers');
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
@@ -15,15 +15,15 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 ---
 
 <Base title={page.title} description={page.description}>
-  <PageIntro eyebrow={page.eyebrow} title={page.h1} highlight={page.hlWord} lead={page.lead} />
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
 
-  <section class="section" aria-label="Les sessions">
+  <section class="section section--top0" aria-label="Les sessions">
     <div class="container list">
       {offers.map((offer, i) => <div data-reveal style={`--reveal-delay: ${i * 90}ms`}><OfferCard offer={offer} headingLevel="h2" /></div>)}
     </div>
   </section>
 
-  <section class="section" aria-label="Infos pratiques">
+  <section class="section section--top0" aria-label="Infos pratiques">
     <div class="container practical">
       <div class="card practical__info" data-reveal>
         <h2 class="practical__title">Bon à savoir</h2>
@@ -34,22 +34,28 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
           <li>Ce sont des balades et des temps dehors, pas des séances de sport. La séquence mobilité de la demi-journée est encadrée par l’éducateur partenaire.</li>
         </ul>
       </div>
-      <div data-reveal style="--reveal-delay: 120ms">
-        <HighlightCard title="Une question avant de choisir ?" text="Écris-nous, on te répond simplement. Tu peux aussi directement demander une session." />
+      <div class="teaser frame" data-reveal style="--reveal-delay: 120ms">
+        <h2 class="teaser__title">Une question avant de choisir ?</h2>
+        <p class="teaser__text">Écris-nous, on te répond simplement. Tu peux aussi directement demander une session.</p>
+        <Button href={CTA_HREF} variant="lime" icon="arrow-right">{CTA_LABEL}</Button>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
+  .section--top0 {
+    padding-top: 0;
+  }
+
   .list {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
 
   .practical {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
 
   .practical__info {
@@ -57,7 +63,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   }
 
   .practical__title {
-    font-size: var(--text-xl);
+    font-size: var(--text-md);
     margin-bottom: var(--space-4);
   }
 
@@ -65,12 +71,34 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     display: grid;
     gap: var(--space-3);
     padding-left: 1.1em;
-    color: var(--muted);
-    font-size: var(--text-sm);
+    color: var(--ink-2);
+    font-size: var(--body-sm);
+    line-height: 1.55;
   }
 
   .practical__list a {
-    color: var(--moss);
+    color: var(--green-600);
+  }
+
+  .teaser {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    align-content: start;
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    background: var(--green-800);
+    color: var(--on-dark);
+  }
+
+  .teaser__title {
+    color: var(--on-dark);
+    font-size: var(--text-md);
+  }
+
+  .teaser__text {
+    color: var(--on-dark-muted);
+    font-size: var(--body-sm);
+    max-width: 36ch;
   }
 
   @media (min-width: 56em) {

@@ -1,63 +1,63 @@
 /*
-  Design tokens — Nó Made Project
-  Source : docs/design.md §3. Tout est en variables CSS pour pouvoir
-  remplacer la palette d'un seul coup quand l'identité finale arrive.
-
-  Deux couches :
-  1. Palette brute (--palette-*) : les valeurs estimées de design.md.
-  2. Tokens sémantiques (--bg, --ink, …) : ce que les composants utilisent.
-  Pour changer de palette, ne toucher qu'à la couche 1.
+  Design tokens — Nó Made Project (v2, d'après la maquette Stitch)
+  Source : docs/design.md §3. Tout est en variables CSS.
+  Pour changer de palette : ne toucher qu'à la couche 1.
 */
 
 :root {
-  /* ---------- 1. Palette brute (estimée, à remplacer) ---------- */
-  --palette-offwhite: #f7f6f2;
-  --palette-white: #ffffff;
-  --palette-ink: #141414;
-  --palette-grey: #6f6f6f;
-  --palette-moss: #4f6b3a;
-  --palette-moss-dark: #3a5229;
-  --palette-lime: #d6ec6e;
-  --palette-line: rgba(20, 20, 20, 0.08);
+  /* ---------- 1. Palette brute ---------- */
+  --p-offwhite: #f9f9f8;
+  --p-surface-low: #f3f4f3;
+  --p-white: #ffffff;
+  --p-surface-high: #e8e8e7;
+  --p-ink: #1a1c1c;
+  --p-ink-2: #424843;
+  --p-green-900: #082013;
+  --p-green-800: #1e3527;
+  --p-green-600: #4c6700;
+  --p-lime: #c5f260;
+  --p-lime-dim: #aad547;
+  --p-outline-variant: #c2c8c1;
+  --p-outline: #737973;
 
   /* ---------- 2. Tokens sémantiques ---------- */
-  --bg: var(--palette-offwhite);
-  --surface: var(--palette-white);
-  --ink: var(--palette-ink);
-  --muted: var(--palette-grey);
-  --moss: var(--palette-moss);
-  --moss-dark: var(--palette-moss-dark);
-  --lime: var(--palette-lime);
-  --line: var(--palette-line);
+  --bg: var(--p-offwhite);
+  --surface-low: var(--p-surface-low);
+  --surface: var(--p-white);
+  --surface-high: var(--p-surface-high);
+  --ink: var(--p-ink);
+  --ink-2: var(--p-ink-2);
+  --green-900: var(--p-green-900);
+  --green-800: var(--p-green-800);
+  --green-600: var(--p-green-600);
+  --lime: var(--p-lime);
+  --lime-dim: var(--p-lime-dim);
+  --line: rgba(194, 200, 193, 0.4);
+  --line-strong: rgba(194, 200, 193, 0.7);
+  --outline: var(--p-outline);
+  --focus: var(--green-600);
 
-  /* Dérivés */
-  --on-moss: var(--palette-white); /* texte sur bouton moss : 6.0:1 */
-  --on-lime: var(--palette-ink); /* texte sur lime : 14.1:1. Jamais de blanc sur lime. */
-  --sky: #eef0ec; /* [À AJUSTER M1] : couleur du ciel du poster pour fondre la vidéo dans --bg */
-  --focus: var(--moss);
-  --overlay: rgba(247, 246, 242, 0.96);
-  --card-shadow: 0 1px 2px rgba(20, 20, 20, 0.03), 0 12px 32px -20px rgba(20, 20, 20, 0.18);
-  --card-shadow-hover: 0 2px 4px rgba(20, 20, 20, 0.04), 0 20px 40px -20px rgba(20, 20, 20, 0.22);
+  --on-dark: var(--p-white);
+  --on-dark-muted: rgba(255, 255, 255, 0.82);
+  --glass: rgba(255, 255, 255, 0.85);
+  --shadow: 0 10px 30px -10px rgba(30, 53, 39, 0.05);
+  --shadow-hover: 0 18px 40px -16px rgba(30, 53, 39, 0.16);
 
   /* ---------- Typographie ---------- */
-  --font-serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Échelle fluide (clamp). Mobile → desktop. */
-  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
-  --text-sm: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
-  --text-base: clamp(1rem, 0.97rem + 0.2vw, 1.0625rem);
-  --text-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
-  --text-xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
-  --text-2xl: clamp(1.875rem, 1.5rem + 1.6vw, 2.5rem);
-  --text-3xl: clamp(2.375rem, 1.8rem + 2.6vw, 3.5rem);
-  --text-display: clamp(2.875rem, 2rem + 4.4vw, 5.25rem);
-
-  --leading-tight: 1.05;
-  --leading-snug: 1.2;
-  --leading-body: 1.6;
-  --tracking-display: -0.02em;
-  --tracking-heading: -0.015em;
+  --text-display: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem); /* 36 → 56 */
+  --leading-display: 1.15;
+  --text-xl: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem); /* 28 → 40 */
+  --text-lg: 1.75rem; /* 28 */
+  --text-md: 1.375rem; /* 22 */
+  --text-sm-h: 1.125rem; /* 18 */
+  --body-lg: 1.125rem; /* 18 */
+  --body: 0.9375rem; /* 15 */
+  --body-sm: 0.8125rem; /* 13 */
+  --label: 0.875rem; /* 14 */
+  --label-sm: 0.75rem; /* 12 */
+  --label-upper: 0.75rem; /* 12 */
 
   /* ---------- Espacement ---------- */
   --space-1: 0.25rem;
@@ -66,29 +66,31 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
-  --space-7: 3rem;
-  --space-8: 4rem;
-  --space-9: 6rem;
-  --section-gap: clamp(4rem, 3rem + 5vw, 7.5rem);
-  --gutter: clamp(1.25rem, 4vw, 3.6rem);
-  --content-max: 75rem; /* ~1200px */
-  --prose-max: 42rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-9: 4rem;
+  --space-10: 6rem;
+  --section: clamp(4rem, 3rem + 3vw, 6rem);
+  --gutter: clamp(1rem, 0.5rem + 2.2vw, 3rem);
+  --content-max: 80rem;
+  --prose-max: 44rem;
 
   /* ---------- Formes ---------- */
-  --radius-card: clamp(1.5rem, 1.25rem + 1vw, 2rem); /* 24–32px */
-  --radius-inner: 1rem;
+  --radius-frame: 1.5rem;
+  --radius-card: 1.5rem;
+  --radius-box: 1rem;
   --radius-pill: 999px;
   --border: 1px solid var(--line);
 
   /* ---------- Mouvement ---------- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* expo-like */
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-fast: 160ms;
-  --dur-base: 320ms;
-  --dur-slow: 950ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 700ms;
   --dur-media: 1200ms;
 
   /* ---------- Layout ---------- */
-  --header-h: 4.5rem;
-  --tap-min: 2.75rem; /* 44px */
+  --header-h: 4rem;
+  --header-offset: 6rem; /* header flottant + marge */
+  --tap-min: 2.75rem;
 }

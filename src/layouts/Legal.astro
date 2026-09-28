@@ -1,8 +1,5 @@
 ---
-/**
- * Gabarit des trois pages légales (/mentions-legales, /cgv, /confidentialite).
- * Le contenu (modèles à compléter) est rédigé au jalon M4.
- */
+/** Gabarit des trois pages légales (/mentions-legales, /cgv, /confidentialite). Contenu au jalon M4. */
 import Base from './Base.astro';
 import { legalLinks } from '@/data/site';
 
@@ -10,7 +7,6 @@ interface Props {
   title: string;
   description: string;
   h1: string;
-  /** Date de dernière mise à jour, affichée sous le titre quand elle existe. */
   updated?: string;
 }
 
@@ -46,7 +42,7 @@ const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
   .legal {
     display: grid;
     gap: var(--space-6);
-    padding-block: clamp(2.5rem, 2rem + 3vw, 5rem);
+    padding-block: clamp(1.5rem, 1rem + 2vw, 3rem) var(--section);
   }
 
   .legal__nav ul {
@@ -63,32 +59,32 @@ const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
     border-radius: var(--radius-pill);
     border: var(--border);
     background: var(--surface);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--muted);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--ink-2);
     text-decoration: none;
   }
 
   .legal__nav a[aria-current='page'] {
-    color: var(--ink);
-    border-color: rgba(20, 20, 20, 0.25);
+    color: var(--green-900);
+    border-color: var(--outline);
   }
 
   .legal__body h1 {
-    font-size: var(--text-3xl);
+    font-size: var(--text-xl);
     margin-bottom: var(--space-2);
   }
 
   @media (min-width: 56em) {
     .legal {
       grid-template-columns: 14rem minmax(0, 1fr);
-      gap: var(--space-8);
+      gap: var(--space-9);
       align-items: start;
     }
 
     .legal__nav {
       position: sticky;
-      top: calc(var(--header-h) + var(--space-5));
+      top: var(--header-offset);
     }
 
     .legal__nav ul {

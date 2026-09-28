@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nó Made Project — Marche, Mobilité &amp; Respiration dans le Var</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-high": "#e8e8e7",
+            "surface-container-low": "#f3f4f3",
+            "surface": "#f9f9f8",
+            "on-tertiary-fixed": "#171d18",
+            "on-surface-variant": "#424843",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#424842",
+            "on-tertiary-container": "#949a92",
+            "on-secondary-fixed": "#141f00",
+            "on-error": "#ffffff",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#dee4db",
+            "surface-container-highest": "#e2e2e2",
+            "surface-bright": "#f9f9f8",
+            "on-primary-fixed-variant": "#344c3d",
+            "surface-container": "#eeeeed",
+            "inverse-surface": "#2f3130",
+            "tertiary-fixed-dim": "#c2c8c0",
+            "on-background": "#1a1c1c",
+            "outline-variant": "#c2c8c1",
+            "on-secondary-container": "#516e00",
+            "surface-container-lowest": "#ffffff",
+            "error": "#ba1a1a",
+            "background": "#f9f9f8",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#cee9d4",
+            "primary-fixed-dim": "#b2cdb9",
+            "on-primary-container": "#849e8c",
+            "secondary-fixed": "#c5f260",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#e2e2e2",
+            "secondary": "#4c6700",
+            "surface-dim": "#dadad9",
+            "inverse-on-surface": "#f1f1f0",
+            "tertiary": "#171d18",
+            "primary": "#082013",
+            "on-secondary-fixed-variant": "#384e00",
+            "on-primary": "#ffffff",
+            "secondary-container": "#c5f260",
+            "on-surface": "#1a1c1c",
+            "outline": "#737973",
+            "on-primary-fixed": "#082013",
+            "inverse-primary": "#b2cdb9",
+            "tertiary-container": "#2c322c",
+            "secondary-fixed-dim": "#aad547",
+            "primary-container": "#1e3527",
+            "surface-tint": "#4c6454"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-2xl": "3rem",
+            "margin-xl": "6rem",
+            "margin-lg": "4rem",
+            "margin-sm": "1rem",
+            "margin-md": "2.5rem",
+            "gutter": "1.5rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-xs": "0.5rem",
+            "space-sm": "0.75rem",
+            "space-2xs": "0.25rem",
+            "space-3xl": "4.5rem",
+            "space-4xl": "6rem",
+            "margin": "1.5rem",
+            "gutter-lg": "2.5rem",
+            "space-md": "1rem",
+            "gutter-sm": "1rem"
+          },
+          "fontFamily": {
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-uppercase": ["Plus Jakarta Sans"],
+            "display-hero-mobile": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "display-hero": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-xl-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-md": ["15px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-uppercase": ["11px", { "lineHeight": "16px", "letterSpacing": "0.12em", "fontWeight": "700" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-md text-body-md selection:bg-secondary-fixed selection:text-primary">
+<!-- ========================================================================= -->
+<!-- 1. TOP NAV BAR (Shared Component Execution)                              -->
+<!-- ========================================================================= -->
+<header class="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl rounded-full z-50 bg-surface-container-lowest/80 dark:bg-tertiary-container/80 backdrop-blur-md border border-outline-variant/40 dark:border-outline/20 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)]">
+<div class="flex items-center justify-between px-6 py-3.5 w-full">
+<!-- Brand Logo -->
+<a class="font-headline-sm text-headline-sm tracking-tight text-primary dark:text-surface flex items-center gap-2 group" href="#">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed transition-transform duration-200 group-hover:scale-125"></span>
+<span>Nó Made Project</span>
+</a>
+<!-- Desktop Navigation Links -->
+<nav class="hidden md:flex items-center gap-7">
+<a class="font-label-md text-label-md text-primary dark:text-secondary-fixed font-semibold hover:opacity-90 transition-all duration-200" href="#experience">L'expérience</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-surface transition-colors" href="#piliers">Marche &amp; Mobilité</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-surface transition-colors" href="#reconnex">Reconnex</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-surface transition-colors" href="#deroulement">Déroulement</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-surface transition-colors" href="#tarifs">Tarifs</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-container text-surface font-label-md text-label-md hover:opacity-90 active:scale-[0.98] transition-all duration-150" href="#contact">
+<span>Réserver ta session</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="sm:hidden flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-surface" href="#contact">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+</a>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- 2. HERO SECTION                                                          -->
+<!-- ========================================================================= -->
+<section class="relative pt-28 pb-16 md:pt-36 md:pb-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+<div class="relative w-full rounded-3xl overflow-hidden min-h-[580px] md:min-h-[660px] flex flex-col justify-end p-6 sm:p-10 md:p-16 border border-outline-variant/40 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)]">
+<!-- Background Image -->
+<img alt="Lever de soleil sur les sentiers rocheux de l'arrière-pays varois en Provence" class="absolute inset-0 w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDot4Pu8c9Mj8Sx4eOO4ZnPEXNi61lkn8PhI11mOO62cXwpWiVKglXElMPSNreSLovixqq0_964TNeEPnv-65NT_bmYFz4zTZ1scsEtZP5kYbQ1J_6euzhY4mg9qChcqHBCcI0VHyGqJ4mhxeVSiwRMW86AkCKJWzr9My0ZJoUcYFxtjygwnZTxHPPPJjnOaVTAiVNlRfUxspfSuix3WCo8oFHHrTiNa_Y9O5HxToe3GBO72yfNepy1"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent"></div>
+<!-- Content Floating Inside Hero -->
+<div class="relative z-10 max-w-3xl">
+<!-- Floating Live Tag -->
+<div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/40 mb-5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary tracking-wide">Aperçu vidéo en boucle • Lever de soleil dans le Var</span>
+</div>
+<h1 class="font-display-hero-mobile md:font-display-hero text-display-hero-mobile md:text-display-hero text-surface-container-lowest tracking-tight mb-4">
+          Ralentis. Respire.<br/>Reconnecte-toi avec l’essentiel.
+        </h1>
+<p class="font-body-lg text-body-lg text-surface-bright/90 mb-8 max-w-2xl">
+          Des parenthèses guidées en petit comité dans l’arrière-pays varois, alliant marche consciente, mobilité naturelle et respiration active. Pour les 30-50 ans et les duos parent-ado.
+        </p>
+<!-- CTA Row -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
+<a class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md hover:bg-secondary-fixed-dim transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] shadow-sm" href="#contact">
+<span>Réserver ta session</span>
+<span class="material-symbols-outlined text-[18px]">east</span>
+</a>
+<a class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-surface-container-lowest/80 text-primary backdrop-blur-sm border border-outline-variant/50 font-label-md text-label-md hover:bg-surface-container-lowest transition-all" href="#experience">
+<span>Découvrir le format</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</a>
+</div>
+<!-- Experience Spec Bar -->
+<div class="inline-flex flex-wrap items-center gap-3 sm:gap-6 px-5 py-3 rounded-2xl md:rounded-full bg-surface-container-lowest/85 backdrop-blur-md border border-outline-variant/40 text-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">location_on</span>
+<span class="font-label-sm text-label-sm font-semibold">Var, Provence</span>
+</div>
+<span class="hidden sm:inline w-px h-4 bg-outline-variant/60"></span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">groups</span>
+<span class="font-label-sm text-label-sm font-semibold">4 à 8 personnes max</span>
+</div>
+<span class="hidden sm:inline w-px h-4 bg-outline-variant/60"></span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">nature</span>
+<span class="font-label-sm text-label-sm font-semibold">100% plein air</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 3. INTRO SECTION (Ce qu'est une session)                                 -->
+<!-- ========================================================================= -->
+<section class="py-16 md:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="experience">
+<div class="max-w-3xl mb-14 md:mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-3">L’APPROCHE NÓ MADE</span>
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary tracking-tight">
+        Une parenthèse brute et bienveillante pour ton corps et ton esprit.
+      </h2>
+</div>
+<!-- 4-Pillar Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Pillar 1 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 hover:-translate-y-1 transition-all duration-200 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.03)] flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[24px]">forest</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Nature préservée</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Massifs calcaires sauvages, senteurs de pinède et crêtes secrètes du Var, loin de l’agitation côtière.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-secondary font-semibold">
+          01 / Immersion
+        </div>
+</div>
+<!-- Pillar 2 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 hover:-translate-y-1 transition-all duration-200 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.03)] flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[24px]">directions_walk</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Corps en mouvement</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Déverrouillage articulaire doux et marche libre pour réveiller chaque muscle sans forcer ni chercher la performance.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-secondary font-semibold">
+          02 / Mobilité
+        </div>
+</div>
+<!-- Pillar 3 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 hover:-translate-y-1 transition-all duration-200 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.03)] flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[24px]">air</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Esprit allégé</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Protocoles guidés de respiration consciente pour réguler le système nerveux et déposer la charge mentale quotidienne.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-secondary font-semibold">
+          03 / Clarté
+        </div>
+</div>
+<!-- Pillar 4 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 hover:-translate-y-1 transition-all duration-200 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.03)] flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-[24px]">diversity_1</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Petit comité</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Jamais plus de 8 personnes par session pour garantir une écoute réelle, une dynamique chaleureuse et fluide.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 font-label-sm text-label-sm text-secondary font-semibold">
+          04 / Intimité
+        </div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 4. EXPERIENCE CARDS (3 Piliers)                                          -->
+<!-- ========================================================================= -->
+<section class="py-16 md:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="piliers">
+<div class="max-w-3xl mb-14 md:mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-3">TROIS TEMPS FORTS</span>
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary tracking-tight">
+        Chaque sortie réunit trois dimensions complémentaires
+      </h2>
+</div>
+<!-- 3 Cards Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1: Marche -->
+<div class="rounded-3xl bg-surface-container-lowest border border-outline-variant/40 overflow-hidden shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)] hover:-translate-y-1.5 transition-all duration-200 flex flex-col">
+<div class="relative h-64 overflow-hidden">
+<img alt="Petit groupe en marche consciente sur les chemins ensoleillés du Var" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7umkIPDzsqIcz73VDqXVr0OMupRDoYtN3SaoJjS5lYjVjphm4y_LQTXtpykLnDdGIGGAlnxI2A7kcHLqi2tdey5IwXPejqynFxIvmHu8TkDAwO5YKBTywpXF8vtQ8pI0y3NjQyI0FZAVoghs471NQEMPTTQ_a2fW1sfNIOmTu38v4lZe8SkDBNX3YoPF9No1SvnQLTjYg-eNBSmU3D4xXZ_9lPrnhbkzJwIZvLZjrhBjnGDVIrgyu"/>
+<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/40 font-label-sm text-label-sm text-primary font-medium">
+            Pilier 01
+          </div>
+</div>
+<div class="p-8 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">1. Marche consciente &amp; immersive</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Cheminer à pas mesurés sur les chemins de garrigue. On apprend à poser son regard, à écouter la résonance du pas sur le calcaire et à s'ancrer dans l'instant sans montre ni objectif kilométrique.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">Rythme modéré • 5 à 7 km</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">hiking</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Mobilité -->
+<div class="rounded-3xl bg-surface-container-lowest border border-outline-variant/40 overflow-hidden shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)] hover:-translate-y-1.5 transition-all duration-200 flex flex-col">
+<div class="relative h-64 overflow-hidden">
+<img alt="Séance d'étirements et de mobilité fonctionnelle en plein air surplombant un village provençal" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Zw3WpC94xH25gfG5M0KGVWb0GMNHqKrlIrlABGOrnZOHMA8XHcIU9QRubK78W0bBCwAqygsXA-QOLboAd_j6fSMMjDYuQU6xOIbt8fbveVIORpk82v2yMqh00olc4onGveEagkMAanDL9qwmY3oVb27cbpENZGMovoQv3S7qOm4NlHICRaaEbdMHllu7qoSZw0vWzZ7EidSNWt5I091Qex43RU8PMcPShlrNdhD6JNaYC4ZVzBri"/>
+<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/40 font-label-sm text-label-sm text-primary font-medium">
+            Pilier 02
+          </div>
+</div>
+<div class="p-8 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">2. Mobilité &amp; déverrouillage corporel</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Sur un belvédère ensoleillé, nous dénouons le dos, relâchons les trapèzes et réveillons les articulations par des mouvements instinctifs issus du yoga fonctionnel et du mouvement naturel.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">Postures au sol &amp; debout</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">self_improvement</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Respiration -->
+<div class="rounded-3xl bg-surface-container-lowest border border-outline-variant/40 overflow-hidden shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)] hover:-translate-y-1.5 transition-all duration-200 flex flex-col">
+<div class="relative h-64 overflow-hidden">
+<img alt="Méditation et respiration consciente debout face aux collines de pins en Provence" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdpuAhJ7CfwvWq8N8CH6f2mzZL_CClOmblKzxc1zen5T6utGjCSe36_jhjeT-PiSCh1cwvQVbnSSh5U2I4iT1HVXHjfM8Qwi7HnCiChheNPPdE7GoxbHOT998Jag_w_tLFw-sVaCVMuFciS3zKMmk77MR26uW69Osem6RpscN553f4ZUSpLIJgi-hhwp3pM_yf6LSST1-agKHiBtPVsjSo8GXyPbp1CrOs0O25zL62J3fr4B0XVRY3"/>
+<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/40 font-label-sm text-label-sm text-primary font-medium">
+            Pilier 03
+          </div>
+</div>
+<div class="p-8 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">3. Respiration &amp; calme intérieur</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Inspirer à pleins poumons les huiles essentielles de thym et de romarin. Des techniques simples de breathwork appliquées pour désamorcer les tensions et restaurer une lucidité paisible.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">Breathwork guidé doux</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">air</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 5. RECONNEX SECTION (Parent & Ado)                                        -->
+<!-- ========================================================================= -->
+<section class="py-16 md:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="reconnex">
+<div class="p-8 sm:p-12 md:p-16 rounded-3xl bg-surface-container-low border border-outline-variant/40 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+<!-- Visual Column -->
+<div class="lg:col-span-6 relative">
+<div class="relative rounded-3xl overflow-hidden shadow-lg border border-outline-variant/40 aspect-[4/3] sm:aspect-[16/11]">
+<img alt="Mère et fils adolescent partageant un rire complice en pause de randonnée dans la nature provençale" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4NOP6n417rj22yHKhcfEqEFnXjHZRnbfXkho3D2666bQwynW8_pVYH1lL2Yw5wZKnNpxHQrEFfw4lpRpdLKq_GYmS2EDSms_oQp-qwaWXDZWLt_ftLLXrIw6d_Th92qGQRDHFc0Fdhnv61nGAJQK__Q6LTBU25u24I6bNt_ICLj4sbiaa4fANgt30xLeDRS8G1PYj5OEtDDCLwASyKDytxhiurhq0Pg558HsLK8HdTDtpY2RFVTTh"/>
+</div>
+<!-- Floating Glass Badge -->
+<div class="absolute -bottom-4 sm:bottom-6 -right-2 sm:-right-4 px-4 py-2.5 rounded-full bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/50 shadow-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-secondary">phonelink_off</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">Moments partagés sans écrans</span>
+</div>
+</div>
+<!-- Narrative Column -->
+<div class="lg:col-span-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/30 border border-secondary-container text-secondary font-label-uppercase text-label-uppercase mb-4">
+          FORMAT DUO SPÉCIAL
+        </div>
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary tracking-tight mb-5">
+          Reconnex : une passerelle complice entre parents et ados
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6">
+          Une sortie conçue pour rompre avec le quotidien, ranger les smartphones et retrouver la simplicité d’un dialogue vrai, les pieds dans la terre et le sourire aux lèvres.
+        </p>
+<!-- Bullet Points -->
+<ul class="space-y-4 mb-8">
+<li class="flex items-start gap-3">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</span>
+<div>
+<strong class="font-label-md text-label-md text-primary">Zéro pression, zéro jugement :</strong>
+<span class="font-body-md text-body-md text-on-surface-variant"> des exercices légers, du jeu corporel et du rire partagé.</span>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</span>
+<div>
+<strong class="font-label-md text-label-md text-primary">Déconnexion digitale naturelle :</strong>
+<span class="font-body-md text-body-md text-on-surface-variant"> l'attention se tourne vers l'autre et les sentiers varois, sans forcer.</span>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</span>
+<div>
+<strong class="font-label-md text-label-md text-primary">Souvenirs gravés :</strong>
+<span class="font-body-md text-body-md text-on-surface-variant"> une bulle d'intimité rare pour consolider le lien à une période charnière.</span>
+</div>
+</li>
+</ul>
+<div class="flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-primary text-surface font-label-md text-label-md hover:bg-primary-container transition-all" href="#contact">
+<span>Explorer Reconnex</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dès 11 ans • Tarifs duos avantageux</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 6. DÉROULEMENT (Comment ça se passe)                                     -->
+<!-- ========================================================================= -->
+<section class="py-16 md:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="deroulement">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-3">DÉROULEMENT</span>
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary tracking-tight">
+        En trois étapes simples, sans prise de tête
+      </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+<!-- Step 1 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 relative">
+<span class="text-[52px] font-bold text-surface-container-high leading-none block mb-4">01</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Tu nous contactes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Un formulaire rapide, un mot sur tes attentes et tes disponibilités. Que tu viennes en solo, entre amis ou en duo parent-ado.
+        </p>
+</div>
+<!-- Step 2 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 relative">
+<span class="text-[52px] font-bold text-surface-container-high leading-none block mb-4">02</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">On planifie ensemble</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          On sélectionne le massif du Var adapté à la saison, au vent et à l’énergie du groupe. Tout est clair avant le départ.
+        </p>
+</div>
+<!-- Step 3 -->
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 relative">
+<span class="text-[52px] font-bold text-surface-container-high leading-none block mb-4">03</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">On se retrouve dehors</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Chaussures aux pieds, eau fraîche dans le sac et esprit libre. On prend le temps, on respire et on profite.
+        </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 7. OFFRE DÉCOUVERTE BANNER                                               -->
+<!-- ========================================================================= -->
+<section class="py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="tarifs">
+<div class="rounded-3xl bg-primary-container text-surface p-8 sm:p-12 md:p-14 relative overflow-hidden border border-outline-variant/20 shadow-xl">
+<!-- Decorative circle overlay -->
+<div class="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-secondary-fixed/10 pointer-events-none blur-3xl"></div>
+<div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed text-primary font-label-sm text-label-sm font-semibold mb-4">
+            Offre de lancement
+          </div>
+<h3 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-surface font-semibold mb-3">
+            Session d’essai complète de 2h30 en petit groupe
+          </h3>
+<p class="font-body-lg text-body-lg text-surface-container-high/90">
+            Prêt de matériel de mobilité inclus, collation locale offerte en pleine nature, accompagnement bienveillant dans les collines varoises.
+          </p>
+</div>
+<div class="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-5 shrink-0">
+<div class="text-left lg:text-right">
+<span class="font-label-sm text-label-sm text-surface-container-high uppercase tracking-wider block">Tarif spécial</span>
+<div class="font-display-hero-mobile text-display-hero-mobile font-bold text-secondary-fixed">
+              30 € <span class="font-headline-sm text-headline-sm font-normal text-surface-container-high">/ personne</span>
+</div>
+</div>
+<a class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md font-semibold hover:bg-secondary-fixed-dim transition-all shadow-md" href="#contact">
+<span>Je profite de l’offre d’essai</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 8. CONTACT & BOOKING FORM                                                 -->
+<!-- ========================================================================= -->
+<section class="py-16 md:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" id="contact">
+<div class="max-w-3xl mx-auto text-center mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-3">PRENDS CONTACT</span>
+<h2 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary tracking-tight mb-3">
+        Envie de faire une pause ? Écris-nous.
+      </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+        Indique-nous tes dates ou pose-nous tes questions. On te répond sous 24h avec le sourire.
+      </p>
+</div>
+<!-- Booking Form Card -->
+<div class="max-w-2xl mx-auto p-8 sm:p-10 rounded-3xl bg-surface-container-lowest border border-outline-variant/40 shadow-[0_10px_30px_-10px_rgba(30,53,39,0.05)]">
+<form class="space-y-6" onsubmit="event.preventDefault(); alert('Merci pour ton message ! Nous te répondrons sous 24 heures.');">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<!-- Nom & Prénom -->
+<div>
+<label class="block font-label-sm text-label-sm text-primary mb-2" for="name">Nom &amp; prénom</label>
+<input class="w-full px-5 py-3.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest focus:ring-2 focus:ring-secondary-fixed focus:border-primary text-body-md outline-none transition-all placeholder:text-on-surface-variant/40" id="name" placeholder="Ex. Julie Bonnet" required="" type="text"/>
+</div>
+<!-- Email -->
+<div>
+<label class="block font-label-sm text-label-sm text-primary mb-2" for="email">Adresse email</label>
+<input class="w-full px-5 py-3.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest focus:ring-2 focus:ring-secondary-fixed focus:border-primary text-body-md outline-none transition-all placeholder:text-on-surface-variant/40" id="email" placeholder="julie@exemple.fr" required="" type="email"/>
+</div>
+</div>
+<!-- Participants format -->
+<div>
+<label class="block font-label-sm text-label-sm text-primary mb-2" for="format">Format souhaité &amp; participants</label>
+<select class="w-full px-5 py-3.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest focus:ring-2 focus:ring-secondary-fixed focus:border-primary text-body-md outline-none transition-all text-on-surface" id="format">
+<option value="solo">1 personne — Session classique</option>
+<option value="duo">2 personnes — Amis ou couple</option>
+<option value="reconnex">Duo Parent-Ado (Reconnex)</option>
+<option value="groupe">Petit groupe privé (4 à 8 personnes)</option>
+</select>
+</div>
+<!-- Message -->
+<div>
+<label class="block font-label-sm text-label-sm text-primary mb-2" for="message">Ton message ou dates souhaitées</label>
+<textarea class="w-full px-5 py-3.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest focus:ring-2 focus:ring-secondary-fixed focus:border-primary text-body-md outline-none transition-all placeholder:text-on-surface-variant/40" id="message" placeholder="Dis-nous ce qui te ferait plaisir, tes créneaux ou questions éventuelles..." rows="4"></textarea>
+</div>
+<!-- Submit Button -->
+<div>
+<button class="w-full py-4 px-8 rounded-full bg-secondary-fixed text-primary font-label-md text-label-md font-semibold hover:bg-secondary-fixed-dim transition-all shadow-sm flex items-center justify-center gap-2" type="submit">
+<span>Envoyer ma demande</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+<!-- Reassurance -->
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant/80 flex items-center justify-center gap-2 pt-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span>Aucun paiement immédiat • Réponse humaine et rapide</span>
+</p>
+</form>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 9. FOOTER (Shared Component Execution)                                   -->
+<!-- ========================================================================= -->
+<footer class="w-full rounded-t-3xl mt-space-4xl bg-surface-container-low dark:bg-tertiary border-t border-outline-variant/30 dark:border-outline/20">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<!-- Brand & Mission statement -->
+<div class="max-w-md">
+<a class="font-headline-md text-headline-md tracking-tight text-primary dark:text-surface block mb-2" href="#">
+          Nó Made Project
+        </a>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+          Sorties nature, marche, mobilité &amp; respiration dans le Var (Provence). Reconnexion humaine et déconnexion digitale.
+        </p>
+</div>
+<!-- Links & Navigation -->
+<div class="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8">
+<div class="flex flex-wrap gap-6 font-label-sm text-label-sm">
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:underline" href="#">Mentions Légales</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:underline" href="#">Politique de Confidentialité</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:underline" href="#">Instagram</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-surface transition-colors hover:underline" href="#contact">Contact</a>
+</div>
+</div>
+</div>
+<!-- Copyright Sub-row -->
+<div class="max-w-7xl mx-auto px-6 lg:px-12 pb-8 pt-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 font-body-sm text-body-sm text-on-surface-variant/70">
+<p>© 2025 Nó Made Project — Var, France. Tous droits réservés.</p>
+<p class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span>Au cœur du massif de la Sainte-Baume &amp; Maures</span>
+</p>
+</div>
+</footer>
+</body></html>

@@ -8,10 +8,10 @@ const page = usePage('notFound');
 ---
 
 <Base title={page.title} description={page.description} noindex>
-  <PageIntro title={page.h1} highlight={page.hlWord} lead={page.lead} align="center">
+  <PageIntro title={page.h1} lead={page.lead} align="center">
     <div class="actions">
-      <Button href="/">{page.backHome}</Button>
-      <Button href="/offres/" variant="secondary">Voir les offres</Button>
+      <Button href="/" variant="dark" icon="arrow-right">{page.backHome}</Button>
+      <Button href="/offres/" variant="outline">Voir les offres</Button>
     </div>
   </PageIntro>
 </Base>
@@ -23,5 +23,6 @@ const page = usePage('notFound');
     justify-content: center;
     gap: var(--space-3);
     margin-top: var(--space-2);
+    padding-bottom: var(--space-10);
   }
 </style>

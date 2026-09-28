@@ -1,28 +1,16 @@
 /*
-  Styles globaux — reset léger, polices auto-hébergées, base typographique,
-  focus visible, conteneurs et quelques utilitaires. Les composants portent
-  leurs propres styles (scoped) dans les fichiers .astro.
+  Styles globaux (v2) : police auto-hébergée, reset, base typo, focus, conteneurs, utilitaires.
+  Les composants portent leurs styles scoped dans leurs fichiers .astro.
 */
 
 @import './tokens.css';
 
-/* ---------- Polices (sous-ensemble latin, auto-hébergées) ---------- */
 @font-face {
-  font-family: 'Instrument Serif';
+  font-family: 'Plus Jakarta Sans';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 200 800;
   font-display: swap;
-  src: url('/fonts/instrument-serif-latin.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
-    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  src: url('/fonts/plus-jakarta-sans-var-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
     U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -42,7 +30,7 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 1rem);
+  scroll-padding-top: var(--header-offset);
 }
 
 body {
@@ -50,14 +38,17 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: var(--leading-body);
+  font-size: var(--body);
+  line-height: 1.6;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: 'cv11', 'ss01'; /* Inter : formes plus ouvertes */
   overflow-x: clip;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--green-900);
 }
 
 img,
@@ -109,56 +100,70 @@ ol[role='list'] {
 h1,
 h2,
 h3,
-.serif {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: var(--tracking-heading);
-  line-height: var(--leading-snug);
+h4 {
+  color: var(--green-900);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
 h1 {
-  font-size: var(--text-3xl);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-display);
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: var(--leading-display);
+  letter-spacing: -0.03em;
 }
 
 h2 {
-  font-size: var(--text-2xl);
-  line-height: 1.1;
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
 }
 
 h3 {
-  font-size: var(--text-xl);
+  font-size: var(--text-md);
 }
 
-h4,
-h5,
-h6 {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: var(--text-base);
-  line-height: var(--leading-snug);
-}
-
-/* Le mot mis en avant dans un titre : un seul par titre (design.md §3) */
-.hl {
-  font-style: normal;
-  color: var(--moss);
+h4 {
+  font-size: var(--text-sm-h);
 }
 
 .lead {
-  font-size: var(--text-lg);
-  color: var(--muted);
+  font-size: var(--body-lg);
+  line-height: 1.55;
+  color: var(--ink-2);
   max-width: var(--prose-max);
 }
 
 .muted {
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
 .small {
-  font-size: var(--text-sm);
+  font-size: var(--body-sm);
+  line-height: 1.55;
+}
+
+.label {
+  font-size: var(--label);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.label-sm {
+  font-size: var(--label-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Étiquette de section en capitales (design.md §6) */
+.eyebrow {
+  display: block;
+  font-size: var(--label-upper);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green-600);
 }
 
 /* ---------- Focus visible ---------- */
@@ -179,10 +184,10 @@ h6 {
   left: 0.75rem;
   z-index: 100;
   padding: 0.75rem 1.25rem;
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--green-900);
+  color: var(--on-dark);
   border-radius: var(--radius-pill);
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   transform: translateY(-200%);
   transition: transform var(--dur-fast) var(--ease-out);
@@ -202,35 +207,45 @@ h6 {
 }
 
 .section {
-  padding-block: var(--section-gap);
-}
-
-.section + .section {
-  padding-top: 0;
+  padding-block: var(--section);
 }
 
 .section-head {
   display: grid;
   justify-items: start;
-  gap: var(--space-4);
-  max-width: 40rem;
-  margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  gap: var(--space-3);
+  max-width: 48rem;
+  margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+
+.section-head--center {
+  justify-items: center;
+  text-align: center;
+  margin-inline: auto;
 }
 
 .prose {
   max-width: var(--prose-max);
+  color: var(--ink-2);
 }
 
 .prose > * + * {
   margin-top: 1em;
 }
 
+.prose h2,
+.prose h3 {
+  color: var(--green-900);
+}
+
 .prose h2 {
   margin-top: 2.2em;
+  font-size: var(--text-md);
 }
 
 .prose h3 {
   margin-top: 1.8em;
+  font-size: var(--text-sm-h);
 }
 
 .prose ul,
@@ -242,27 +257,52 @@ h6 {
   margin-top: 0.4em;
 }
 
-/* ---------- Cartes ---------- */
+.prose a {
+  color: var(--green-600);
+}
+
+/* ---------- Cartes et cadres ---------- */
 .card {
   background: var(--surface);
   border: var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow);
 }
 
-/* ---------- Placeholders (design.md : rien d'inventé ne part en prod) ---------- */
+.card--hover {
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.card--hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.frame {
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+}
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: var(--border);
+}
+
+/* ---------- Placeholders : rien d'inventé ne part en production ---------- */
 .placeholder {
   display: inline-block;
   padding: 0 0.35em;
   border: 1px dashed #b8860b;
   border-radius: 0.35em;
-  background: rgba(214, 236, 110, 0.35);
-  color: #5a4a00;
-  font-family: var(--font-sans);
+  background: rgba(197, 242, 96, 0.4);
+  color: #4a4200;
   font-size: 0.85em;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0;
-  font-style: normal;
   line-height: 1.4;
   vertical-align: baseline;
 }
@@ -281,10 +321,6 @@ h6 {
   border: 0;
 }
 
-.flow > * + * {
-  margin-top: var(--flow, 1em);
-}
-
 /* ---------- Apparition au défilement (transform + opacity uniquement) ---------- */
 .js-reveal [data-reveal] {
   opacity: 0;
@@ -293,13 +329,11 @@ h6 {
     opacity 0.7s ease-out,
     transform 0.8s var(--ease-out);
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
 }
 
 .js-reveal [data-reveal].is-in {
   opacity: 1;
   transform: none;
-  will-change: auto;
 }
 
 /* ---------- Mouvement réduit ---------- */
@@ -315,5 +349,9 @@ h6 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .card--hover:hover {
+    transform: none;
   }
 }

@@ -24,7 +24,8 @@ Node 22 ou plus récent.
 | Une offre, un prix | `src/content/offers/fr/*.md` (à partir du jalon M2) |
 | Une page | `src/pages/<nom>.astro` |
 | L'en-tête, le pied de page, un bouton | `src/components/` |
-| Les polices | `public/fonts/` + `@font-face` dans `src/styles/global.css` |
+| La police (Plus Jakarta Sans) | `public/fonts/` + `@font-face` dans `src/styles/global.css` |
+| Les images provisoires (à remplacer par de vraies photos) | `src/assets/provisoire/` |
 
 ## Placeholders
 
@@ -45,7 +46,7 @@ Toute information manquante est écrite entre crochets et en majuscules : `[SLOG
 | Jalon | Contenu | État |
 |---|---|---|
 | M0 | Squelette : tokens, gabarit, en-tête, pied de page, 8 routes | fait |
-| M1 | Hero vidéo : encodages, boucle, dégradés, entrée, mouvement réduit | à venir |
-| M2 | Accueil complet, Offres, À propos | à venir |
+| M1 | Hero vidéo : encodages, boucle, dégradés, entrée, mouvement réduit | en attente de la vidéo |
+| M2 | Accueil complet, Offres, À propos (design v2, images provisoires) | fait |
 | M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | à venir |
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | à venir |

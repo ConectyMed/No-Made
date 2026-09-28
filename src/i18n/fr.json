@@ -1,7 +1,7 @@
 {
   "meta": {
     "titleSuffix": "Nó Made Project",
-    "defaultDescription": "Balades guidées et expériences nature en petit groupe, en région PACA. Marcher, respirer, poser son téléphone, parler."
+    "defaultDescription": "Balades guidées et sorties nature en petit groupe, en région PACA. On marche, on fait quelques exercices ensemble, on parle. Le téléphone reste dans le sac."
   },
   "common": {
     "skipToContent": "Aller au contenu",
@@ -12,32 +12,22 @@
     "home": "Nó Made Project, retour à l’accueil",
     "requestSession": "Demander une session",
     "requestThisSession": "Demander cette session",
-    "learnMore": "En savoir plus",
-    "comingSoon": "Bientôt"
-  },
-  "footer": {
-    "explore": "Explorer",
-    "practical": "Infos pratiques",
-    "legal": "Légal",
-    "follow": "Suivre",
-    "area": "Zone : région PACA",
-    "faq": "Questions fréquentes",
-    "copyright": "Nó Made Project. Tous droits réservés."
+    "discover": "Découvrir le format"
   },
   "pages": {
     "home": {
-      "title": "Balades guidées et expériences nature en PACA",
-      "description": "Nó Made Project : balades guidées en petit groupe, demi-journées hors écran et formats Reconnex parents / ados en région PACA.",
-      "eyebrow": "Nature, en petit groupe",
-      "h1": "[SLOGAN]",
-      "lead": "Marcher, respirer, poser ton téléphone, parler. Des balades guidées en petit groupe, en région PACA."
+      "title": "Balades guidées et sorties nature en PACA",
+      "description": "Nó Made Project : balades guidées en petit groupe, demi-journées hors écran et format Reconnex parent / ado, en région PACA.",
+      "tag": "Région PACA · sessions en petit groupe",
+      "h1": "Marcher. Respirer.\nSe retrouver dehors.",
+      "h1Note": "Slogan proposé, à valider (design.md §12).",
+      "lead": "Des balades guidées en petit groupe, sur les sentiers de la région PACA. On marche, on fait quelques exercices ensemble, on parle. Le téléphone reste dans le sac."
     },
     "offers": {
       "title": "Nos offres",
-      "description": "Deux formats en phase de test : Reconnex nature (2h30, 3 à 5 personnes, 30 € par personne) et Demi-journée hors écran (3h).",
-      "eyebrow": "Offres",
+      "description": "Deux formats en phase de test : Reconnex nature (2h30, 3 à 5 personnes, 30 € par personne) et Demi-journée hors écran (3h, en duo ou à 4).",
+      "eyebrow": "Les sessions",
       "h1": "Deux façons de sortir",
-      "hlWord": "sortir",
       "lead": "Deux formats, en phase de test. Les prix peuvent bouger. Tu choisis, tu nous écris, on cale une date ensemble."
     },
     "about": {
@@ -45,16 +35,14 @@
       "description": "Qui est derrière Nó Made Project, et l’éducateur partenaire qui encadre la partie physique des sessions.",
       "eyebrow": "À propos",
       "h1": "Qui est derrière Nó Made",
-      "hlWord": "derrière",
       "lead": "Une personne, un éducateur partenaire, et l’envie de transmettre le goût de sortir."
     },
     "contact": {
       "title": "Demander une session",
       "description": "Dis-nous quelle session t’intéresse, pour combien de personnes et quand. On te répond par email.",
-      "eyebrow": "Contact",
-      "h1": "Demander une session",
-      "hlWord": "session",
-      "lead": "Pas de calendrier en ligne pour l’instant : tu nous écris, on te répond et on cale une date ensemble."
+      "eyebrow": "Prends contact",
+      "h1": "Envie de sortir ? Écris-nous.",
+      "lead": "Pas de calendrier en ligne pour l’instant : tu nous écris, on te répond par email et on cale une date ensemble."
     },
     "legalNotice": {
       "title": "Mentions légales",
@@ -75,7 +63,6 @@
       "title": "Page introuvable",
       "description": "Cette page n’existe pas ou plus.",
       "h1": "Cette page s’est perdue en chemin",
-      "hlWord": "perdue",
       "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les offres.",
       "backHome": "Retour à l’accueil"
     }

@@ -1,227 +1,162 @@
-# design.md — Nó Made Project
+# design.md — Nó Made Project (v2)
 
-> Source of truth for the website's look, feel and behavior. Build from this file.
-> Items in [BRACKETS] are placeholders to be replaced when the final visual identity arrives.
-> Hex values are estimated by eye from the reference screenshot, not sampled. Replace with the real identity later.
+> Source of truth for the website's look, feel and behaviour. Rewritten on 2026-09-28 from the Stitch
+> mockup (`docs/reference/stitch-accueil.png`, `docs/reference/stitch-accueil.html`). The previous
+> brief is superseded and lives only in git history.
+> Items in [BRACKETS] are placeholders. Nothing invented ships: production builds fail while any remain.
 
 ---
 
 ## 1. Project
 
-**Nó Made Project**: small-group guided nature experiences in the PACA region (France). Walks, screen-free half-days, and "Reconnex" parent/teen formats. A partner qualified educator leads any physical-exercise or mobility content.
+**Nó Made Project**: small-group guided nature experiences in the PACA region (France). Guided walks,
+screen-free half-days, and a "Reconnex" parent / teen format. A partner qualified educator leads any
+physical-exercise or mobility content and is named on the site.
 
-**Site goal (v1):** showcase + "request a session" flow. No public calendar and no online payment yet. Sessions are scheduled case by case after contact.
-**Later (keep the architecture ready):** dated sessions with capacity, live availability, Stripe Checkout.
+**v1:** showcase + "request a session" flow. No public calendar, no online payment. Sessions are scheduled
+case by case after contact. **Later:** dated sessions with capacity, live availability, Stripe Checkout.
 
-**Language:** French only for now, informal "tu" everywhere. i18n-ready.
+**Language:** French only, informal "tu". i18n-ready.
 
----
+## 2. Standing rules (from the project brief, unchanged)
 
-## 2. Voice and copy
+- All copy in French, informal "tu".
+- No invented statistics, testimonials, partner logos or credentials. Real facts only: duration, group size,
+  price, area. Test prices are labelled as such.
+- Sessions are presented as guided walks and nature / connection experiences. Mobility or physical exercise
+  is described only when led by the partner educator, who is named: [NOM DU PARTENAIRE].
+- Placeholders wherever information is missing: [SLOGAN], [NOM DU PARTENAIRE], [DIPLÔME],
+  [NUMÉRO DE CARTE PROFESSIONNELLE], [ADRESSE EMAIL], [LIEN INSTAGRAM], photos.
+- Main CTA label: **"Demander une session"** (there is no booking, so never "Réserver").
 
-- Informal "tu", short sentences, warm and direct.
-- No wellness jargon ("énergie", "alignement", "lâcher-prise" and similar). Concrete words: marcher, respirer, poser son téléphone, parler.
-- Present sessions as guided walks and nature/connection experiences.
-- Mobility or physical exercise may only be described as part of a session when it is led by the qualified partner educator, who is named on the site.
-- No invented numbers, no fake testimonials, no "trusted by" logos. Use real facts only (duration, group size, price, area).
-- Main CTA label: **"Demander une session"**.
+## 3. Visual direction (from the Stitch mockup)
 
----
+Deep-green and lime on an off-white page. Photo-led, generous radii, thin borders, soft shadows.
+Everything sits inside a centred 80rem container with rounded "frames".
 
-## 3. Visual direction
+### Colours (CSS variables in `src/styles/tokens.css`)
 
-**Reference:** the attached green nature-NGO homepage screenshot. Recreate its style, not its content (no name, logo, photos or copy).
-
-- Light, airy, modern. Off-white page, white cards with hairline borders, very large rounded corners.
-- Photo/video-led. Lots of whitespace. One highlighted word per headline.
-- Calm and minimal, warm and human. No terracotta for now.
-
-### Colors (CSS variables, all swappable)
-
-| Token | Value (estimate) | Use |
+| Token | Value | Use |
 |---|---|---|
-| `--bg` | `#F7F6F2` | page background |
-| `--surface` | `#FFFFFF` | cards |
-| `--ink` | `#141414` | headlines, main text |
-| `--muted` | `#6F6F6F` | secondary text |
-| `--moss` | `#4F6B3A` | primary buttons, highlighted headline word, icons |
-| `--moss-dark` | `#3A5229` | hover/pressed |
-| `--lime` | `#D6EC6E` | single accent: top-right nav CTA, one highlight card |
-| `--line` | `rgba(20,20,20,.08)` | hairline borders |
+| `--bg` | `#f9f9f8` | page |
+| `--surface-low` | `#f3f4f3` | tinted sections (Reconnex frame, footer) |
+| `--surface` | `#ffffff` | cards, nav pill, inputs |
+| `--surface-high` | `#e8e8e7` | big faded step numbers |
+| `--ink` | `#1a1c1c` | body text |
+| `--ink-2` | `#424843` | secondary text |
+| `--green-900` | `#082013` | headings, primary buttons |
+| `--green-800` | `#1e3527` | nav CTA, price banner background |
+| `--green-600` | `#4c6700` | eyebrow labels, small icons |
+| `--lime` | `#c5f260` | accent: hero CTA, brand dot, badges |
+| `--lime-dim` | `#aad547` | lime hover |
+| `--line` | `rgba(194, 200, 193, 0.4)` | hairline borders |
+| `--outline` | `#737973` | placeholders, disabled |
 
-Check WCAG AA contrast, especially white text on moss and dark text on lime.
+Contrast (AA): white on green-800 > 12:1, green-600 on bg 6.1:1, green-900 on lime > 14:1, ink-2 on white 8:1.
 
 ### Typography
 
-- Headlines: **Instrument Serif**, regular weight, large, tight line-height (~1.05), slight negative letter-spacing. One word highlighted in `--moss`.
-- Body/UI: **Inter** (400/500/600).
-- Small pill "eyebrow" labels above section titles.
+- One family: **Plus Jakarta Sans**, self-hosted variable woff2 (latin subset), weights 300–800.
+- Scale (mobile → desktop): display 36/44 → 56/64, weight 700, tracking -0.03em · headline-xl 28/36 → 40/48,
+  600 · headline-lg 28/36 · headline-md 22/30 · headline-sm 18/26 · body-lg 18/28 · body 15/24 ·
+  body-sm 13/20 · label 14/20 600 · label-sm 12/16 600 · label-uppercase 12/16 700, tracking 0.12em.
 - Fluid sizes with `clamp()`.
 
 ### Shape and spacing
 
-- Cards: radius 24–32px, white, 1px `--line` border, very soft shadow at most.
-- Buttons and pills: fully rounded.
-- Generous vertical rhythm. Max content width ~1200px, side padding `clamp(1.25rem, 4vw, 3.6rem)`.
+- Frames and cards: radius 1.5rem. Icon boxes: 1rem. Buttons, pills, badges, inputs: fully rounded.
+- Borders: 1px `--line`. Shadow: `0 10px 30px -10px rgba(30,53,39,.05)`.
+- Container 80rem, side padding 1rem / 1.5rem / 3rem. Section padding 4rem mobile, 6rem desktop.
+- Icons: inline SVG, 24px grid, stroke 1.8. No icon font.
 
----
+## 4. Nav
 
-## 4. Hero (most important part)
+Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
+Left: lime dot + "Nó Made Project". Centre (desktop): Accueil, Offres, À propos, Contact.
+Right: CTA pill in green-800 with an arrow. Mobile: brand, CTA icon, burger opening a full-screen panel
+with large links and the CTA. Escape closes, focus managed.
 
-Full-viewport hero with a **looping background video** and minimal overlaid text.
+## 5. Hero
 
-**Composition**
-- Video: a still, locked-off Mediterranean hillside at dawn (cork oak, umbrella pines, cistus, broom, an empty trail, morning mist). Pale off-white sky in the top ~40% so the headline sits on clean space.
-- Headline (Instrument Serif, centered, top-anchored, not vertically centered): [SLOGAN] with one word in `--moss`.
-- Subtitle: one or two lines.
-- One primary button: "Demander une session".
-- Below the fold of the hero: 4 fact tiles (real facts only), e.g. `2h30` / `3 à 5 personnes` / `dès 30 €` / `PACA`.
-- Nav in normal flow above the headline, z-index above any mobile menu overlay.
+Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
+- Media: the looping video when it arrives (poster first paint, fade-in, baked crossfade loop,
+  `preload="none"`, playback after `load`, pause control, poster only under reduced motion or Save-Data).
+  Until then the provisional trail image.
+- Gradient from green-900 at 90% at the bottom to transparent at the top, so white text reads.
+- Tag pill (white, blurred, lime dot): "Région PACA · sessions en petit groupe".
+- H1 in white: [SLOGAN] (a proposal is in `src/i18n/fr.json`, to validate). Lead in white at 90%.
+- Two CTAs: "Demander une session" (lime) and "Découvrir le format" (white glass, scrolls to the approach).
+- Spec bar (white glass pill): Région PACA · 3 à 5 personnes · 100 % dehors.
+- Portrait mobile: same frame, media covers, content stacks.
 
-**Video assets** *(decisions 2026-09-28, see §13)*
-- `hero-1080.mp4`: 1080p, 16:9, ~8 s, H.264, **no audio**, up to ~4 MB (only if 720p looks visibly soft full-screen; otherwise 720p everywhere).
-- `hero-720.mp4`: 720p, ≤ 1 MB, served to phones.
-- `hero-poster.webp`: first frame, used as the instant first paint and as the blurred backdrop on portrait mobile.
-- The source clip does not loop natively. **The ~1 s crossfade is baked into the file** (tail blended over head with ffmpeg) so a single `<video loop>` loops seamlessly. The two-stacked-elements runtime crossfade is the fallback only if the baked file shows a seam.
-- Video starts at opacity 0 and fades in (~1.2 s) once it has frames, so the poster carries the first paint.
-- `autoplay muted loop playsinline preload="none"`, `aria-hidden="true"`. The script attaches the source and starts playback after the page `load` event, so the poster (LCP element) is never competing with the video for bandwidth. Poster `<img>` carries the alt text.
-- The pale sky must blend into `--bg`: add a soft off-white gradient overlay at the top and at the bottom of the hero.
-- A small pause control sits in a hero corner (WCAG 2.2.2: auto-playing motion longer than 5 s needs one).
+## 6. Home page sections, in order
 
-**Mobile**
-- Portrait: bottom-anchor the same 16:9 media at ~64svh with a feathered top edge over a blurred poster backdrop, so the open-sky composition survives. No separate portrait crop.
-- Poster only when `prefers-reduced-motion: reduce` or `Save-Data` is on.
-- Simpler effects than desktop, never the same effects 1:1.
+1. **Hero** (above).
+2. **L'approche** — uppercase label, headline-xl, four small cards (icon box, title, body-sm, footer
+   "0n / word"): Terrain, Marche, Coopération, Groupe.
+3. **Trois temps forts** — three image-top cards (image 16rem high, pill "Temps 0n", headline-md, body,
+   footer row with a note and an icon): Marche · Mobilité with [NOM DU PARTENAIRE] · Respirer et parler.
+4. **Reconnex** — tinted frame, image left with a floating glass badge "Sans écran", label
+   "Format parent / ado", headline-xl, lead, three check bullets, CTA + real price note.
+5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu nous écris ·
+   On cale une date · On se retrouve dehors.
+6. **Prix** — green-800 banner: label "Prix de test", the entry offer, its price large in lime, CTA,
+   link to /offres.
+7. **Contact** — centred intro and the request form in a white card (see §8).
+8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
+   légales, CGV, Confidentialité, Instagram), copyright row.
 
----
+Testimonials: none until real ones exist (`site.showTestimonials`).
 
-## 5. Motion
+## 7. Other pages
 
-Principle: calm, purposeful, cheap. One idea per screen. Never hide content behind an animation.
+- **/offres** — one detailed card per offer (category pill, duration, group, prices, for whom, programme,
+  what to bring, CTA), practical notes, contact teaser.
+- **/a-propos** — the founder's story (10 years of autonomous travel, BJJ, climbing, boxing, physical
+  preparation, 15 years in hospitality, a taste for passing things on), written as biography, never as
+  session content. Partner educator block: [NOM DU PARTENAIRE], [DIPLÔME], [NUMÉRO DE CARTE PROFESSIONNELLE].
+  One personal photo slot (Machu Picchu photo, provided later).
+- **/contact** — intro, the form, FAQ (native details/summary).
+- **/mentions-legales, /cgv, /confidentialite** — three routes on a shared legal layout; templates at M4.
+- **404** in the same style.
 
-**Entrance (on load)**
-- Media plate: slow fade-in with slight scale/blur settle.
-- Nav items: staggered rise (small translateY, ~0.95 s, ease-out expo-like).
-- Headline lines: rise out of a mask (`overflow:hidden` line wrapper), second line slightly later.
-- Button and fact tiles: soft fade-rise after the headline.
+## 8. Request form
 
-**Scroll** *(decision 2026-09-28: no parallax in v1)*
-- Below the hero: simple fade-rise reveals via IntersectionObserver, once per element. This is the single scroll effect of v1.
-- Hero parallax (small translate/scale of the media plus fade of the hero content) is deferred; it can be added later behind a flag, desktop only.
-- No pinned sections, no scrollytelling, no heavy scroll libraries.
+Fields: prénom et nom, email, téléphone (optional), session souhaitée (select from the offers collection,
+plus "je ne sais pas encore"), nombre de personnes, période souhaitée (free text), message, RGPD consent
+linking to /confidentialite. Hidden: honeypot, timestamp. Posts to `/api/contact` (M3): validation,
+honeypot + timing, email to the owner via Resend, short confirmation to the requester in French "tu".
+Turnstile dormant behind env keys. No payment.
 
-**Where the entrance plays**
-- The full entrance sequence plays on the home page only. Inner pages get a plain short fade, so moving between pages never feels slow.
+## 9. Motion
 
-**Rules**
-- `prefers-reduced-motion: reduce`: no entrance animation, no parallax, poster image only (no video), all content visible.
-- Animate `transform` and `opacity` only. No layout-shifting animation.
-- Keyboard navigation and screen readers must never depend on scroll-triggered visibility.
+- Entrance on the home page only: media fade, hero content rise. Elsewhere a plain short fade.
+- Scroll: once-only fade-rise reveals via IntersectionObserver. No parallax in v1.
+- Hover: cards lift 4–6px, buttons scale 1.02 / 0.98.
+- `prefers-reduced-motion: reduce`: no entrance, no reveals, poster instead of video. Transform and
+  opacity only, never layout.
 
----
+## 10. Imagery
 
-## 6. Components
+- Real photos from the first outings replace everything as soon as they exist.
+- Until then, the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
+  visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship to production.
+- The hero video (1080p ≤ 4 MB, 720p ≤ 1 MB, poster webp) is still expected in `assets/source/`.
 
-- **Nav:** logo wordmark left ("Nó Made", keep the ó accent), links centered on desktop (Accueil, Offres, À propos, Contact), pill CTA on the right in `--lime`. Mobile: burger opening a full-screen overlay with large serif links and the CTA.
-- **Photo cards:** tall, very rounded, image with dark gradient at the bottom, small round icon, title, one line of text.
-- **Offer cards:** category pill, duration, group size, price, who it's for, what to bring, "Demander cette session" button.
-- **Highlight card:** lime card used once, teasing the contact form (no newsletter).
-- **Fact tiles:** small white cards, big number/word, small label.
-- **Buttons:** primary = `--moss` bg, white text. Secondary = white with hairline border. Hover: slight lift.
-- **Footer:** 4 columns (Explorer, Infos pratiques, Légal, Suivre), tiny copyright.
+## 11. Tech (unchanged decisions)
 
----
-
-## 7. Pages
-
-1. **Accueil:** hero, the two offers, how it works, 3 pillar photo cards (marche en nature, coopération, Reconnex parents/ados), highlight card, testimonials placeholder (commented out until real ones exist).
-2. **Offres:** one card per session with all practical info.
-3. **À propos:** my story (10 years of autonomous travel, BJJ, climbing, boxing, physical preparation, 15 years in hospitality, taste for transmission) plus the partner educator: [NAME], [DIPLOMA], [PROFESSIONAL CARD NUMBER].
-4. **Contact / Demande de session:** form (name, email, phone, offer of interest, group size, preferred dates/availability, message) that notifies me by email. FAQ. Area: PACA.
-5. **Légal:** three separate routes, linked in the footer: `/mentions-legales`, `/cgv` (cancellation/refund), `/confidentialite` (RGPD). The form's consent checkbox links to `/confidentialite`. *(decision 2026-09-28, was one page)*
-
-### Wireframe of the Accueil, mapped from the reference screenshot (2026-09-28)
-
-The reference screenshot (`docs/reference/homepage-style-reference.jpg`) is the wireframe for the section compositions. Content, photos, stats and logos are never copied.
-
-| # | Block | Composition taken from the screenshot | Our content |
-|---|---|---|---|
-| 1 | Hero | Full-bleed media inside a large rounded container, eyebrow pill, headline with one highlighted word, subtitle, one CTA, **row of 4 small white tiles at the bottom of the hero container** (their stats row becomes our fact tiles). | Video per §4. **Divergence, design.md wins:** headline centered and top-anchored on the pale sky, not left-aligned next to a photo. No email field, no avatar stack, no play button, no floating mini-cards. |
-| 2 | Offres | "Initiatives" block: cards on the left in a horizontal row, text column on the right with eyebrow, headline, one paragraph and a "view all" link, **the lime highlight card sits under that text column**. | Our two offer cards (§6) in place of their three photo cards; "Voir les offres" link to `/offres`; the lime highlight card teases the contact form ("Demander une session"), no newsletter. |
-| 3 | Comment ça marche | Not in the screenshot. Simple row of 3 numbered white cards, same radius and hairline border as the fact tiles. | Tu nous écris / on cale une date ensemble / on marche. |
-| 4 | Les trois piliers | "Mission" block: eyebrow + headline + paragraph + two buttons on the left, **three tall photo cards on the right** with a dark bottom gradient, a small round icon, a title and one line. | Marche en nature / Coopération / Reconnex parents-ados. Photos are placeholders until the first outings. Buttons: "Demander une session" (primary), "À propos" (secondary). |
-| 5 | Témoignages | The "trusted by" strip is dropped. | Testimonials component behind `showTestimonials: false`, ships nothing until real ones exist. |
-| 6 | Footer | Brand + one-line tagline on the left, four link columns, social icons, tiny copyright. | Explorer / Infos pratiques / Légal / Suivre. |
-
-Inner pages reuse the same card system with a page intro (eyebrow, headline with highlighted word, lead) and no hero.
-
-Also: a `404` page in the same style. URLs, slugs, file names and the domain are ASCII only, no accent (`nomade-project`), while titles and metadata keep "Nó Made Project" and the nav wordmark "Nó Made".
-
----
-
-## 8. Offers (test phase, prices may change)
-
-- **Reconnex nature:** 2h30, 3 to 5 people, €30 per person.
-- **Demi-journée hors écran:** 3h outdoors, walking + cooperation exercises + mobility + exchange. €60 for a father/son pair, €80 for 4 people.
-
----
-
-## 9. Imagery
-
-- Real photos from the first outings replace all placeholders as soon as they exist. Style: natural light, real people from a distance or from behind, no stock-photo clichés, no posed smiles.
-- Until then: clearly marked image slots with alt text, and the hero video.
-- The first-person Machu Picchu / Huayna Picchu photo is for the "À propos" page only, never the hero.
-
----
-
-## 10. Do / Don't
-
-**Do:** keep it light and calm, real facts only, big type, lots of air, mobile first, fast, WCAG AA, one accent color used sparingly.
-**Don't:** fake stats, "trusted by" strips, wellness clichés, saturated postcard colors, autoplaying audio, heavy scroll effects, dark overlays that dull the video, text over busy image areas.
-
----
-
-## 11. Tech
-
-- Simple, maintainable stack with minimal dependencies (built with AI-assisted coding). Fast hosting.
-- **Chosen (2026-09-28):** Astro, static output, plain CSS with tokens in `src/styles/tokens.css`, no UI framework. Runtime dependencies: `astro`, `@astrojs/vercel`, `@astrojs/sitemap`, and `resend` from M3. The adapter is the only host-specific line; Netlify or Cloudflare Pages are drop-in swaps.
-- Fonts self-hosted as latin-subset woff2 (Instrument Serif regular, Inter variable 400–600). No third-party font requests.
-- Semantic HTML, accessible names, visible focus states.
-- Form handling with email notification (Resend, one serverless endpoint). Spam protection in v1: honeypot + time-to-submit + strict server validation. Cloudflare Turnstile is wired but dormant, activated by environment keys if spam appears.
-- A short automatic confirmation email goes to the requester, in French, informal "tu".
-- No analytics, no cookies, no banner in v1.
-- Data model ready for a future `session` entity (date, capacity, price) without a rebuild. Prices stored as integer cents.
-- Production builds fail while any `[PLACEHOLDER]` remains in the HTML (override for previews only).
-
----
+Astro, static output, plain CSS tokens, no UI framework. Adapter: Vercel, swappable for Netlify or
+Cloudflare Pages. Self-hosted font. No analytics, no cookies, no banner. Offers in Markdown with a
+validated schema; prices in integer cents. `Session` type reserved for v2. Production build fails while
+any [PLACEHOLDER] remains (override for previews).
 
 ## 12. Open items
 
-- [ ] Slogan and the highlighted word
-- [ ] Final visual identity: logo, palette, photos (being worked on separately)
-- [ ] Final offer names and prices
-- [ ] Partner educator: name, diploma, professional card number
-- [ ] Domain name and email address
-- [ ] DNS provider (for Resend's sending records)
-- [ ] Hosting plan: Vercel paid plan, or Netlify / Cloudflare Pages
-- [ ] Legal status (micro-entreprise to confirm), VAT regime, partner educator's status
-- [ ] Future languages (for the i18n config)
-- [ ] Real testimonials (later)
-
----
-
-## 13. Decisions log
-
-**2026-09-28, plan approval**
-- Legal: three routes instead of one page (§7).
-- Hero loop baked into the video file; `preload="none"` with playback started after `load`; 1080p ≤ 4 MB only if 720p is visibly soft, 720p ≤ 1 MB for phones (§4).
-- Portrait phones: same 16:9 clip bottom-anchored over the blurred poster, no portrait crop. Poster only under reduced motion or Save-Data (§4).
-- Scroll: section fade-up reveals only, no parallax in v1 (§5).
-- Entrance sequence on the home page only (§5).
-- Spam: honeypot + timing + validation; Turnstile dormant behind env keys (§11).
-- Requester gets a short automatic confirmation email (§11).
-- Fonts self-hosted, no analytics, ASCII slugs and domain (§3, §7, §11).
-- Offers: one page, one card per offer, two offers with test prices (§8).
-- Photos: all placeholders except one personal photo on À propos, provided later (§9).
-- Fact tiles on the home page read `2h30 à 3h` / `3 à 5 personnes` / `dès 30 €` / `PACA`, so all four stay true across both offers.
-- The personal background in À propos (BJJ, climbing, boxing, physical preparation) is written as biography, never as session content. Only the partner educator's activities may be described as physical work.
+- [ ] Slogan: validate or replace the proposal in `src/i18n/fr.json` → `pages.home.h1`
+- [ ] Which offer carries the name "Reconnex": the 2h30 walk, the parent / ado half-day, or both?
+- [ ] Partner educator: name, diploma, professional card number, separate business or not
+- [ ] Hero video and poster
+- [ ] Real photos
+- [ ] Domain, email address, DNS provider, hosting plan
+- [ ] Legal status, VAT regime, cancellation and weather policy
+- [ ] Future languages

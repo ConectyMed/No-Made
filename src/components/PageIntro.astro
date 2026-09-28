@@ -1,26 +1,21 @@
 ---
-/**
- * En-tête de page intérieure : eyebrow, titre avec mot mis en avant, chapô.
- * L'accueil a son propre hero (M1) et n'utilise pas ce composant.
- */
-import Eyebrow from './Eyebrow.astro';
-import Headline from './Headline.astro';
+/** En-tête de page intérieure : étiquette en capitales, titre, chapô. L'accueil a son hero. */
+import Placeholder from './Placeholder.astro';
 
 interface Props {
   eyebrow?: string;
   title: string;
-  highlight?: string;
   lead?: string;
   align?: 'start' | 'center';
 }
-
-const { eyebrow, title, highlight, lead, align = 'start' } = Astro.props;
+const { eyebrow, title, lead, align = 'start' } = Astro.props;
+const ph = title.match(/^\[([^\]]+)\]$/);
 ---
 
 <header class:list={['intro', `intro--${align}`]}>
   <div class="container intro__inner">
-    {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-    <Headline as="h1" text={title} highlight={highlight} />
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1>{ph ? <Placeholder name={ph[1]} /> : title}</h1>
     {lead && <p class="lead">{lead}</p>}
     <slot />
   </div>
@@ -28,26 +23,22 @@ const { eyebrow, title, highlight, lead, align = 'start' } = Astro.props;
 
 <style>
   .intro {
-    padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(2.5rem, 2rem + 2vw, 4rem);
+    padding-block: clamp(2rem, 1.5rem + 3vw, 4rem) clamp(2rem, 1.5rem + 2vw, 3.5rem);
   }
 
   .intro__inner {
     display: grid;
-    gap: var(--space-5);
+    gap: var(--space-4);
     justify-items: start;
   }
 
   .intro h1 {
-    font-size: var(--text-display);
-    max-width: 14ch;
+    font-size: var(--text-xl);
+    max-width: 22ch;
   }
 
   .intro--center .intro__inner {
     justify-items: center;
     text-align: center;
-  }
-
-  .intro--center .lead {
-    margin-inline: auto;
   }
 </style>

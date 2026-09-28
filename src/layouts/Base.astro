@@ -1,7 +1,7 @@
 ---
 /**
- * Gabarit commun à toutes les pages : <head>, lien d'évitement, en-tête,
- * contenu principal, pied de page.
+ * Gabarit commun : <head>, lien d'évitement, nav flottante, contenu, pied de page,
+ * et le seul effet au défilement de la v1 (apparition en fondu-montée).
  */
 import Seo from '@/components/Seo.astro';
 import Header from '@/components/Header.astro';
@@ -15,7 +15,6 @@ interface Props {
   image?: string;
   isHome?: boolean;
   noindex?: boolean;
-  /** Classe ajoutée à <body>, ex. "page-home" pour les animations d'entrée. */
   bodyClass?: string;
 }
 
@@ -31,14 +30,12 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
   <body class={bodyClass}>
     <a href="#contenu" class="skip-link">{t('common.skipToContent')}</a>
     <Header />
-    <main id="contenu" tabindex="-1">
+    <main id="contenu" class="main" tabindex="-1">
       <slot />
     </main>
     <Footer />
 
     <script>
-      // Le seul effet au défilement de la v1 (design.md §5) : apparition en fondu-montée,
-      // une fois par élément. Sans JS ou en mouvement réduit, tout est visible d'emblée.
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
       if (!reduce && items.length && 'IntersectionObserver' in window) {
@@ -59,3 +56,10 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
     </script>
   </body>
 </html>
+
+<style is:global>
+  /* La nav est flottante : le contenu commence sous elle. */
+  .main {
+    padding-top: calc(var(--header-h) + 2rem);
+  }
+</style>

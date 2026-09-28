@@ -1,0 +1,212 @@
+---
+/**
+ * Formulaire "Demander une session" (design.md §8). Balisage et validation HTML natifs.
+ * Le point d'entrée /api/contact (envoi d'email, anti-spam) arrive au jalon M3 :
+ * jusque-là le bouton est actif mais la soumission renvoie une 404.
+ */
+import { getCollection } from 'astro:content';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Pré-sélection depuis ?offre=slug */
+  selected?: string | null;
+  id?: string;
+}
+const { selected = null, id = 'demande' } = Astro.props;
+
+const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<form class="form card" id={id} action="/api/contact" method="post" novalidate={false}>
+  <div class="form__row">
+    <div class="field">
+      <label for={`${id}-name`}>Prénom et nom</label>
+      <input id={`${id}-name`} name="name" type="text" autocomplete="name" required maxlength="120" placeholder="Ex. Camille Roux" />
+    </div>
+    <div class="field">
+      <label for={`${id}-email`}>Adresse email</label>
+      <input id={`${id}-email`} name="email" type="email" autocomplete="email" required maxlength="200" placeholder="camille@exemple.fr" />
+    </div>
+  </div>
+
+  <div class="form__row">
+    <div class="field">
+      <label for={`${id}-phone`}>Téléphone <span class="muted">(facultatif)</span></label>
+      <input id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="06 00 00 00 00" />
+    </div>
+    <div class="field">
+      <label for={`${id}-size`}>Nombre de personnes</label>
+      <input id={`${id}-size`} name="groupSize" type="number" inputmode="numeric" min="1" max="5" required placeholder="2" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for={`${id}-offer`}>Session souhaitée</label>
+    <select id={`${id}-offer`} name="offerSlug" required>
+      <option value="" disabled selected={!selected}>Choisis une session</option>
+      {offers.map((o) => (
+        <option value={o.data.slug} selected={selected === o.data.slug}>
+          {o.data.title} — {o.data.duration}
+        </option>
+      ))}
+      <option value="indecis" selected={selected === 'indecis'}>Je ne sais pas encore</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for={`${id}-period`}>Période souhaitée</label>
+    <input id={`${id}-period`} name="preferredPeriod" type="text" required maxlength="200" placeholder="Ex. un samedi matin en octobre, ou les vacances de la Toussaint" />
+  </div>
+
+  <div class="field">
+    <label for={`${id}-message`}>Ton message <span class="muted">(facultatif)</span></label>
+    <textarea id={`${id}-message`} name="message" rows="4" maxlength="2000" placeholder="Une question, une précision, ce qui te ferait plaisir…"></textarea>
+  </div>
+
+  <div class="field field--check">
+    <input id={`${id}-consent`} name="consent" type="checkbox" required />
+    <label for={`${id}-consent`}>
+      J’accepte que ces informations servent à répondre à ma demande. <a href="/confidentialite/">Comment on traite tes données</a>.
+    </label>
+  </div>
+
+  <!-- Anti-spam : champ piège invisible + horodatage (vérifiés côté serveur au jalon M3) -->
+  <div class="hp" aria-hidden="true">
+    <label for={`${id}-website`}>Site web</label>
+    <input id={`${id}-website`} name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+  <input type="hidden" name="startedAt" value={String(Date.now())} data-started-at />
+
+  <Button type="submit" variant="lime" size="lg" icon="send" block>Envoyer ma demande</Button>
+
+  <p class="form__note small muted">
+    <Icon name="shield" size={16} />
+    <span>Pas de paiement en ligne. On te répond par email.</span>
+  </p>
+</form>
+
+<script>
+  // Horodatage réel côté client (le rendu statique fige la valeur au build).
+  document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => {
+    el.value = String(Date.now());
+  });
+</script>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+  }
+
+  .form__row {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .field label {
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--green-900);
+  }
+
+  .field input:not([type='checkbox']),
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.85rem 1.25rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 1.5rem;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: var(--body);
+    transition:
+      border-color var(--dur-fast) ease,
+      box-shadow var(--dur-fast) ease;
+  }
+
+  .field textarea {
+    resize: vertical;
+    border-radius: 1.25rem;
+  }
+
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23424843' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.1rem center;
+    padding-right: 3rem;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: rgba(66, 72, 67, 0.45);
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--green-800);
+    box-shadow: 0 0 0 3px rgba(197, 242, 96, 0.7);
+  }
+
+  .field--check {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--space-3);
+  }
+
+  .field--check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.15rem;
+    accent-color: var(--green-800);
+  }
+
+  .field--check label {
+    font-weight: 400;
+    color: var(--ink-2);
+    font-size: var(--body-sm);
+    line-height: 1.5;
+  }
+
+  .field--check a {
+    color: var(--green-600);
+  }
+
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__note {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--ink-2);
+  }
+
+  .form__note :global(.icon) {
+    color: var(--green-600);
+  }
+
+  @media (min-width: 40em) {
+    .form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
