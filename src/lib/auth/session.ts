@@ -4,9 +4,12 @@
  *    une adresse peut créer son mot de passe si elle figure dans ADMIN_EMAILS ou existe déjà en base.
  *  - Cookie de session HttpOnly, 30 jours, prolongé à l'usage ; seul le hachage du jeton est stocké.
  *  - Verrouillage 15 min après 8 échecs de connexion.
+ *  - Compte de démarrage : tant qu'aucun compte n'existe, l'identifiant ADMIN_BOOTSTRAP_USER avec le mot de
+ *    passe ADMIN_BOOTSTRAP_PASSWORD (par défaut admin / admin123, demandé le 2026-09-28, temporaire) crée
+ *    le premier compte à la première connexion. Il est marqué « mot de passe à changer ».
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { and, eq, gt, isNull } from 'drizzle-orm';
+import { and, count, eq, gt, isNull } from 'drizzle-orm';
 import type { AstroCookies } from 'astro';
 import { getDb, schema } from '../db';
 import { hashPassword, verifyPassword } from './password';
@@ -25,6 +28,40 @@ export interface AdminUser {
   email: string;
   name: string;
   role: 'admin';
+  mustChangePassword: boolean;
+}
+
+const toAdminUser = (u: typeof schema.users.$inferSelect): AdminUser => ({
+  id: u.id,
+  email: u.email,
+  name: u.name,
+  role: u.role,
+  mustChangePassword: u.mustChangePassword === 1,
+});
+
+function bootstrapCredentials() {
+  return { user: normalizeEmail(env('ADMIN_BOOTSTRAP_USER') ?? 'admin'), password: env('ADMIN_BOOTSTRAP_PASSWORD') ?? 'admin123' };
+}
+
+/** Crée le compte de démarrage si la table est vide et que les identifiants correspondent. */
+async function tryBootstrap(email: string, password: string) {
+  const db = await getDb();
+  const boot = bootstrapCredentials();
+  if (email !== boot.user || password !== boot.password) return null;
+  const total = await db.select({ n: count() }).from(schema.users).get();
+  if ((total?.n ?? 0) > 0) return null;
+  const id = crypto.randomUUID();
+  await db.insert(schema.users).values({
+    id,
+    email: boot.user,
+    name: 'Admin',
+    passwordHash: await hashPassword(password),
+    role: 'admin',
+    mustChangePassword: 1,
+    createdAt: Date.now(),
+  });
+  console.warn('[admin] compte de démarrage créé : change son mot de passe dès que possible.');
+  return db.query.users.findFirst({ where: eq(schema.users.id, id) });
 }
 
 const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
@@ -55,8 +92,9 @@ export type LoginResult = { ok: true; user: AdminUser } | { ok: false; reason: '
 export async function login(email: string, password: string): Promise<LoginResult> {
   const db = await getDb();
   const e = normalizeEmail(email);
-  const user = await db.query.users.findFirst({ where: eq(schema.users.email, e) });
+  let user = await db.query.users.findFirst({ where: eq(schema.users.email, e) });
   const now = Date.now();
+  if (!user) user = (await tryBootstrap(e, password)) ?? undefined;
   if (!user) {
     await verifyPassword(password, null); // temps constant, pas de fuite sur l'existence du compte
     return { ok: false, reason: 'invalid' };
@@ -76,7 +114,33 @@ export async function login(email: string, password: string): Promise<LoginResul
     .update(schema.users)
     .set({ failedLogins: 0, lockedUntil: null, lastLoginAt: now })
     .where(eq(schema.users.id, user.id));
-  return { ok: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } };
+  return { ok: true, user: toAdminUser(user) };
+}
+
+/** Changement de mot de passe (et de prénom) depuis « Mon compte », après vérification de l'actuel. */
+export async function changePassword(
+  userId: string,
+  current: string,
+  next: string,
+  name?: string,
+): Promise<{ ok: true } | { ok: false; reason: 'wrong-current' | 'not-found' }> {
+  const db = await getDb();
+  const user = await db.query.users.findFirst({ where: eq(schema.users.id, userId) });
+  if (!user) return { ok: false, reason: 'not-found' };
+  if (!(await verifyPassword(current, user.passwordHash))) return { ok: false, reason: 'wrong-current' };
+  await db
+    .update(schema.users)
+    .set({ passwordHash: await hashPassword(next), mustChangePassword: 0, ...(name?.trim() ? { name: name.trim() } : {}) })
+    .where(eq(schema.users.id, userId));
+  return { ok: true };
+}
+
+/** Ferme toutes les sessions d'un utilisateur sauf celle indiquée (après un changement de mot de passe). */
+export async function destroyOtherSessions(userId: string, keepToken: string | undefined): Promise<void> {
+  const db = await getDb();
+  const keep = keepToken ? sha256(keepToken) : '';
+  const rows = await db.select({ id: schema.authSessions.id }).from(schema.authSessions).where(eq(schema.authSessions.userId, userId));
+  for (const r of rows) if (r.id !== keep) await db.delete(schema.authSessions).where(eq(schema.authSessions.id, r.id));
 }
 
 // ---------- Sessions ----------
@@ -108,7 +172,7 @@ export async function getUserFromToken(token: string | undefined): Promise<Admin
   if (row.session.expiresAt - now < RENEW_BELOW_DAYS * DAY) {
     await db.update(schema.authSessions).set({ expiresAt: now + SESSION_DAYS * DAY }).where(eq(schema.authSessions.id, id));
   }
-  return { id: row.user.id, email: row.user.email, name: row.user.name, role: row.user.role };
+  return toAdminUser(row.user);
 }
 
 export async function destroySession(token: string | undefined): Promise<void> {
@@ -178,12 +242,12 @@ export async function setPasswordWithToken(token: string, password: string, name
   } else {
     await db
       .update(schema.users)
-      .set({ passwordHash, failedLogins: 0, lockedUntil: null, ...(name?.trim() ? { name: name.trim() } : {}) })
+      .set({ passwordHash, failedLogins: 0, lockedUntil: null, mustChangePassword: 0, ...(name?.trim() ? { name: name.trim() } : {}) })
       .where(eq(schema.users.id, user.id));
     // Changer de mot de passe ferme les autres sessions.
     await db.delete(schema.authSessions).where(eq(schema.authSessions.userId, user.id));
   }
   await db.update(schema.passwordTokens).set({ usedAt: now }).where(eq(schema.passwordTokens.id, sha256(token)));
   if (!user) return null;
-  return { id: user.id, email: user.email, name: user.name, role: user.role };
+  return { ...toAdminUser(user), mustChangePassword: false };
 }

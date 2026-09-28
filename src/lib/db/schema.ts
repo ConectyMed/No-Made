@@ -23,6 +23,8 @@ export const users = sqliteTable('users', {
   failedLogins: integer('failed_logins').notNull().default(0),
   lockedUntil: integer('locked_until'),
   lastLoginAt: integer('last_login_at'),
+  /** 1 pour le compte de démarrage tant que son mot de passe n'a pas été changé. */
+  mustChangePassword: integer('must_change_password').notNull().default(0),
   createdAt: integer('created_at').notNull(),
 });
 

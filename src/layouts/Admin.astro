@@ -81,6 +81,7 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
               <strong>{user?.name}</strong>
               <small>{user?.email}</small>
             </span>
+            <a href="/admin/compte" class="adm__site small" aria-current={path === '/admin/compte' ? 'page' : undefined}>Mon compte</a>
             <form method="post" action="/admin/deconnexion">
               <button type="submit" class="adm__logout">Se déconnecter</button>
             </form>
@@ -91,6 +92,14 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
     }
 
     <main id="contenu" class="adm__main" tabindex="-1">
+      {
+        !bare && user?.mustChangePassword && (
+          <p class="adm-alert adm-alert--err adm__warn" role="alert">
+            <strong>Compte temporaire.</strong> Ce compte utilise le mot de passe de démarrage.{' '}
+            <a href="/admin/compte">Change-le maintenant</a>, et mets ton prénom au passage.
+          </p>
+        )
+      }
       <slot />
     </main>
   </body>
@@ -238,6 +247,15 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
     max-width: 80rem;
     width: 100%;
     margin-inline: auto;
+  }
+
+  .adm__warn {
+    margin-bottom: var(--space-5);
+  }
+
+  .adm__warn a {
+    color: inherit;
+    font-weight: 600;
   }
 
   .adm--bare .adm__main {

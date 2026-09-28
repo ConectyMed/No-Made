@@ -42,8 +42,8 @@ if (Astro.request.method === 'POST') {
 
     <form method="post" class="login__form">
       <div class="adm-field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="username" required value={email} />
+        <label for="email">Email ou identifiant</label>
+        <input id="email" name="email" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required value={email} />
       </div>
       <div class="adm-field">
         <label for="password">Mot de passe</label>

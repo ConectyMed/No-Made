@@ -1,0 +1,89 @@
+---
+/** Mon compte : prénom et mot de passe. Le mot de passe actuel est demandé pour changer. */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { changePassword, destroyOtherSessions, COOKIE_NAME } from '@/lib/auth/session';
+import { PASSWORD_MIN } from '@/lib/auth/password';
+
+export const prerender = false;
+
+const user = Astro.locals.user!;
+let error: string | null = null;
+let ok = Astro.url.searchParams.get('ok') === '1';
+let nameValue = user.name;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const current = String(form.get('current') ?? '');
+  const next = String(form.get('password') ?? '');
+  const confirm = String(form.get('confirm') ?? '');
+  const name = String(form.get('name') ?? '');
+  nameValue = name.trim() || user.name;
+  if (next.length < PASSWORD_MIN) error = `Le nouveau mot de passe doit faire au moins ${PASSWORD_MIN} caractères.`;
+  else if (next !== confirm) error = 'Les deux nouveaux mots de passe ne correspondent pas.';
+  else {
+    const res = await changePassword(user.id, current, next, name);
+    if (res.ok) {
+      await destroyOtherSessions(user.id, Astro.cookies.get(COOKIE_NAME)?.value);
+      return Astro.redirect('/admin/compte?ok=1', 303);
+    }
+    error = res.reason === 'wrong-current' ? 'Le mot de passe actuel est incorrect.' : 'Compte introuvable.';
+  }
+}
+---
+
+<Admin title="Mon compte">
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Mon compte</span>
+      <h1>{user.name}</h1>
+      <p>Identifiant : <strong>{user.email}</strong></p>
+    </div>
+  </div>
+
+  {ok && <p class="adm-alert adm-alert--ok" role="status">Mot de passe changé. Les autres appareils connectés ont été déconnectés.</p>}
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <form method="post" class="adm-card account">
+    <div class="adm-field">
+      <label for="name">Prénom affiché</label>
+      <input id="name" name="name" type="text" autocomplete="given-name" maxlength="60" value={nameValue} />
+    </div>
+    <div class="adm-field">
+      <label for="current">Mot de passe actuel</label>
+      <input id="current" name="current" type="password" autocomplete="current-password" required />
+    </div>
+    <div class="account__row">
+      <div class="adm-field">
+        <label for="password">Nouveau mot de passe ({PASSWORD_MIN} caractères minimum)</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required minlength={PASSWORD_MIN} />
+      </div>
+      <div class="adm-field">
+        <label for="confirm">Le même, une deuxième fois</label>
+        <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength={PASSWORD_MIN} />
+      </div>
+    </div>
+    <div>
+      <Button type="submit" variant="dark" icon="check">Enregistrer</Button>
+    </div>
+  </form>
+</Admin>
+
+<style>
+  .account {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 44rem;
+  }
+
+  .account__row {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 40em) {
+    .account__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
