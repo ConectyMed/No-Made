@@ -16,7 +16,6 @@ Généré par `npm run build` le 2026-09-28.
 | `[NOM DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[NUMÉRO DE CONTRAT]` | /mentions-legales/ |
 | `[NUMÉRO SIRET]` | /cgv/, /mentions-legales/ |
-| `[PHOTO À FOURNIR]` | /a-propos/ |
 | `[PRÉNOM NOM]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[TARIF SOLO]` | /, /cgv/, /offres/ |
 | `[ZONE GÉOGRAPHIQUE COUVERTE]` | /mentions-legales/ |
@@ -24,4 +23,4 @@ Généré par `npm run build` le 2026-09-28.
 | `[À CONFIRMER]` | /confidentialite/ |
 | `[ÂGE MINIMUM ÉVENTUEL]` | /cgv/ |
 
-Où les remplir : `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/pages/a-propos.astro` (diplôme, carte pro), `src/assets/provisoire/` (images).
+Où les remplir : `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/assets/provisoire/` (images encore provisoires).

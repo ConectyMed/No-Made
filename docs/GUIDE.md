@@ -73,7 +73,11 @@ Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. 
 
 Reçue et intégrée. Source en `assets/source/hero-source.mp4` (1280×720, 8 s, sans son), encodages et poster dans `public/hero/`. Si tu remplaces la vidéo un jour : même format, même dossier, puis `npm run video` régénère tout (il faut ffmpeg sur la machine).
 
-Les cinq visuels actuels sont générés par IA et portent un badge « image provisoire ». Ils ne peuvent pas partir en production : le build refusera tant qu'ils sont là. Remplace-les par tes photos quand tu en as (`src/assets/provisoire/`, mêmes noms de fichiers, et je retire les badges).
+Premières vraies photos reçues le 28 septembre 2026, dans `src/assets/photos/`, métadonnées retirées : l'escalier de montagne (accueil, « Marcher, randonner », Pérou), le coucher de soleil sur les rochers face à la mer (accueil, « Respirer, se concentrer », lieu à confirmer), le lac d'altitude (accueil, cadre Reconnexion, Pérou) et son portrait assis sur un rocher (À propos, Pérou). Les photos du Pérou portent une petite légende « Pérou », pour ne pas laisser croire que c'est la région : à retirer si tu préfères.
+
+Un visuel reste généré par IA, avec le badge « image provisoire » qui bloque la production : la carte « Bouger » (accueil). Il manque donc une photo d'Anthony en train de faire un exercice au poids du corps ou de mobilité, dehors. Une photo parent / enfant en nature (avec l'accord des personnes) serait aussi la bienvenue pour le cadre Reconnexion, où le lac tient lieu d'ambiance en attendant.
+
+Écartés : les deux photos au bord du lac et sur la plage où apparaissent d'autres personnes (pas d'accord de leur part, images floues), la plage tropicale vide (1280 px, floue) et la vidéo du lever de soleil sur la plage (848×480, trop petite pour un cadre du site, et hors sujet). Une vidéo utile serait filmée à l'horizontale, en 1080p, quelques secondes, en nature dans la région.
 
 ---
 
@@ -82,7 +86,7 @@ Les cinq visuels actuels sont générés par IA et portent un badge « image pro
 Chaque case correspond à un placeholder jaune. Le build de production refuse de partir tant qu'il en reste (`docs/PLACEHOLDERS.md` en donne la liste à jour après chaque `npm run build`).
 
 - [x] **Lui** : prénom et parcours reçus (Anthony). Pas de diplôme ni de titre, et pas un mot sur le bar : c'est décidé.
-- [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
+- [x] **Son portrait** pour la page À propos : reçu le 28 septembre 2026 (photo de voyage, Pérou).
 - [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
 - [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
 - [x] **Lien Cal.com** pour la visio : reçu le 28 septembre 2026 (`cal.com/nomadeproject/presentation`), en place.
@@ -111,7 +115,7 @@ Autres possibilités reconnues par le site si vous préférez : Calendly (plan g
 
 ## Étape 6 quater — Les avis de participants
 
-Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Depuis le 28 septembre 2026, deux **avis provisoires, inventés pour la maquette** (fichiers `karim-b.md`, `lea-d.md`) sont glissés dans la page comme des citations ; la troisième citation est de Rousseau, libre de droits, et peut rester. Ils portent un marqueur invisible `[AVIS PROVISOIRE]` : la production reste bloquée tant qu'ils sont là, comme pour les images provisoires.
+Le site a un emplacement pour les avis sur l'accueil, entre le déroulement et le bandeau prix. Depuis le 28 septembre 2026, deux **avis provisoires, inventés pour la maquette** (fichiers `karim-b.md`, `lea-d.md`) sont glissés dans la page comme des citations ; la troisième citation est de Saint-Exupéry (*Le Petit Prince*), courte citation attribuée, et peut rester ; la page À propos porte une citation de Montaigne (*Essais*, III, 3), domaine public, qui reste aussi. Ils portent un marqueur invisible `[AVIS PROVISOIRE]` : la production reste bloquée tant qu'ils sont là, comme pour les images provisoires.
 
 Pour chaque avis, envoie-moi : le prénom et l'initiale du nom, le texte tel qu'il a été écrit, le mois de la session, l'offre concernée, d'où vient l'avis (email, message, oral), et la confirmation que la personne est d'accord pour être citée. Je crée un fichier par avis dans `src/content/testimonials/fr/` (modèle : `_modele.md`) et j'active la section. Pas d'étoiles ni de note : le texte et le prénom suffisent, c'est plus crédible.
 

@@ -38,7 +38,14 @@ const show = entry ? { text: entry.body?.trim() ?? '', name: entry.data.name, me
   show && (
     <figure class:list={['quote', { 'quote--compact': compact }, className]} data-reveal>
       <blockquote class="quote__text">
-        <p>{show.text}</p>
+        <p>
+          {show.text.split('\n').map((line, i, all) => (
+            <>
+              {line}
+              {i < all.length - 1 && <br />}
+            </>
+          ))}
+        </p>
       </blockquote>
       <figcaption class="quote__by">
         <strong>{show.name}</strong>

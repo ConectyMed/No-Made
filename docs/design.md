@@ -141,7 +141,7 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
    légales, CGV, Confidentialité, Instagram), copyright row.
 
 Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
-quote after the three moments (Rousseau, *Les Confessions* IV, on walking and thinking, chosen 2026-09-28),
+quote after the three moments (Saint-Exupéry, *Le Petit Prince*, dedication, original punctuation with the parenthesis, chosen by the representative 2026-09-28; short quotation with attribution),
 one participant quote under the Reconnexion image (parent / child), one after the steps, before the price
 banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
 Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
@@ -159,8 +159,8 @@ First name + initial, month, offer; no stars, no ratings.
 - **/a-propos** — the owner in the first person: "Moi, c'est Anthony", his story in his own facts (10 years
   of autonomous travel, knowledge of the terrain, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
   for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why Nó Made exists,
-  a four-item facts list, one portrait slot ([PHOTO À FOURNIR]),
-  then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
+  a four-item facts list, his portrait (travel photo, captioned Pérou), a Montaigne pull quote (*Essais*, III, 3,
+  public domain, chosen by the representative 2026-09-28) as the bridge, then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
 - **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): a booking
   page (Cal.com recommended since the owner has no Google account; Calendly and Google Calendar also
   recognised) loaded in an iframe only after a click (no third-party request before), fallback link in a new
@@ -187,8 +187,19 @@ Turnstile dormant behind env keys. No payment.
 ## 10. Imagery
 
 - Real photos from the first outings replace everything as soon as they exist.
-- Until then (approved 2026-09-28), the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
-  visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship to production.
+- First real photos received 2026-09-28: Anthony's own photos, re-encoded with `sharp` (auto-rotated,
+  EXIF and GPS stripped, 1500×2000, JPEG 86) into `src/assets/photos/`, served through `Photo.astro`
+  (Astro `<Image>`, webp, responsive widths, `object-fit: cover`, optional `position` and `caption`).
+  Travel photos carry a small "Pérou" caption (bottom left) so nobody mistakes them for the region.
+  Placement: steep stone stairway (Peru) → home "Marcher, randonner"; crouched silhouette on sea rocks at
+  sunset (location to confirm, no caption) → home "Respirer, se concentrer"; glacier lake (Peru) → home
+  Reconnexion frame (mood image until a parent / child photo exists); Anthony seated on a summit rock
+  (Peru) → À propos portrait (4:5 frame).
+- Not used: shots with third parties in frame (no consent), the empty tropical beach (1280 px, soft),
+  and a 30 s 848×480 beach sunrise clip (too small for any frame, off-topic).
+- One AI-generated image remains as a **provisional visual** (the "Bouger" card), carrying a visible
+  "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. It never ships to production. Needed: a
+  bodyweight / mobility shot outdoors.
 - Hero video received 2026-09-28. Source `assets/source/hero-source.mp4` is 1280×720, 24 fps, 8 s,
   no audio, so there is no 1080p encode (upscaling would add weight, not detail). Built files in
   `public/hero/`: `hero-720.mp4` (0.99 MB, desktop), `hero-540.mp4` (0.29 MB, phones),
