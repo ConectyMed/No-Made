@@ -5,10 +5,12 @@
  * sont légendées) ; le seul visuel encore provisoire (« Bouger ») reste étiqueté.
  */
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import type { IconName } from '@/components/Icon.astro';
+import type { ImageMetadata } from 'astro';
 import ProvisionalImage from '@/components/ProvisionalImage.astro';
 import Photo from '@/components/Photo.astro';
 import HeroVideo from '@/components/HeroVideo.astro';
@@ -36,10 +38,19 @@ const soloPrice = entry?.data.pricing.find((p) => p.amountCents === undefined);
 const reconnex = offers.find((o) => o.data.slug === 'reconnexion-parent-enfant');
 const duoPrice = reconnex?.data.pricing[0];
 
-const specs: { icon: IconName; text: string }[] = [
-  { icon: 'pin', text: `Région ${site.area}` },
-  { icon: 'users', text: 'En solo ou de 3 à 5' },
-  { icon: 'leaf', text: '100 % dehors' },
+// Bandeau de repères du hero : uniquement des données du site (durées des offres, visio), rien d'inventé.
+const facts: { value: string; label: string; accent?: boolean }[] = [
+  { value: entry?.data.duration ?? '2h30', label: 'Session corps / aventure, en solo ou en groupe' },
+  { value: reconnex?.data.duration ?? '3h', label: 'Reconnexion parent / enfant' },
+  { value: site.visio.duration.replace('minutes', 'min'), label: 'En visio, gratuites, avant de réserver' },
+  { value: '0 écran', label: 'Le téléphone reste dans le sac', accent: true },
+];
+
+// Cartes flottantes du hero : les trois temps d'une session, vignettes = vraies photos (détail dans #temps-forts).
+const heroCards: { title: string; text: string; img: ImageMetadata; position: string }[] = [
+  { title: 'Marcher', text: 'Sentiers de la région, rythme adapté', img: marcheImg, position: 'center 30%' },
+  { title: 'Bouger', text: 'Poids du corps, mobilité', img: respirationImg, position: 'center 35%' },
+  { title: 'Respirer', text: 'Souffle, concentration, sans écran', img: reconnexImg, position: 'center 55%' },
 ];
 
 // Les quatre raisons de sortir, telles que formulées par la personne qui encadre.
@@ -72,7 +83,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 ---
 
 <Base title={page.title} description={page.description} isHome bodyClass="page-home">
-  <!-- 1. Hero -->
+  <!-- 1. Hero : cadre clair, texte à gauche, vidéo qui déborde à droite, cartes flottantes, repères en bas -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
       <div class="hero__frame frame">
@@ -85,19 +96,19 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
             srcMobile="/hero/hero-540.mp4"
             alt="Un sentier vide dans la garrigue au lever du jour, pins parasols et collines dans la brume, région PACA"
           />
+          <div class="hero__shade" aria-hidden="true"></div>
         </div>
-        <div class="hero__shade" aria-hidden="true"></div>
 
         <div class="hero__content">
-          <span class="hero__tag glass">
-            <span class="hero__tag-dot" aria-hidden="true"></span>
+          <span class="hero__tag">
+            <Icon name="leaf" size={14} />
             {page.tag}
           </span>
 
           <h1 id="hero-title" class="hero__title">
             {h1Lines.map((line, i) => (
               <>
-                {line}
+                {i === h1Lines.length - 1 ? <span class="hero__accent">{line}</span> : line}
                 {i < h1Lines.length - 1 && <br />}
               </>
             ))}
@@ -106,18 +117,39 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
           <div class="hero__cta">
             <Button href={CTA_HREF} variant="lime" size="lg" icon="arrow-right">{CTA_LABEL}</Button>
-            <Button href="#approche" variant="glass" size="lg" icon="chevron-down">{t('common.discover')}</Button>
+            <Button href="#approche" variant="outline" size="lg" icon="chevron-down">{t('common.discover')}</Button>
           </div>
 
-          <ul class="specs glass" role="list">
-            {specs.map((s) => (
-              <li>
-                <Icon name={s.icon} size={18} class="specs__icon" />
-                <span>{s.text}</span>
-              </li>
-            ))}
-          </ul>
+          <p class="hero__note small muted">
+            <Icon name="video" size={16} class="hero__note-icon" />
+            <span>
+              Tu préfères en parler d’abord ? <a href={VISIO_HREF}>{site.visio.duration} en visio</a>, gratuites et sans engagement.
+            </span>
+          </p>
         </div>
+
+        <ul class="hero__cards" role="list" aria-label="Les trois temps d’une session">
+          {heroCards.map((c, i) => (
+            <li class="hero__card glass" style={`--i: ${i}`}>
+              <a href="#temps-forts" class="hero__card-link">
+                <Image src={c.img} width={112} height={112} format="webp" quality={75} alt="" class="hero__card-img" style={`object-position: ${c.position}`} />
+                <span class="hero__card-text">
+                  <strong>{c.title}</strong>
+                  <span class="small muted">{c.text}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <ul class="hero__facts" role="list" aria-label="Repères">
+          {facts.map((f) => (
+            <li class:list={['hero__fact', 'glass', { 'hero__fact--accent': f.accent }]}>
+              <strong class="hero__fact-value">{f.value}</strong>
+              <span class="hero__fact-label small muted">{f.label}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   </section>
@@ -327,51 +359,57 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 <style>
   /* ---------- Hero ---------- */
   .hero {
+    --hero-pad: clamp(1.25rem, 0.75rem + 2.5vw, 3.5rem);
     padding-bottom: var(--space-6);
   }
 
+  /* Mobile : une colonne (texte, média, cartes, repères). Desktop : grille 2 colonnes + rangée de repères. */
   .hero__frame {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    min-height: min(85svh, 660px);
-    padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+    background: var(--surface);
     border: var(--border);
     box-shadow: var(--shadow);
     isolation: isolate;
   }
 
-  @media (max-width: 40em) {
-    .hero__frame {
-      min-height: 580px;
-    }
-  }
-
   .hero__media {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+    position: relative;
+    order: 2;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    isolation: isolate;
+    animation: hero-media 1.4s ease-out both;
   }
 
+  /* Le média fond dans la surface du cadre : par le bas sur mobile, par la gauche et le bas sur desktop. */
   .hero__shade {
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(8, 32, 19, 0.9) 0%, rgba(8, 32, 19, 0.5) 45%, transparent 100%);
+    background: linear-gradient(to top, var(--surface) 0%, transparent 45%);
   }
 
-  /* Le bouton pause de la vidéo doit rester cliquable au-dessus du voile. */
+  /* Bouton pause de la vidéo : en haut à droite, hors des cartes et des repères. */
   .hero__media :global(.hv__toggle) {
+    top: 1rem;
+    right: 1rem;
+    bottom: auto;
     z-index: 3;
   }
 
-  .hero__media {
-    z-index: 0;
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    order: 1;
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    padding: var(--hero-pad) var(--hero-pad) var(--space-4);
   }
 
-  /* Entrée (accueil uniquement, design.md §9) : le contenu monte en fondu, le média se révèle. */
   .hero__content > * {
     animation: hero-rise 0.9s var(--ease-out) both;
   }
@@ -381,8 +419,143 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   .hero__content > :nth-child(4) { animation-delay: 240ms; }
   .hero__content > :nth-child(5) { animation-delay: 320ms; }
 
-  .hero__media {
-    animation: hero-media 1.4s ease-out both;
+  .hero__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: var(--lime-soft);
+    color: var(--green-600);
+    font-size: var(--label-upper);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--green-900);
+  }
+
+  .hero__accent {
+    color: var(--green-600);
+  }
+
+  .hero__lead {
+    font-size: var(--body-lg);
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34rem;
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .hero__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    max-width: 30rem;
+  }
+
+  .hero__note :global(.hero__note-icon) {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--green-600);
+  }
+
+  .hero__note a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  /* Cartes : les trois temps d'une session. Sur mobile elles remontent sur le bas du média. */
+  .hero__cards {
+    position: relative;
+    z-index: 2;
+    order: 3;
+    display: grid;
+    gap: var(--space-3);
+    margin: -3rem var(--hero-pad) 0;
+  }
+
+  .hero__card {
+    border-radius: var(--radius-box);
+    box-shadow: var(--shadow);
+    animation: hero-rise 0.9s var(--ease-out) both;
+    animation-delay: calc(360ms + var(--i, 0) * 90ms);
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+
+  .hero__card:hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  .hero__card-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0.6rem 1rem 0.6rem 0.6rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .hero__card :global(.hero__card-img) {
+    flex: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.65rem;
+    object-fit: cover;
+  }
+
+  .hero__card-text {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .hero__card-text strong {
+    font-size: var(--label);
+    font-weight: 700;
+    color: var(--green-900);
+  }
+
+  /* Repères : durées et conditions réelles, jamais des chiffres inventés. */
+  .hero__facts {
+    position: relative;
+    z-index: 2;
+    order: 4;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    padding: var(--space-5) var(--hero-pad) var(--hero-pad);
+  }
+
+  .hero__fact {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-box);
+  }
+
+  .hero__fact--accent {
+    background: var(--lime-soft);
+    border-color: var(--lime);
+  }
+
+  .hero__fact-value {
+    font-size: var(--text-md);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--green-900);
   }
 
   @keyframes hero-rise {
@@ -407,83 +580,95 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
   @media (prefers-reduced-motion: reduce) {
     .hero__content > *,
+    .hero__card,
     .hero__media {
       animation: none;
     }
   }
 
-  .hero__content {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    gap: var(--space-4);
-    justify-items: start;
-    max-width: 48rem;
-    color: var(--on-dark);
+  /* Tablette : média moins haut, les trois cartes sur une ligne. */
+  @media (min-width: 40em) and (max-width: 63.98em) {
+    .hero__media {
+      aspect-ratio: 16 / 9;
+    }
+
+    .hero__cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: -2.5rem;
+    }
   }
 
-  .hero__tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: var(--radius-pill);
-    color: var(--green-900);
-    font-size: var(--label-sm);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    margin-bottom: var(--space-2);
+  @media (min-width: 64em) {
+    .hero__frame {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+      min-height: min(84svh, 720px);
+    }
+
+    /* Le média couvre la moitié droite du cadre, sur toute la hauteur, derrière les cartes et les repères. */
+    .hero__media {
+      position: absolute;
+      inset: 0 0 0 auto;
+      z-index: 0;
+      width: 62%;
+      aspect-ratio: auto;
+      order: 0;
+    }
+
+    .hero__shade {
+      background:
+        linear-gradient(to right, var(--surface) 0%, transparent 42%),
+        linear-gradient(to top, var(--surface) 0%, transparent 32%);
+    }
+
+    .hero__content {
+      grid-column: 1;
+      grid-row: 1;
+      align-content: center;
+      max-width: 36rem;
+      padding: var(--hero-pad);
+      padding-right: 0;
+    }
+
+    .hero__cards {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: center;
+      justify-self: end;
+      width: 19rem;
+      max-width: 100%;
+      margin: 0;
+      padding: var(--hero-pad) var(--hero-pad) var(--hero-pad) 0;
+    }
+
+    /* Léger décalage horizontal, comme des cartes posées sur le paysage (plus discret sous 72em). */
+    .hero__card:nth-child(1) { transform: translateX(var(--shift-1, -1.25rem)); }
+    .hero__card:nth-child(3) { transform: translateX(var(--shift-3, -2rem)); }
+
+    .hero__card:nth-child(1):hover { transform: translateX(var(--shift-1, -1.25rem)) translateY(-3px); }
+    .hero__card:nth-child(2):hover { transform: translateY(-3px); }
+    .hero__card:nth-child(3):hover { transform: translateX(var(--shift-3, -2rem)) translateY(-3px); }
+
+    .hero__facts {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding-top: 0;
+    }
   }
 
-  .hero__tag-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--lime);
+  @media (min-width: 72em) {
+    .hero__cards {
+      --shift-1: -2.5rem;
+      --shift-3: -4rem;
+    }
   }
 
-  .hero__title {
-    color: var(--on-dark);
-    max-width: 18ch;
-  }
-
-  .hero__lead {
-    font-size: var(--body-lg);
-    line-height: 1.55;
-    color: var(--on-dark-muted);
-    max-width: 40rem;
-  }
-
-  .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-block: var(--space-2) var(--space-5);
-  }
-
-  .specs {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.25rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: 1rem;
-    color: var(--green-900);
-    font-size: var(--label-sm);
-    font-weight: 600;
-  }
-
-  .specs li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .specs li + li {
-    position: relative;
-  }
-
-  .specs :global(.specs__icon) {
-    color: var(--green-600);
+  @media (min-width: 64em) and (prefers-reduced-motion: reduce) {
+    .hero__card:hover {
+      transform: none;
+    }
   }
 
   /* ---------- Citations intégrées ---------- */

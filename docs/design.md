@@ -109,18 +109,30 @@ with large links and the CTA. Escape closes, focus managed.
 
 ## 5. Hero
 
-Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
+Split layout (v3, 2026-09-28), on a light frame: text left, media right, floating cards, a row of facts.
+- Frame: rounded, `--surface` background, border, soft shadow. Desktop ≥ 64em: two columns (7/5), min
+  height 84svh capped at 720px, plus a full-width facts row. Tablet and mobile: one column (text, media,
+  cards, facts).
 - Media: the looping video (`src/components/HeroVideo.astro`). Poster `<img>` first (LCP element,
   carries the alt text), video attached after `load` with `preload="none"`, 1.2 s fade-in once frames
-  render, native `loop` on a file whose 1 s crossfade is baked in, pause control, blurred poster backdrop
-  for portrait screens. Poster only under reduced motion, Save-Data, 2G, or when playback is refused.
-  Pauses when the tab is hidden or the hero is scrolled out.
-- Gradient from green-900 at 90% at the bottom to transparent at the top, so white text reads.
-- Tag pill (white, blurred, lime dot): "Région PACA · sessions en petit groupe".
-- H1 in white: "Marcher. Respirer. Se retrouver dehors." (validated), editable in `src/i18n/fr.json`. Lead in white at 90%.
-- Two CTAs: "Demander une session" (lime) and "Découvrir le format" (white glass, scrolls to the approach).
-- Spec bar (white glass pill): Région PACA · 3 à 5 personnes · 100 % dehors.
-- Portrait mobile: same frame, media covers, content stacks.
+  render, native `loop` on a file whose 1 s crossfade is baked in, pause control (top right), blurred
+  poster backdrop. Poster only under reduced motion, Save-Data, 2G, or when playback is refused. Pauses
+  when the tab is hidden or the hero is scrolled out. On desktop it covers the right 62% of the frame,
+  full height, and fades into the frame surface on its left edge and at the bottom (two gradients in
+  `--surface`, so both themes work). On mobile it is a 4:3 block (16:9 on tablet) fading at the bottom.
+- Tag pill (lime-soft, leaf icon, uppercase): "Région PACA · en solo ou en petit groupe".
+- H1 in green-900, larger than the display size (2.5 → 4.25rem), last line "Se retrouver." in green-600.
+  Editable in `src/i18n/fr.json` (the last `\n` line is the accented one). Lead in ink-2, 34rem max.
+- Two CTAs: "Demander une session" (lime) and "Découvrir l'approche" (outline, scrolls to the approach).
+  Under them, one line: "Tu préfères en parler d'abord ? 20 minutes en visio, gratuites et sans
+  engagement." linking to the visio block. No fake avatars, no "join N people".
+- Floating cards (right column, staggered horizontally, `.glass`): Marcher · Bouger · Respirer, each a
+  56px real-photo thumbnail (stairs, crouched silhouette on rocks, altitude lake) and one line; they link
+  to the "Trois temps forts" section. Thumbnails are decorative (`alt=""`), too small to carry the "Pérou"
+  caption; the full cards below keep it. On mobile the three cards overlap the bottom of the media.
+- Facts row (4 tiles, `.glass`, the last one lime-soft): 2h30 session corps / aventure · 3h Reconnexion ·
+  20 min de visio · 0 écran. Values come from the offers' `duration` and `site.visio.duration`, never
+  typed numbers: the reference layout's "520K+ trees" style counters are exactly what this site does not do.
 
 ## 6. Home page sections, in order
 
@@ -178,7 +190,8 @@ Turnstile dormant behind env keys. No payment.
 
 ## 9. Motion
 
-- Entrance on the home page only: media fade, hero content rise. Elsewhere a plain short fade.
+- Entrance on the home page only: media fade, hero content rise, then the three floating cards rise one
+  after the other (360 ms + 90 ms each). Elsewhere a plain short fade.
 - Scroll: once-only fade-rise reveals via IntersectionObserver. No parallax in v1.
 - Hover: cards lift 4–6px, buttons scale 1.02 / 0.98.
 - `prefers-reduced-motion: reduce`: no entrance, no reveals, poster instead of video. Transform and
