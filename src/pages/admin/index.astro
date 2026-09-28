@@ -1,0 +1,162 @@
+---
+/** Tableau de bord (version étape 1 : demandes à traiter et dernières demandes ; complet à l'étape 3). */
+import Admin from '@/layouts/Admin.astro';
+import { countRequestsByStatus, listRequests } from '@/lib/crm/requests';
+import { REQUEST_STATUS_LABEL } from '@/lib/crm/labels';
+import { formatRelative } from '@/lib/dates';
+
+export const prerender = false;
+
+const user = Astro.locals.user!;
+const counts = await countRequestsByStatus();
+const latest = (await listRequests()).slice(0, 6);
+const hour = Number(new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(Date.now()));
+const hello = hour < 18 ? 'Bonjour' : 'Bonsoir';
+---
+
+<Admin title="Tableau de bord">
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Tableau de bord</span>
+      <h1>{hello} {user.name}</h1>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <a href="/admin/demandes?statut=nouvelle" class="tile adm-card tile--accent">
+      <span class="tile__num">{counts.nouvelle}</span>
+      <span class="tile__label">{counts.nouvelle > 1 ? 'demandes à traiter' : 'demande à traiter'}</span>
+    </a>
+    <a href="/admin/demandes?statut=repondue" class="tile adm-card">
+      <span class="tile__num">{counts.repondue}</span>
+      <span class="tile__label">en attente de réponse du client</span>
+    </a>
+    <a href="/admin/demandes?statut=confirmee" class="tile adm-card">
+      <span class="tile__num">{counts.confirmee}</span>
+      <span class="tile__label">confirmée{counts.confirmee > 1 ? 's' : ''}</span>
+    </a>
+    <div class="tile adm-card tile--soon">
+      <span class="tile__num">…</span>
+      <span class="tile__label">sessions et chiffre d’affaires : étape suivante</span>
+    </div>
+  </div>
+
+  <section class="adm-card latest" aria-labelledby="latest-title">
+    <div class="latest__head">
+      <h2 id="latest-title">Dernières demandes</h2>
+      <a href="/admin/demandes" class="small">Tout voir</a>
+    </div>
+    {
+      latest.length === 0 ? (
+        <p class="adm-empty">Aucune demande pour l’instant. Elles arriveront ici dès le premier envoi du formulaire.</p>
+      ) : (
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Qui</th>
+              <th>Session</th>
+              <th>Personnes</th>
+              <th>Reçue</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {latest.map((r) => (
+              <tr>
+                <td>
+                  <a href={`/admin/demandes/${r.id}`}>{r.contactName}</a>
+                  <br />
+                  <span class="small">{r.contactEmail}</span>
+                </td>
+                <td>{r.offerLabel}</td>
+                <td>{r.groupSize}</td>
+                <td>{formatRelative(r.createdAt)}</td>
+                <td>
+                  <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )
+    }
+  </section>
+</Admin>
+
+<style>
+  .tiles {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .tile {
+    display: grid;
+    gap: var(--space-1);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .tile__num {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--green-900);
+    line-height: 1.1;
+  }
+
+  .tile__label {
+    font-size: var(--body-sm);
+    color: var(--ink-2);
+  }
+
+  .tile--accent {
+    background: var(--deep);
+    border-color: transparent;
+  }
+
+  .tile--accent .tile__num {
+    color: var(--lime);
+  }
+
+  .tile--accent .tile__label {
+    color: var(--on-dark-muted);
+  }
+
+  .tile--soon {
+    border-style: dashed;
+    box-shadow: none;
+  }
+
+  .tile--soon .tile__num {
+    color: var(--ink-3);
+  }
+
+  .latest__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .latest__head h2 {
+    font-size: var(--text-md);
+  }
+
+  .latest__head a {
+    color: var(--green-600);
+  }
+
+  @media (min-width: 40em) {
+    .tiles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .tiles {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

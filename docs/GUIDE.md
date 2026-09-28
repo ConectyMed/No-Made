@@ -106,6 +106,19 @@ Si son compte n'a pas l'option « Planning de rendez-vous », le lien court de p
 
 ---
 
+## Étape 6 ter — L'espace admin (mini CRM)
+
+L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de l'email, et servira à suivre les sessions.
+
+1. **Base de données** : fait (Turso, Irlande). Vérifie dans Vercel → Settings → Environment Variables que `TURSO_DATABASE_URL` et `TURSO_AUTH_TOKEN` existent pour les trois environnements. Si l'intégration les a nommées autrement, dis-le-moi.
+2. **Les deux comptes** : ajoute une variable `ADMIN_EMAILS` avec les deux adresses séparées par une virgule (celle d'Anthony et la tienne), pour les trois environnements, puis Redeploy.
+3. **Premier mot de passe** : chacun va sur `/admin/mot-de-passe`, saisit son adresse, reçoit un lien (valable une heure) et choisit un mot de passe de 12 caractères minimum. Tant que Resend n'est pas configuré (étape 4), l'email ne part pas : le lien est alors écrit dans les journaux de la fonction, sur Vercel → Deployments → le déploiement → Functions. Solution de repli depuis ton ordinateur : `TURSO_DATABASE_URL=… TURSO_AUTH_TOKEN=… node scripts/admin-user.mjs adresse "Prénom"` crée le compte et affiche un mot de passe temporaire.
+4. **Au quotidien** : Demandes → ouvrir une demande → « Répondre par email » ouvre la boîte mail avec un brouillon, la demande passe en « répondue ». Le statut, les notes sur la demande et sur la personne s'enregistrent dans le bloc Suivi. Le bouton Supprimer sert au droit à l'effacement (RGPD).
+
+À venir : contacts et sessions avec le paiement au cochage (étape 2), tableau de bord (étape 3), édition du contenu du site en brouillon (étape 4).
+
+---
+
 ## Étape 7 — Tester
 
 Quand les étapes 1, 2 et 4 sont faites :

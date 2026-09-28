@@ -44,6 +44,13 @@ Toute information manquante est écrite entre crochets et en majuscules : `[SLOG
   dans `package.json` et `astro.config.mjs`. Rien d'autre ne change.
 - Mettre à jour `SITE_URL` dans `astro.config.mjs` et `public/robots.txt` avec le vrai domaine.
 
+## Admin (mini CRM)
+
+`/admin` : demandes, contacts, sessions, tableau de bord. Base SQLite sur Turso (`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`),
+fichier `data/dev.db` en local. Comptes par email et mot de passe ; les adresses de `ADMIN_EMAILS` créent leur mot de passe
+sur `/admin/mot-de-passe`. Schéma dans `src/lib/db/schema.ts` ; après une modification : `npm run db:generate -- --name <nom>`
+puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un terminal : `npm run admin:user -- email "Prénom"`.
+
 ## Jalons
 
 | Jalon | Contenu | État |
@@ -54,3 +61,7 @@ Toute information manquante est écrite entre crochets et en majuscules : `[SLOG
 | M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | fait (clés Resend à renseigner) |
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | fait |
 | + | Mode sombre : suit le système, bascule discrète dans la nav, choix mémorisé | fait |
+| M5.1 | Admin : base Turso, comptes, connexion, boîte de demandes branchée sur le formulaire | fait |
+| M5.2 | Admin : contacts, sessions, paiement au cochage | à venir |
+| M5.3 | Admin : tableau de bord | à venir |
+| M5.4 | Contenu du site éditable en brouillon (Keystatic) | à venir |

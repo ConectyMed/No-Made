@@ -1,0 +1,95 @@
+---
+/** Choix du mot de passe depuis le lien reçu par email. Crée le compte à la première connexion. */
+import Admin from '@/layouts/Admin.astro';
+import Button from '@/components/Button.astro';
+import { peekPasswordToken, setPasswordWithToken, createSession, setSessionCookie } from '@/lib/auth/session';
+import { PASSWORD_MIN } from '@/lib/auth/password';
+
+export const prerender = false;
+
+const token = Astro.params.token ?? '';
+const info = token ? await peekPasswordToken(token) : null;
+let error: string | null = null;
+
+if (info && Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const password = String(form.get('password') ?? '');
+  const confirm = String(form.get('confirm') ?? '');
+  const name = String(form.get('name') ?? '');
+  if (password.length < PASSWORD_MIN) error = `Au moins ${PASSWORD_MIN} caractères.`;
+  else if (password !== confirm) error = 'Les deux mots de passe ne correspondent pas.';
+  else if (info.isNew && name.trim().length < 2) error = 'Indique ton prénom.';
+  else {
+    const user = await setPasswordWithToken(token, password, name);
+    if (user) {
+      setSessionCookie(Astro.cookies, await createSession(user.id));
+      return Astro.redirect('/admin', 303);
+    }
+    error = 'Ce lien n’est plus valable.';
+  }
+}
+---
+
+<Admin title="Mot de passe" bare>
+  <div class="box adm-card">
+    {
+      !info ? (
+        <>
+          <h1>Lien expiré</h1>
+          <p class="muted">Ce lien n’est plus valable : il a déjà servi ou il a plus d’une heure.</p>
+          <a href="/admin/mot-de-passe" class="btn-ghost">Demander un nouveau lien</a>
+        </>
+      ) : (
+        <>
+          <h1>{info.isNew ? 'Bienvenue' : 'Nouveau mot de passe'}</h1>
+          <p class="muted">
+            Compte : <strong>{info.email}</strong>
+          </p>
+          {error && (
+            <p class="adm-alert adm-alert--err" role="alert">
+              {error}
+            </p>
+          )}
+          <form method="post" class="box__form">
+            {info.isNew && (
+              <div class="adm-field">
+                <label for="name">Prénom</label>
+                <input id="name" name="name" type="text" autocomplete="given-name" required minlength="2" maxlength="60" />
+              </div>
+            )}
+            <div class="adm-field">
+              <label for="password">Mot de passe ({PASSWORD_MIN} caractères minimum)</label>
+              <input id="password" name="password" type="password" autocomplete="new-password" required minlength={PASSWORD_MIN} />
+            </div>
+            <div class="adm-field">
+              <label for="confirm">Le même, une deuxième fois</label>
+              <input id="confirm" name="confirm" type="password" autocomplete="new-password" required minlength={PASSWORD_MIN} />
+            </div>
+            <Button type="submit" variant="dark" block icon="check">
+              Enregistrer et entrer
+            </Button>
+          </form>
+        </>
+      )
+    }
+  </div>
+</Admin>
+
+<style>
+  .box {
+    width: min(26rem, 100%);
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .box h1 {
+    font-size: var(--text-lg);
+  }
+
+  .box__form {
+    display: grid;
+    gap: var(--space-4);
+    width: 100%;
+  }
+</style>

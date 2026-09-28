@@ -1,0 +1,497 @@
+---
+/**
+ * Gabarit de l'espace admin (mini CRM) : barre latérale, contenu, déconnexion.
+ * Rendu à la demande uniquement (les pages fixent prerender = false). Jamais indexé.
+ */
+import Icon from '@/components/Icon.astro';
+import type { IconName } from '@/components/Icon.astro';
+import { site } from '@/data/site';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  /** Sans barre latérale (connexion, mot de passe). */
+  bare?: boolean;
+}
+const { title, bare = false } = Astro.props;
+const user = Astro.locals.user;
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const nav: { href: string; label: string; icon: IconName; soon?: boolean }[] = [
+  { href: '/admin', label: 'Tableau de bord', icon: 'leaf' },
+  { href: '/admin/demandes', label: 'Demandes', icon: 'mail' },
+  { href: '/admin/contacts', label: 'Contacts', icon: 'users', soon: true },
+  { href: '/admin/sessions', label: 'Sessions', icon: 'calendar', soon: true },
+];
+const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path.startsWith(href));
+---
+
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} · Admin {site.shortName}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f9f9f8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1411" media="(prefers-color-scheme: dark)" />
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('nomade-theme');
+          var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class:list={['adm', { 'adm--bare': bare }]}>
+    <a href="#contenu" class="skip-link">Aller au contenu</a>
+
+    {
+      !bare && (
+        <aside class="adm__side">
+          <a href="/admin" class="adm__brand" aria-label="Tableau de bord">
+            <span class="adm__dot" aria-hidden="true" />
+            <span>{site.shortName}<small>Admin</small></span>
+          </a>
+          <nav aria-label="Admin">
+            <ul role="list" class="adm__nav">
+              {nav.map((n) => (
+                <li>
+                  {n.soon ? (
+                    <span class="adm__link adm__link--soon" aria-disabled="true">
+                      <Icon name={n.icon} size={18} />
+                      {n.label}
+                      <small>bientôt</small>
+                    </span>
+                  ) : (
+                    <a href={n.href} class="adm__link" aria-current={isActive(n.href) ? 'page' : undefined}>
+                      <Icon name={n.icon} size={18} />
+                      {n.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div class="adm__user">
+            <span class="adm__who">
+              <strong>{user?.name}</strong>
+              <small>{user?.email}</small>
+            </span>
+            <form method="post" action="/admin/deconnexion">
+              <button type="submit" class="adm__logout">Se déconnecter</button>
+            </form>
+            <a href="/" class="adm__site small">Voir le site <Icon name="arrow-right" size={14} /></a>
+          </div>
+        </aside>
+      )
+    }
+
+    <main id="contenu" class="adm__main" tabindex="-1">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  .adm {
+    min-height: 100dvh;
+    background: var(--bg);
+  }
+
+  .adm:not(.adm--bare) {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .adm__side {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border-bottom: var(--border);
+  }
+
+  .adm__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--green-900);
+    font-weight: 600;
+    font-size: var(--text-sm-h);
+    letter-spacing: -0.01em;
+  }
+
+  .adm__brand small {
+    display: block;
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--green-600);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .adm__dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--lime);
+  }
+
+  .adm__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .adm__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: var(--tap-min);
+    padding: 0 0.85rem;
+    border-radius: var(--radius-pill);
+    color: var(--ink-2);
+    font-size: var(--label);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+
+  .adm__link:hover {
+    color: var(--green-900);
+    background: var(--surface-low);
+  }
+
+  .adm__link[aria-current='page'] {
+    color: var(--on-lime);
+    background: var(--lime);
+  }
+
+  .adm__link--soon {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .adm__link--soon small {
+    font-size: var(--label-sm);
+    font-weight: 500;
+    color: var(--ink-3);
+  }
+
+  .adm__user {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    margin-left: auto;
+  }
+
+  .adm__who {
+    display: grid;
+    line-height: 1.25;
+  }
+
+  .adm__who strong {
+    font-size: var(--label);
+    color: var(--green-900);
+  }
+
+  .adm__who small {
+    font-size: var(--label-sm);
+    color: var(--ink-2);
+  }
+
+  .adm__logout,
+  .adm__site {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.25rem;
+    padding: 0 0.8rem;
+    border-radius: var(--radius-pill);
+    border: var(--border);
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .adm__logout:hover,
+  .adm__site:hover {
+    color: var(--green-900);
+    border-color: var(--outline);
+  }
+
+  .adm__main {
+    padding: var(--space-6) var(--gutter) var(--space-10);
+    max-width: 80rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .adm--bare .adm__main {
+    display: grid;
+    place-items: center;
+    min-height: 100dvh;
+    padding-block: var(--space-8);
+  }
+
+  /* ---------- Éléments partagés de l'admin ---------- */
+  .adm-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .adm-head h1 {
+    font-size: var(--text-xl);
+  }
+
+  .adm-head p {
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+
+  .adm-card {
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow);
+    padding: clamp(1.25rem, 1rem + 1.2vw, 2rem);
+  }
+
+  .adm-field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .adm-field label,
+  .adm-field .adm-label {
+    font-size: var(--label-sm);
+    font-weight: 600;
+    color: var(--green-900);
+  }
+
+  .adm-field input:not([type='checkbox']),
+  .adm-field select,
+  .adm-field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1.1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 1rem;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: var(--body);
+  }
+
+  .adm-field textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .adm-field select {
+    appearance: none;
+    background-image: var(--select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.75rem;
+  }
+
+  .adm-field input:focus-visible,
+  .adm-field select:focus-visible,
+  .adm-field textarea:focus-visible {
+    outline: none;
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  .adm-alert {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-box);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-low);
+    color: var(--ink);
+    font-size: var(--body-sm);
+  }
+
+  .adm-alert--err {
+    border-color: var(--danger-line);
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+
+  .adm-alert--ok {
+    border-color: var(--lime);
+    background: var(--lime-soft);
+    color: var(--ink);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25em 0.7em;
+    border-radius: var(--radius-pill);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    background: var(--surface-low);
+    color: var(--ink-2);
+    border: var(--border);
+  }
+
+  .badge::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .badge--nouvelle {
+    background: var(--lime-soft);
+    color: var(--green-600);
+    border-color: transparent;
+  }
+
+  .badge--repondue {
+    color: var(--green-800);
+  }
+
+  :root[data-theme='dark'] .badge--repondue {
+    color: var(--ink);
+  }
+
+  .badge--confirmee {
+    background: var(--deep);
+    color: var(--on-dark);
+    border-color: transparent;
+  }
+
+  .badge--annulee {
+    color: var(--ink-3);
+    text-decoration: line-through;
+  }
+
+  .adm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--body-sm);
+  }
+
+  .adm-table th {
+    text-align: left;
+    font-size: var(--label-sm);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--green-600);
+    padding: 0 0.75rem 0.75rem 0;
+    border-bottom: var(--border);
+  }
+
+  .adm-table td {
+    padding: 0.85rem 0.75rem 0.85rem 0;
+    border-bottom: var(--border);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+
+  .adm-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .adm-table a {
+    color: var(--green-900);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .adm-table a:hover {
+    text-decoration: underline;
+  }
+
+  .adm-empty {
+    padding: var(--space-8) var(--space-5);
+    text-align: center;
+    color: var(--ink-2);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: var(--tap-min);
+    padding: 0.6em 1.2em;
+    border-radius: var(--radius-pill);
+    border: var(--border);
+    background: var(--surface);
+    color: var(--green-900);
+    font-size: var(--label);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--outline);
+  }
+
+  .btn-danger {
+    color: var(--danger);
+    border-color: var(--danger-line);
+  }
+
+  @media (min-width: 64em) {
+    .adm:not(.adm--bare) {
+      grid-template-columns: 15.5rem minmax(0, 1fr);
+      min-height: 100dvh;
+    }
+
+    .adm__side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100dvh;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-6);
+      padding: var(--space-6) var(--space-4);
+      border-bottom: 0;
+      border-right: var(--border);
+    }
+
+    .adm__nav {
+      flex-direction: column;
+    }
+
+    .adm__link {
+      width: 100%;
+    }
+
+    .adm__user {
+      margin-top: auto;
+      margin-left: 0;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .adm__main {
+      padding: var(--space-8) var(--space-8) var(--space-10);
+    }
+  }
+</style>

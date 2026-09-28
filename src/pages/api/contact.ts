@@ -13,6 +13,7 @@ import { getCollection } from 'astro:content';
 import { sendMail, mailConfig, escapeHtml } from '@/lib/mail';
 import { env, isDev } from '@/lib/env';
 import { site } from '@/data/site';
+import { createRequest } from '@/lib/crm/requests';
 import type { SessionRequest } from '@/lib/types';
 
 export const prerender = false;
@@ -29,7 +30,7 @@ const schema = z.object({
   preferredPeriod: z.string().trim().min(2, 'Indique une période souhaitée.').max(200),
   message: z.string().trim().max(2000).optional().or(z.literal('')),
   consent: z.union([z.literal('on'), z.literal('true'), z.literal(true)], {
-    errorMap: () => ({ message: 'Il faut accepter le traitement de ta demande.' }),
+    error: 'Il faut accepter le traitement de ta demande.',
   }),
   // anti-spam
   website: z.string().max(200).optional().or(z.literal('')),
@@ -118,6 +119,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     consent: true,
   };
 
+  // --- Enregistrement dans l'admin (mini CRM). Un échec de la base ne doit pas perdre la demande :
+  //     l'email part quand même, l'erreur est journalisée.
+  let requestId: string | null = null;
+  try {
+    requestId = await createRequest(req, offerLabel);
+  } catch (e) {
+    console.error('[contact] enregistrement en base impossible :', e);
+  }
+  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}`, request.url).toString() : null;
+
   // --- Email au propriétaire
   const { to } = mailConfig();
   const owner = to ?? (isDev ? 'dev@localhost' : undefined);
@@ -145,14 +156,14 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 <table style="border-collapse:collapse">${rows.join('')}</table>
 <p style="margin:16px 0 4px;color:#424843">Message :</p>
 <p style="white-space:pre-wrap;margin:0">${escapeHtml(req.message ?? '-')}</p>
-<p style="margin-top:24px;font-size:12px;color:#737973">Réponds directement à cet email pour écrire à ${escapeHtml(req.name)}.</p>
+<p style="margin-top:24px;font-size:12px;color:#737973">Réponds directement à cet email pour écrire à ${escapeHtml(req.name)}.${adminUrl ? ` <a href="${adminUrl}">Voir dans l’admin</a>.` : ''}</p>
 </div>`;
 
   const sent = await sendMail({
     to: owner,
     replyTo: req.email,
     subject: `Demande de session : ${offerLabel} — ${req.name}`,
-    text: `Nouvelle demande de session\n\n${lines.join('\n')}`,
+    text: `Nouvelle demande de session\n\n${lines.join('\n')}${adminUrl ? `\n\nDans l’admin : ${adminUrl}` : ''}`,
     html,
   });
 
