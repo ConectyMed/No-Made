@@ -9,13 +9,13 @@ import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import type { IconName } from '@/components/Icon.astro';
 import ProvisionalImage from '@/components/ProvisionalImage.astro';
+import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF } from '@/data/site';
 import { formatPrice } from '@/lib/format';
 
-import heroImg from '@/assets/provisoire/sentier-aube.png';
 import marcheImg from '@/assets/provisoire/groupe-marche.png';
 import mobiliteImg from '@/assets/provisoire/mobilite.png';
 import respirationImg from '@/assets/provisoire/respiration.png';
@@ -70,9 +70,15 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   <section class="hero" aria-labelledby="hero-title">
     <div class="container">
       <div class="hero__frame frame">
-        <div class="hero__media" aria-hidden="true">
-          <!-- M1 : poster + vidéo en boucle à la place de cette image provisoire -->
-          <ProvisionalImage src={heroImg} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="eager" badge="top-left" />
+        <div class="hero__media">
+          <HeroVideo
+            poster="/hero/hero-poster.webp"
+            posterSmall="/hero/hero-poster-640.webp"
+            posterBlur="/hero/hero-poster-blur.webp"
+            srcDesktop="/hero/hero-720.mp4"
+            srcMobile="/hero/hero-540.mp4"
+            alt="Un sentier vide dans la garrigue au lever du jour, pins parasols et collines dans la brume, région PACA"
+          />
         </div>
         <div class="hero__shade" aria-hidden="true"></div>
 
@@ -326,15 +332,62 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     z-index: 0;
   }
 
-  .hero__media :global(.prov) {
-    border-radius: 0;
-  }
-
   .hero__shade {
     position: absolute;
     inset: 0;
     z-index: 1;
+    pointer-events: none;
     background: linear-gradient(to top, rgba(8, 32, 19, 0.9) 0%, rgba(8, 32, 19, 0.5) 45%, transparent 100%);
+  }
+
+  /* Le bouton pause de la vidéo doit rester cliquable au-dessus du voile. */
+  .hero__media :global(.hv__toggle) {
+    z-index: 3;
+  }
+
+  .hero__media {
+    z-index: 0;
+  }
+
+  /* Entrée (accueil uniquement, design.md §9) : le contenu monte en fondu, le média se révèle. */
+  .hero__content > * {
+    animation: hero-rise 0.9s var(--ease-out) both;
+  }
+
+  .hero__content > :nth-child(2) { animation-delay: 80ms; }
+  .hero__content > :nth-child(3) { animation-delay: 160ms; }
+  .hero__content > :nth-child(4) { animation-delay: 240ms; }
+  .hero__content > :nth-child(5) { animation-delay: 320ms; }
+
+  .hero__media {
+    animation: hero-media 1.4s ease-out both;
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hero-media {
+    from {
+      opacity: 0.4;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__content > *,
+    .hero__media {
+      animation: none;
+    }
   }
 
   .hero__content {

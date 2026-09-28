@@ -40,7 +40,7 @@ const faq = [
     <div class="container wrap">
       <ContactForm selected={null} id="demande" />
       <p class="small muted alt">
-        Tu préfères écrire directement ? <Placeholder name="ADRESSE EMAIL" />
+        Tu préfères écrire directement ? <a href={`mailto:${site.email}`}>{site.email}</a>
       </p>
     </div>
   </section>

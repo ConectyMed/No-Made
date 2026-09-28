@@ -33,7 +33,7 @@ const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
     <p>© {year} {site.name} — Région {site.area}. Tous droits réservés.</p>
     <p class="footer__contact">
       <span class="footer__dot" aria-hidden="true"></span>
-      <Placeholder name="ADRESSE EMAIL" />
+      {site.email.startsWith('[') ? <Placeholder name={site.email.slice(1, -1)} /> : <a href={`mailto:${site.email}`}>{site.email}</a>}
     </p>
   </div>
 </footer>

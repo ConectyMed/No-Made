@@ -11,8 +11,8 @@ export const site = {
   areaLong: 'Provence-Alpes-Côte d’Azur',
   locale: 'fr-FR',
 
-  /** Coordonnées : à compléter dès que le domaine et l'adresse existent. */
-  email: '[ADRESSE EMAIL]',
+  /** Adresse publique. Phase de dev : la boîte Outlook ; plus tard contact@<domaine> redirigée vers elle. */
+  email: 'nomadeproject@outlook.fr',
   phone: null as string | null, // affiché seulement si renseigné
 
   /** Réseaux : placeholders tant que les comptes n'existent pas. */

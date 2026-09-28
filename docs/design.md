@@ -79,9 +79,11 @@ with large links and the CTA. Escape closes, focus managed.
 ## 5. Hero
 
 Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
-- Media: the looping video when it arrives (poster first paint, fade-in, baked crossfade loop,
-  `preload="none"`, playback after `load`, pause control, poster only under reduced motion or Save-Data).
-  Until then the provisional trail image.
+- Media: the looping video (`src/components/HeroVideo.astro`). Poster `<img>` first (LCP element,
+  carries the alt text), video attached after `load` with `preload="none"`, 1.2 s fade-in once frames
+  render, native `loop` on a file whose 1 s crossfade is baked in, pause control, blurred poster backdrop
+  for portrait screens. Poster only under reduced motion, Save-Data, 2G, or when playback is refused.
+  Pauses when the tab is hidden or the hero is scrolled out.
 - Gradient from green-900 at 90% at the bottom to transparent at the top, so white text reads.
 - Tag pill (white, blurred, lime dot): "Région PACA · sessions en petit groupe".
 - H1 in white: "Marcher. Respirer. Se retrouver dehors." (validated), editable in `src/i18n/fr.json`. Lead in white at 90%.
@@ -141,7 +143,12 @@ Turnstile dormant behind env keys. No payment.
 - Real photos from the first outings replace everything as soon as they exist.
 - Until then (approved 2026-09-28), the five AI-generated Stitch images are used as **provisional visuals**, each carrying a
   visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship to production.
-- The hero video (1080p ≤ 4 MB, 720p ≤ 1 MB, poster webp) is still expected in `assets/source/`.
+- Hero video received 2026-09-28. Source `assets/source/hero-source.mp4` is 1280×720, 24 fps, 8 s,
+  no audio, so there is no 1080p encode (upscaling would add weight, not detail). Built files in
+  `public/hero/`: `hero-720.mp4` (0.99 MB, desktop), `hero-540.mp4` (0.29 MB, phones),
+  `hero-poster.webp` (83 KB), `hero-poster-640.webp` (35 KB), `hero-poster-blur.webp` (32 px backdrop).
+  Loop: output = source[1 s → end] then a 1 s fade into source[0 → 1 s], so the last frame matches the
+  first. Rebuild with `npm run video` (ffmpeg needed).
 
 ## 11. Tech (unchanged decisions)
 
@@ -155,8 +162,8 @@ any [PLACEHOLDER] remains (override for previews).
 - [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver dehors."
 - [x] The format is spelled "Reconnexion" (2026-09-28). "Reconnexion nature" is the 2h30 walk; the parent / ado half-day is presented as the Reconnexion parent / ado format.
 - [ ] Partner educator: name, diploma, professional card number, separate business or not
-- [ ] Hero video and poster
+- [x] Hero video received and encoded (2026-09-28)
 - [ ] Real photos
-- [ ] Domain, email address, DNS provider, hosting plan
+- [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.
 - [ ] Legal status, VAT regime, cancellation and weather policy
 - [ ] Future languages

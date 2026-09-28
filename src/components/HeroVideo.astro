@@ -1,0 +1,234 @@
+---
+/**
+ * Média du hero (design.md §5) :
+ *  - le poster <img> assure le premier affichage (élément LCP) et porte le texte alternatif ;
+ *  - la vidéo, muette, en boucle (fondu intégré au fichier), sans préchargement, est attachée
+ *    après l'événement load, puis fondue en 1,2 s dès qu'elle affiche des images ;
+ *  - poster seul si mouvement réduit, Save-Data ou connexion très lente, ou si la lecture est refusée ;
+ *  - un bouton pause (WCAG 2.2.2) apparaît une fois la vidéo en lecture ;
+ *  - un fond flou (poster minuscule agrandi) couvre les bords sur les formats portrait.
+ */
+interface Props {
+  poster: string; // ex. /hero/hero-poster.webp
+  posterSmall?: string; // ex. /hero/hero-poster-640.webp
+  posterBlur?: string; // ex. /hero/hero-poster-blur.webp (quelques dizaines de pixels)
+  srcDesktop: string; // ex. /hero/hero-720.mp4
+  srcMobile: string; // ex. /hero/hero-540.mp4
+  alt: string;
+  width?: number;
+  height?: number;
+}
+const {
+  poster,
+  posterSmall = poster,
+  posterBlur,
+  srcDesktop,
+  srcMobile,
+  alt,
+  width = 1280,
+  height = 720,
+} = Astro.props;
+---
+
+<div class="hv" data-hero-video>
+  {posterBlur && <img class="hv__blur" src={posterBlur} alt="" aria-hidden="true" width="32" height="18" decoding="async" />}
+  <img
+    class="hv__poster"
+    src={poster}
+    srcset={`${posterSmall} 640w, ${poster} ${width}w`}
+    sizes="100vw"
+    {width}
+    {height}
+    {alt}
+    fetchpriority="high"
+    decoding="async"
+  />
+  <video
+    class="hv__video"
+    muted
+    playsinline
+    loop
+    preload="none"
+    aria-hidden="true"
+    tabindex="-1"
+    data-src-desktop={srcDesktop}
+    data-src-mobile={srcMobile}
+  >
+    <!-- Les <source> (H.264 puis VP9) sont ajoutées par le script après le chargement de la page. -->
+  </video>
+  <button class="hv__toggle glass" type="button" hidden data-hero-toggle aria-pressed="false" aria-label="Mettre la vidéo en pause">
+    <svg class="hv__icon hv__icon--pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    <svg class="hv__icon hv__icon--play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+  </button>
+</div>
+
+<script>
+  type NetInfo = { saveData?: boolean; effectiveType?: string };
+
+  document.querySelectorAll<HTMLElement>('[data-hero-video]').forEach((root) => {
+    const video = root.querySelector<HTMLVideoElement>('video');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+    if (!video || !toggle) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const net = (navigator as Navigator & { connection?: NetInfo }).connection;
+    const slow = net?.saveData === true || /(^|-)2g$/.test(net?.effectiveType ?? '');
+    if (reduce || slow) return; // poster seul
+
+    // Deux sources par taille : H.264 (universel) puis VP9 WebM (repli). Le navigateur prend la première qu'il sait lire.
+    const sources = (mp4: string) => [
+      { src: mp4, type: 'video/mp4; codecs="avc1.640028"' },
+      { src: mp4.replace(/\.mp4$/, '.webm'), type: 'video/webm; codecs="vp9"' },
+    ];
+    const pickSrc = () =>
+      window.matchMedia('(min-width: 48em)').matches ? video.dataset.srcDesktop : video.dataset.srcMobile;
+
+    const giveUp = () => {
+      // Source illisible ou lecture refusée : on retire la vidéo, le poster reste.
+      video.replaceChildren();
+      video.removeAttribute('src');
+      video.load();
+      toggle.hidden = true;
+      root.classList.remove('is-playing');
+    };
+
+    let userPaused = false;
+
+    const setPaused = (paused: boolean) => {
+      toggle.setAttribute('aria-pressed', String(paused));
+      toggle.setAttribute('aria-label', paused ? 'Relancer la vidéo' : 'Mettre la vidéo en pause');
+      root.classList.toggle('is-paused', paused);
+    };
+
+    const start = () => {
+      const mp4 = pickSrc();
+      if (!mp4) return;
+      for (const s of sources(mp4)) {
+        const el = document.createElement('source');
+        el.src = s.src;
+        el.type = s.type;
+        el.addEventListener('error', () => {
+          // La dernière <source> en erreur = aucune source lisible.
+          if (el === video.lastElementChild) giveUp();
+        });
+        video.append(el);
+      }
+      video.addEventListener('error', giveUp, { once: true });
+      video.addEventListener(
+        'playing',
+        () => {
+          root.classList.add('is-playing');
+          toggle.hidden = false;
+        },
+        { once: true },
+      );
+      video.load();
+      video.play().catch(giveUp);
+    };
+
+    toggle.addEventListener('click', () => {
+      if (video.paused) {
+        userPaused = false;
+        video.play().then(() => setPaused(false)).catch(() => {});
+      } else {
+        userPaused = true;
+        video.pause();
+        setPaused(true);
+      }
+    });
+
+    // Économie : pause hors écran ou onglet caché, reprise ensuite si l'utilisateur n'a pas mis en pause.
+    document.addEventListener('visibilitychange', () => {
+      if (!root.classList.contains('is-playing')) return;
+      if (document.hidden) video.pause();
+      else if (!userPaused) video.play().catch(() => {});
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          if (!root.classList.contains('is-playing')) return;
+          if (!entry.isIntersecting) video.pause();
+          else if (!userPaused) video.play().catch(() => {});
+        },
+        { threshold: 0.05 },
+      ).observe(root);
+    }
+
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
+  });
+</script>
+
+<style>
+  .hv {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #f3f1ec; /* couleur du ciel, échantillonnée sur le poster */
+  }
+
+  .hv__blur,
+  .hv__poster,
+  .hv__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 60%;
+  }
+
+  .hv__blur {
+    filter: blur(24px) saturate(1.1);
+    transform: scale(1.15);
+  }
+
+  .hv__video {
+    opacity: 0;
+    transform: scale(1.04);
+    transition:
+      opacity var(--dur-media) ease-out,
+      transform 2.4s var(--ease-out);
+    will-change: opacity, transform;
+  }
+
+  .is-playing .hv__video {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hv__toggle {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    border-radius: 50%;
+    color: var(--green-900);
+    opacity: 0.85;
+    transition: opacity var(--dur-fast) ease;
+  }
+
+  .hv__toggle:hover,
+  .hv__toggle:focus-visible {
+    opacity: 1;
+  }
+
+  .hv__icon--play,
+  .is-paused .hv__icon--pause {
+    display: none;
+  }
+
+  .is-paused .hv__icon--play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hv__video {
+      transition: none;
+    }
+  }
+</style>

@@ -16,7 +16,7 @@ Sans ça, rien de ce que je fais n'arrive dans ton dépôt.
 
 ---
 
-## Étape 2 — Choisir l'hébergement (10 min)
+## Étape 2 — Hébergement : Vercel (choisi)
 
 Le site est statique, plus une seule fonction pour le formulaire. Trois options, le code marche sur les trois :
 
@@ -28,11 +28,13 @@ Le site est statique, plus une seule fonction pour le formulaire. Trois options,
 
 Ma recommandation si tu veux zéro frais fixe : **Cloudflare Pages** avec le domaine chez Cloudflare. Si tu préfères la simplicité et que 20 $/mois ne te gênent pas : **Vercel Pro**.
 
-À faire : créer le compte, y connecter GitHub, importer le dépôt `ConectyMed/No-Made`. Le framework « Astro » est détecté tout seul. Dis-moi lequel tu as choisi.
+Décision : **Vercel**, plan gratuit pendant le développement, plan payant au lancement officiel (le plan gratuit interdit l'usage commercial).
+
+À faire : créer le compte sur vercel.com, y connecter GitHub, **Add New → Project**, importer `ConectyMed/No-Made`. Le framework « Astro » est détecté tout seul. Dans **Settings → Git**, la branche de production reste `main` ; chaque autre branche donne une URL de prévisualisation.
 
 ---
 
-## Étape 3 — Domaine et adresse email (30 min)
+## Étape 3 — Domaine et adresse email (plus tard, au lancement)
 
 1. **Choisis et achète le nom de domaine**, en ASCII sans accent, par exemple `nomade-project.fr` ou `nomadeproject.fr`. Chez Cloudflare Registrar, OVH, Gandi ou Infomaniak. Compte 8 à 15 € par an.
 2. **Une adresse email sur ce domaine**, par exemple `contact@nomade-project.fr`. Deux voies :
@@ -40,7 +42,7 @@ Ma recommandation si tu veux zéro frais fixe : **Cloudflare Pages** avec le dom
    - ou une simple redirection de `contact@…` vers ta boîte actuelle (gratuit chez Cloudflare Email Routing, OVH, Gandi).
 3. Note où sont gérés les **DNS** du domaine (c'est là que tu ajouteras deux ou trois enregistrements à l'étape 4).
 
-Dis-moi le domaine et l'adresse : je les mets dans le code (`SITE_URL`, `[ADRESSE EMAIL]`).
+Décision : pendant le développement, l'adresse publique et de réception est **nomadeproject@outlook.fr** (déjà dans le code). Au lancement, `contact@<domaine>` sera redirigée vers cette boîte. Dis-moi le domaine quand il existe : je mets à jour `SITE_URL` et l'adresse affichée.
 
 ---
 
@@ -56,22 +58,18 @@ Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. 
    | Variable | Valeur |
    |---|---|
    | `RESEND_API_KEY` | la clé `re_…` |
-   | `CONTACT_TO_EMAIL` | l'adresse qui doit recevoir les demandes (la tienne) |
-   | `CONTACT_FROM_EMAIL` | une adresse sur le domaine vérifié, ex. `contact@nomade-project.fr` |
+   | `CONTACT_TO_EMAIL` | `nomadeproject@outlook.fr` |
+   | `CONTACT_FROM_EMAIL` | `onboarding@resend.dev` tant qu'il n'y a pas de domaine vérifié |
 
-   Pour tester **avant** d'avoir un domaine : `CONTACT_FROM_EMAIL=onboarding@resend.dev` et `CONTACT_TO_EMAIL=` l'adresse avec laquelle tu as créé le compte Resend. Ça suffit pour recevoir les demandes ; seul l'accusé de réception au demandeur ne partira pas.
+   Important : sans domaine vérifié, Resend n'accepte d'envoyer **que vers l'adresse avec laquelle le compte Resend a été créé**. Crée donc le compte Resend avec `nomadeproject@outlook.fr`. Tu recevras les demandes ; seul l'accusé de réception au demandeur attendra le domaine. L'étape 2 (Domains) se fera au lancement.
 
 5. Ne mets **jamais** la clé dans le code ni dans un message : uniquement dans les variables d'environnement.
 
 ---
 
-## Étape 5 — La vidéo du hero (dès que tu l'as)
+## Étape 5 — La vidéo du hero : fait
 
-Le hero est prêt à recevoir la vidéo ; en attendant il affiche l'image provisoire.
-
-- Un fichier **MP4 H.264, 16:9, 1080p, sans piste audio, environ 8 secondes**, plan fixe.
-- Le **poster** : la première image de la vidéo, en JPG ou PNG (je fais le WebP).
-- Dépose-les dans le dépôt sous `assets/source/` (par exemple `hero-source.mp4` et `hero-poster.png`), ou envoie-les-moi. Je fais les encodages (1080p et 720p), la boucle fondue, le fondu d'entrée et le repli sans vidéo.
+Reçue et intégrée. Source en `assets/source/hero-source.mp4` (1280×720, 8 s, sans son), encodages et poster dans `public/hero/`. Si tu remplaces la vidéo un jour : même format, même dossier, puis `npm run video` régénère tout (il faut ffmpeg sur la machine).
 
 Les cinq visuels actuels sont générés par IA et portent un badge « image provisoire ». Ils ne peuvent pas partir en production : le build refusera tant qu'ils sont là. Remplace-les par tes photos quand tu en as (`src/assets/provisoire/`, mêmes noms de fichiers, et je retire les badges).
 

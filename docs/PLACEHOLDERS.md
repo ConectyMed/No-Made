@@ -4,7 +4,6 @@ Généré par `npm run build` le 2026-09-28.
 
 | Placeholder | Pages |
 |---|---|
-| `[ADRESSE EMAIL]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /mentions-legales/, /offres/ |
 | `[CONDITIONS MÉTÉO ET ANNULATION]` | /contact/ |
 | `[DIPLÔME]` | /a-propos/ |
 | `[IMAGE PROVISOIRE]` | / |

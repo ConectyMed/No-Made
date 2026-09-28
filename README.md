@@ -10,6 +10,7 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # génère dist/ (et .vercel/output/)
 npm run preview
+npm run video      # régénère public/hero/ depuis assets/source/hero-source.mp4 (ffmpeg requis)
 ```
 
 Node 22 ou plus récent.
@@ -46,7 +47,7 @@ Toute information manquante est écrite entre crochets et en majuscules : `[SLOG
 | Jalon | Contenu | État |
 |---|---|---|
 | M0 | Squelette : tokens, gabarit, en-tête, pied de page, 8 routes | fait |
-| M1 | Hero vidéo : encodages, boucle, dégradés, entrée, mouvement réduit | en attente de la vidéo |
+| M1 | Hero vidéo : encodages, boucle fondue, poster, entrée, pause, mouvement réduit | fait |
 | M2 | Accueil complet, Offres, À propos (design v2, images provisoires) | fait |
-| M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | à venir |
+| M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | fait (clés Resend à renseigner) |
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | à venir |
