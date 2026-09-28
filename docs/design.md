@@ -141,7 +141,7 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
    légales, CGV, Confidentialité, Instagram), copyright row.
 
 Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
-quote after the three moments (Rimbaud, *Sensation*, first stanza, chosen 2026-09-28 after Rousseau was declined),
+quote after the three moments (Saint-Exupéry, *Le Petit Prince*, dedication, chosen by the representative 2026-09-28; short quotation with attribution),
 one participant quote under the Reconnexion image (parent / child), one after the steps, before the price
 banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
 Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
