@@ -21,7 +21,8 @@ const { alt, ratio = '3 / 4', class: className, tone = 'moss' } = Astro.props;
   aria-label={`Emplacement photo : ${alt}`}
   data-placeholder="PHOTO"
 >
-  <span class="ph-image__label">[PHOTO : {alt}]</span>
+  <!-- L'étiquette en capitales est celle que le contrôle des placeholders détecte. -->
+  <span class="ph-image__label">[PHOTO À FOURNIR]<small>{alt}</small></span>
 </div>
 
 <style>
@@ -55,7 +56,9 @@ const { alt, ratio = '3 / 4', class: className, tone = 'moss' } = Astro.props;
   }
 
   .ph-image__label {
-    padding: 0.4em 0.8em;
+    display: grid;
+    gap: 0.15em;
+    padding: 0.4em 0.9em;
     border: 1px dashed rgba(20, 20, 20, 0.45);
     border-radius: var(--radius-pill);
     background: rgba(255, 255, 255, 0.75);
@@ -64,5 +67,11 @@ const { alt, ratio = '3 / 4', class: className, tone = 'moss' } = Astro.props;
     font-weight: 500;
     text-align: center;
     max-width: 85%;
+  }
+
+  .ph-image__label small {
+    font-size: 0.85em;
+    font-weight: 400;
+    opacity: 0.85;
   }
 </style>

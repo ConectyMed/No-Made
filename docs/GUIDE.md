@@ -79,7 +79,9 @@ Les cinq visuels actuels sont générés par IA et portent un badge « image pro
 
 Chaque case correspond à un placeholder jaune. Le build de production refuse de partir tant qu'il en reste (`docs/PLACEHOLDERS.md` en donne la liste à jour après chaque `npm run build`).
 
-- [ ] **Lui** : son prénom (page À propos et signature de l'email de confirmation), un paragraphe sur son parcours, dans ses mots, et un portrait. Pas de diplôme ni de titre : c'est décidé.
+- [x] **Lui** : prénom et parcours reçus (Antho). Pas de diplôme ni de titre : c'est décidé.
+- [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
+- [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Antho A. » ne suffit pas là.
 - [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
 - [ ] **Lien Google Agenda** pour la visio (étape 6 bis ci-dessous).
 - [ ] **Adresse email publique** (étape 3).

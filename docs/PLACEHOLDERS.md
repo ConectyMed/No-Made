@@ -16,9 +16,8 @@ Généré par `npm run build` le 2026-09-28.
 | `[NOM DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[NUMÉRO DE CONTRAT]` | /mentions-legales/ |
 | `[NUMÉRO SIRET]` | /cgv/, /mentions-legales/ |
-| `[PARCOURS : D’OÙ TU VIENS ET DEPUIS QUAND TU FAIS ÇA]` | /a-propos/ |
+| `[PHOTO À FOURNIR]` | /a-propos/ |
 | `[PRÉNOM NOM]` | /cgv/, /confidentialite/, /mentions-legales/ |
-| `[PRÉNOM]` | /a-propos/ |
 | `[TARIF SOLO]` | /, /cgv/, /offres/ |
 | `[ZONE GÉOGRAPHIQUE COUVERTE]` | /mentions-legales/ |
 | `[À CONFIRMER : STATUT JURIDIQUE]` | /mentions-legales/ |

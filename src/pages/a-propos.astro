@@ -1,13 +1,12 @@
 ---
 /**
  * À propos : la personne qui encadre les sessions, en « je ». Une seule voix sur tout le site.
- * Les faits personnels (prénom, parcours, photo) sont des placeholders tant qu'ils manquent :
- * rien n'est inventé. Aucun titre professionnel n'est affiché (décision du 2026-09-28).
+ * Le parcours vient de ses mots (2026-09-28), rien n'est ajouté. Aucun titre professionnel
+ * n'est affiché (sa décision). Reste à fournir : le portrait.
  */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import PlaceholderImage from '@/components/PlaceholderImage.astro';
-import Placeholder from '@/components/Placeholder.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import type { IconName } from '@/components/Icon.astro';
@@ -15,7 +14,15 @@ import { usePage } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 
 const page = usePage('about');
-const firstName = site.ownerFirstName.replace(/^\[|\]$/g, '');
+const firstName = site.ownerFirstName;
+
+// En quelques mots : les faits qu'il a donnés, tels quels.
+const facts: { label: string; value: string }[] = [
+  { label: 'Voyage', value: '10 ans en autonomie, dans des natures très différentes' },
+  { label: 'Relation', value: '15 ans derrière un bar, à accueillir tout le monde' },
+  { label: 'Pratique', value: 'Jiu-jitsu brésilien, escalade, boxe, préparation physique' },
+  { label: 'Langues', value: 'Français, anglais, espagnol' },
+];
 
 const practice: { icon: IconName; title: string; text: string }[] = [
   { icon: 'walk', title: 'Marche et randonnée', text: 'Le terrain fait le travail. Un sentier, une montée, un rythme qui s’adapte à toi ou au groupe.' },
@@ -34,13 +41,16 @@ const practice: { icon: IconName; title: string; text: string }[] = [
         <PlaceholderImage alt={`portrait de ${firstName} (à fournir)`} ratio="4 / 5" tone="moss" />
       </div>
       <div class="story__text prose" data-reveal style="--reveal-delay: 100ms">
-        <h2 id="story-title">Je m’appelle <Placeholder name={firstName} /></h2>
+        <h2 id="story-title">Je m’appelle {firstName}</h2>
         <p>
           Nó Made Project, c’est moi : la personne qui t’écrit, qui te répond, et qui t’emmène dehors. Pas de structure
           derrière, pas d’équipe. Un sac, des sentiers, et toi.
         </p>
         <p>
-          <Placeholder name="PARCOURS : D’OÙ TU VIENS ET DEPUIS QUAND TU FAIS ÇA" />
+          Dix ans de voyage, sac sur le dos et en autonomie, à traverser des natures très différentes et à apprendre à
+          m’adapter à chaque terrain. Quinze ans derrière un bar, à accueillir des gens de tous horizons : ça apprend à
+          écouter, à sentir un rythme, à mettre à l’aise. Et depuis toujours, le sport : jiu-jitsu brésilien, escalade,
+          boxe, préparation physique. C’est de là que vient ma façon de bouger, et l’envie de la transmettre.
         </p>
         <p>
           Ce que je vois autour de moi, c’est des journées assises, le nez sur un écran, et un corps et une tête qui
@@ -50,8 +60,17 @@ const practice: { icon: IconName; title: string; text: string }[] = [
         </p>
         <p>
           Je travaille en solo ou en petit groupe, et en duo parent / enfant. Dans tous les cas, je m’adapte à ton
-          profil : le rythme, l’intensité, ce qu’on fait et ce qu’on ne fait pas. Le téléphone, lui, reste dans le sac.
+          profil : le rythme, l’intensité, ce qu’on fait et ce qu’on ne fait pas. Je parle français, anglais et
+          espagnol, une session peut se faire dans l’une de ces trois langues. Le téléphone, lui, reste dans le sac.
         </p>
+        <dl class="story__facts">
+          {facts.map((f) => (
+            <div>
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   </section>
@@ -104,6 +123,30 @@ const practice: { icon: IconName; title: string; text: string }[] = [
     margin-top: 0;
     font-size: var(--text-xl);
     color: var(--green-900);
+  }
+
+  .story__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: var(--border);
+  }
+
+  .story__facts dt {
+    font-size: var(--label-sm);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green-600);
+    margin-bottom: 0.2rem;
+  }
+
+  .story__facts dd {
+    font-size: var(--body-sm);
+    color: var(--ink-2);
+    line-height: 1.5;
   }
 
   .practice {

@@ -148,9 +148,10 @@ Testimonials: none until real ones exist (`site.showTestimonials`).
   what to bring, CTA + "Échanger en visio d'abord" link), practical notes, visio teaser.
   Offers: `experience-corps-aventure` (2h30, solo or 3–5, 30 € per person in a group, solo price [TARIF SOLO])
   and `reconnexion-parent-enfant` (3h, duo 60 € or four people 80 €).
-- **/a-propos** — the owner in the first person: "Je m'appelle [PRÉNOM]", why Nó Made exists (from the
-  owner's brief), a [PARCOURS…] placeholder for the personal story, one portrait slot, then "Ma façon de
-  faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
+- **/a-propos** — the owner in the first person: "Je m'appelle Antho", his story in his own facts (10 years
+  of autonomous travel, 15 years behind a bar, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
+  for passing things on), why Nó Made exists, a four-item facts list, one portrait slot ([PHOTO À FOURNIR]),
+  then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
 - **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): Google Calendar
   appointment page, loaded in an iframe only after a click (no third-party request before), fallback link in
   a new tab; placeholder [LIEN GOOGLE AGENDA] until the owner provides the URL. Then the FAQ.
@@ -202,7 +203,8 @@ any [PLACEHOLDER] remains (override for previews).
       diploma on the site. The owner answers requests himself on nomadeproject@outlook.fr.
 - [x] Visio before booking (2026-09-28): Google Calendar appointment schedule, click-to-load, on /contact,
       linked from the price banner, the offers page and each offer card.
-- [ ] Owner: first name, personal story paragraph, portrait photo
+- [x] Owner: first name (Antho) and story received 2026-09-28
+- [ ] Owner: portrait photo; full legal name for the legal pages
 - [ ] Solo price
 - [ ] Google Calendar booking URL
 - [x] Hero video received and encoded (2026-09-28)
