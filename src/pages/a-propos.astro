@@ -2,12 +2,14 @@
 /**
  * À propos : la personne qui encadre les sessions, en « je ». Une seule voix sur tout le site.
  * Le parcours vient de ses mots (2026-09-28), rien n'est ajouté. Aucun titre professionnel
- * n'est affiché (sa décision). Reste à fournir : le portrait.
+ * n'est affiché (sa décision). Une citation de Montaigne (Essais, III, 3) fait le pont entre le parcours
+ * et la pratique. Reste à fournir : le portrait.
  */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import PlaceholderImage from '@/components/PlaceholderImage.astro';
 import Button from '@/components/Button.astro';
+import Quote from '@/components/Quote.astro';
 import Icon from '@/components/Icon.astro';
 import type { IconName } from '@/components/Icon.astro';
 import { usePage } from '@/i18n';
@@ -75,6 +77,18 @@ const practice: { icon: IconName; title: string; text: string }[] = [
     </div>
   </section>
 
+  <!-- Citation d'auteur (domaine public), choisie par le représentant le 2026-09-28 : le pont entre le parcours et la pratique. -->
+  <section class="section section--top0" aria-label="Citation">
+    <div class="container">
+      <Quote
+        text="Mes pensées dorment si je les assis. Mon esprit ne va, si les jambes ne l’agitent."
+        by="Michel de Montaigne"
+        source="Essais, III, 3, 1588"
+        class="about-quote"
+      />
+    </div>
+  </section>
+
   <section class="section section--top0" id="pratique" aria-labelledby="practice-title">
     <div class="container">
       <div class="practice frame" data-reveal>
@@ -106,6 +120,10 @@ const practice: { icon: IconName; title: string; text: string }[] = [
 <style>
   .section--top0 {
     padding-top: 0;
+  }
+
+  :global(.about-quote) {
+    margin-inline: auto;
   }
 
   .story {

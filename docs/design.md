@@ -141,7 +141,7 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
    légales, CGV, Confidentialité, Instagram), copyright row.
 
 Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
-quote after the three moments (Saint-Exupéry, *Le Petit Prince*, dedication, chosen by the representative 2026-09-28; short quotation with attribution),
+quote after the three moments (Saint-Exupéry, *Le Petit Prince*, dedication, original punctuation with the parenthesis, chosen by the representative 2026-09-28; short quotation with attribution),
 one participant quote under the Reconnexion image (parent / child), one after the steps, before the price
 banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
 Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
@@ -159,8 +159,8 @@ First name + initial, month, offer; no stars, no ratings.
 - **/a-propos** — the owner in the first person: "Moi, c'est Anthony", his story in his own facts (10 years
   of autonomous travel, knowledge of the terrain, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
   for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why Nó Made exists,
-  a four-item facts list, one portrait slot ([PHOTO À FOURNIR]),
-  then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
+  a four-item facts list, one portrait slot ([PHOTO À FOURNIR]), a Montaigne pull quote (*Essais*, III, 3,
+  public domain, chosen by the representative 2026-09-28) as the bridge, then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
 - **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): a booking
   page (Cal.com recommended since the owner has no Google account; Calendly and Google Calendar also
   recognised) loaded in an iframe only after a click (no third-party request before), fallback link in a new
