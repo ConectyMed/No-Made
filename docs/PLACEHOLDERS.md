@@ -10,7 +10,6 @@ Généré par `npm run build` le 2026-09-28.
 | `[CONDITIONS MÉTÉO ET ANNULATION]` | /contact/ |
 | `[DATE DE MISE À JOUR]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[IMAGE PROVISOIRE]` | / |
-| `[LIEN DE RÉSERVATION VISIO]` | /contact/ |
 | `[LIEN FACEBOOK]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /mentions-legales/, /offres/ |
 | `[LIEN INSTAGRAM]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /mentions-legales/, /offres/ |
 | `[NOM DE L’ASSUREUR]` | /cgv/, /mentions-legales/ |

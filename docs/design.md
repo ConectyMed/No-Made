@@ -255,7 +255,7 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [x] Owner: first name (Anthony) and story received 2026-09-28
 - [ ] Owner: portrait photo; full legal name for the legal pages
 - [ ] Solo price
-- [ ] Visio booking URL (Cal.com; Google Calendar dropped 2026-09-28, no Google account)
+- [x] Visio booking URL received 2026-09-28: cal.com/nomadeproject/presentation (Google Calendar dropped, no Google account)
 - [ ] Three real testimonials announced 2026-09-28, to replace the provisional ones (files in
       src/content/testimonials/fr/, then remove `provisional: true`)
 - [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login with the

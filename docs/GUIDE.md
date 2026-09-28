@@ -83,7 +83,7 @@ Chaque case correspond à un placeholder jaune. Le build de production refuse de
 - [ ] **Son portrait** pour la page À propos (format vertical, 4:5, au moins 1200 px de haut).
 - [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
 - [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
-- [ ] **Lien Cal.com** pour la visio (étape 6 bis ci-dessous). Google Agenda écarté : pas de compte Google.
+- [x] **Lien Cal.com** pour la visio : reçu le 28 septembre 2026 (`cal.com/nomadeproject/presentation`), en place.
 - [ ] **Les trois avis** annoncés : prénom, initiale, texte, mois, offre, accord de la personne (étape 6 quater).
 - [ ] **Adresse email publique** (étape 3).
 - [ ] **Instagram** et **Facebook** : les liens, ou « pas de compte » et je retire la ligne.

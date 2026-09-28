@@ -29,7 +29,7 @@ export const site = {
    * Calendly, Google Agenda (planning de rendez-vous). Toute autre URL s'ouvre dans un nouvel onglet.
    */
   visio: {
-    url: '[LIEN DE RÉSERVATION VISIO]',
+    url: 'https://cal.com/nomadeproject/presentation',
     duration: '20 minutes',
   },
 
