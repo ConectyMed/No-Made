@@ -140,12 +140,13 @@ Rounded frame, min height 580px mobile / 660px desktop, content bottom-left.
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
 
-Testimonials are not a section but **pull quotes** (`Quote.astro`) woven into the page: one after the three
-moments (adult format), one under the Reconnexion image (parent / child), one after the steps, before the
-price banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
+Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
+quote after the three moments (Rousseau, *Les Confessions* IV, on walking and thinking, chosen 2026-09-28),
+one participant quote under the Reconnexion image (parent / child), one after the steps, before the price
+banner. A lime hairline on the left, the text large, the attribution small; no card, no stars.
 Shown when `site.showTestimonials` is true and the entry exists in `src/content/testimonials/fr/`. A real entry requires `consent: true`. Since
-2026-09-28, at the representative's request, three **provisional, invented** reviews (`provisional: true`)
-fill the section for previews; each carries a visually-hidden "[AVIS PROVISOIRE]" marker that the
+2026-09-28, at the representative's request, two **provisional, invented** reviews (`provisional: true`,
+Karim B. and Léa D.) stand in for previews; each carries a visually-hidden "[AVIS PROVISOIRE]" marker that the
 placeholder gate catches, so production stays blocked until the three real reviews replace them.
 First name + initial, month, offer; no stars, no ratings.
 
@@ -256,8 +257,8 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [ ] Owner: portrait photo; full legal name for the legal pages
 - [ ] Solo price
 - [x] Visio booking URL received 2026-09-28: cal.com/nomadeproject/presentation (Google Calendar dropped, no Google account)
-- [ ] Three real testimonials announced 2026-09-28, to replace the provisional ones (files in
-      src/content/testimonials/fr/, then remove `provisional: true`)
+- [ ] Three real testimonials announced 2026-09-28: two replace the provisional ones (files in
+      src/content/testimonials/fr/, then remove `provisional: true`), the third gets its own place
 - [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login done and
       temporary password changed the same day. Resend variables set on Vercel. Anthony's own account later via `ADMIN_EMAILS`.
 - [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.

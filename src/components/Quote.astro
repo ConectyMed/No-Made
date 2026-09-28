@@ -1,45 +1,49 @@
 ---
 /**
- * Citation d'un participant, intégrée dans la page comme un exergue : pas de carte, un filet lime,
- * le texte en grand, l'attribution en petit. `who` = nom du fichier dans src/content/testimonials/fr/.
- * Ne rend rien si l'avis n'existe pas ou si site.showTestimonials est faux. Un avis provisoire
- * porte un marqueur invisible que le contrôle des placeholders détecte.
+ * Citation intégrée dans la page comme un exergue : pas de carte, un filet lime, le texte en grand,
+ * l'attribution en petit. Deux usages :
+ *  - `who` : un avis de participant, nom du fichier dans src/content/testimonials/fr/ (rien n'est rendu
+ *    si l'avis n'existe pas ou si site.showTestimonials est faux ; un avis provisoire porte un marqueur
+ *    invisible que le contrôle des placeholders détecte) ;
+ *  - `text` + `by` (+ `source`) : une citation d'auteur, libre de droits, saisie telle quelle.
  */
 import { getCollection } from 'astro:content';
 import { site } from '@/data/site';
 
 interface Props {
-  who: string;
+  who?: string;
+  text?: string;
+  by?: string;
+  source?: string;
   /** Version resserrée, pour vivre dans un cadre (Reconnexion). */
   compact?: boolean;
   class?: string;
 }
-const { who, compact = false, class: className } = Astro.props;
+const { who, text, by, source, compact = false, class: className } = Astro.props;
 
-const entry = site.showTestimonials
-  ? (await getCollection('testimonials', ({ id, filePath }) => filePath?.includes('/testimonials/fr/') && id.endsWith(who))).at(0)
-  : undefined;
+const entry =
+  who && site.showTestimonials
+    ? (await getCollection('testimonials', ({ id, filePath }) => filePath?.includes('/testimonials/fr/') && id.endsWith(who))).at(0)
+    : undefined;
 const offers = entry ? await getCollection('offers') : [];
 const offerTitle = offers.find((o) => o.data.slug === entry?.data.offerSlug)?.data.title;
 const monthLabel = (ym: string) => {
   const [y, m] = ym.split('-').map(Number);
   return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(Date.UTC(y, m - 1, 15)));
 };
+const show = entry ? { text: entry.body?.trim() ?? '', name: entry.data.name, meta: [offerTitle, monthLabel(entry.data.date)].filter(Boolean).join(' · '), provisional: entry.data.provisional } : text && by ? { text, name: by, meta: source ?? '', provisional: false } : null;
 ---
 
 {
-  entry && (
+  show && (
     <figure class:list={['quote', { 'quote--compact': compact }, className]} data-reveal>
       <blockquote class="quote__text">
-        <p>{entry.body?.trim()}</p>
+        <p>{show.text}</p>
       </blockquote>
       <figcaption class="quote__by">
-        <strong>{entry.data.name}</strong>
-        <span>
-          {offerTitle && <>{offerTitle} · </>}
-          {monthLabel(entry.data.date)}
-        </span>
-        {entry.data.provisional && <span class="visually-hidden">[AVIS PROVISOIRE]</span>}
+        <strong>{show.name}</strong>
+        {show.meta && <span>{show.meta}</span>}
+        {show.provisional && <span class="visually-hidden">[AVIS PROVISOIRE]</span>}
       </figcaption>
     </figure>
   )
@@ -101,6 +105,10 @@ const monthLabel = (ym: string) => {
     color: var(--green-900);
     font-weight: 700;
     letter-spacing: 0.02em;
+  }
+
+  .quote__by span {
+    font-style: italic;
   }
 
   .quote--compact {
