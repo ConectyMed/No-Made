@@ -211,13 +211,15 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     <div class="container">
       <div class="reconnex frame" data-reveal>
         <div class="reconnex__visual">
-          <div class="reconnex__img frame">
-            <ProvisionalImage src={reconnexImg} alt="Un parent et son enfant assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
+          <div class="reconnex__media">
+            <div class="reconnex__img frame">
+              <ProvisionalImage src={reconnexImg} alt="Un parent et son enfant assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
+            </div>
+            <span class="reconnex__badge glass label-sm">
+              <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
+              Sans écran
+            </span>
           </div>
-          <span class="reconnex__badge glass label-sm">
-            <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
-            Sans écran
-          </span>
           <Quote who="karim-b" compact class="reconnex__quote" />
         </div>
         <div class="reconnex__text">
@@ -487,7 +489,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   }
 
   :global(.reconnex__quote) {
-    margin-top: var(--space-7);
+    margin-top: var(--space-8);
   }
 
   /* ---------- Piliers ---------- */
@@ -596,6 +598,10 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   }
 
   .reconnex__visual {
+    display: grid;
+  }
+
+  .reconnex__media {
     position: relative;
   }
 
