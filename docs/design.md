@@ -258,8 +258,8 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [x] Visio booking URL received 2026-09-28: cal.com/nomadeproject/presentation (Google Calendar dropped, no Google account)
 - [ ] Three real testimonials announced 2026-09-28, to replace the provisional ones (files in
       src/content/testimonials/fr/, then remove `provisional: true`)
-- [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login with the
-      temporary bootstrap account, then change it on /admin/compte. Anthony's own account later via `ADMIN_EMAILS`.
+- [x] Admin step 1 (2026-09-28): Turso created by the owner's representative (Ireland). First login done and
+      temporary password changed the same day. Resend variables set on Vercel. Anthony's own account later via `ADMIN_EMAILS`.
 - [x] Admin step 2 (2026-09-28): contacts, sessions, participants, payment on "faite", request → session.
 - [x] Admin step 3 (2026-09-28): dashboard.
 - [x] Admin step 4 (Keystatic) dropped 2026-09-28: content changes go through the site administrator.

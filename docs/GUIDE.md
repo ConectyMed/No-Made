@@ -46,7 +46,9 @@ Décision : pendant le développement, l'adresse publique et de réception est *
 
 ---
 
-## Étape 4 — Resend, pour recevoir les demandes par email (20 min)
+## Étape 4 — Resend, pour recevoir les demandes par email : fait (28 septembre 2026)
+
+Compte créé, les trois variables sont dans Vercel. Reste, au lancement, la vérification du domaine (point 2) pour que l'accusé de réception parte vers n'importe quelle adresse.
 
 Resend est le service qui envoie l'email quand quelqu'un remplit le formulaire. Gratuit jusqu'à 3 000 emails par mois.
 
@@ -120,7 +122,7 @@ Pour chaque avis, envoie-moi : le prénom et l'initiale du nom, le texte tel qu'
 L'admin est sur `/admin`. Il enregistre chaque demande du formulaire, en plus de l'email, et servira à suivre les sessions.
 
 1. **Base de données** : fait (Turso, Irlande). Vérifie dans Vercel → Settings → Environment Variables que `TURSO_DATABASE_URL` et `TURSO_AUTH_TOKEN` existent pour les trois environnements. Si l'intégration les a nommées autrement, dis-le-moi.
-2. **Première connexion, temporaire** : sur `/admin`, identifiant `admin`, mot de passe `admin123`. Ce compte se crée tout seul à la première connexion tant qu'aucun autre compte n'existe. Un bandeau rouge reste affiché tant que ce mot de passe n'a pas été changé : **Mon compte** → mot de passe actuel, nouveau mot de passe (12 caractères minimum), et le prénom à afficher. À faire vite, ce mot de passe est connu de tous ceux qui ont lu ce guide.
+2. **Première connexion** : faite le 28 septembre 2026, mot de passe temporaire changé. Le mécanisme de compte de démarrage est désormais inactif (un compte existe). Pour changer de mot de passe : **Mon compte**.
 3. **Le compte d'Anthony**, quand il en voudra un à lui : ajoute une variable `ADMIN_EMAILS` avec son adresse (et la tienne si tu veux un compte séparé), pour les trois environnements, Redeploy, puis il va sur `/admin/mot-de-passe`, saisit son adresse et reçoit un lien valable une heure. Tant que Resend n'est pas configuré (étape 4), l'email ne part pas et le lien est écrit dans les journaux de la fonction, sur Vercel → Deployments → le déploiement → Functions. Solution de repli depuis ton ordinateur : `TURSO_DATABASE_URL=… TURSO_AUTH_TOKEN=… node scripts/admin-user.mjs adresse "Prénom"`.
 4. **Au quotidien** : Demandes → ouvrir une demande → « Répondre par email » ouvre la boîte mail avec un brouillon, la demande passe en « répondue ». Le statut, les notes sur la demande et sur la personne s'enregistrent dans le bloc Suivi. Le bouton Supprimer sert au droit à l'effacement (RGPD).
 
