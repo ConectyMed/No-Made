@@ -187,17 +187,19 @@ Turnstile dormant behind env keys. No payment.
 ## 10. Imagery
 
 - Real photos from the first outings replace everything as soon as they exist.
-- First real photos received 2026-09-28: three of Anthony's travel photos (Peru), re-encoded with
-  `sharp` (auto-rotated, EXIF and GPS stripped, 1500×2000, JPEG 86) into `src/assets/photos/`, served
-  through `Photo.astro` (Astro `<Image>`, webp, responsive widths, `object-fit: cover`, optional
-  `position`). Each carries a small "Pérou" caption (bottom left) so nobody mistakes them for the
-  region. Placement: the steep stone stairway → home "Marcher, randonner"; the glacier lake → home
-  "Respirer, se concentrer"; Anthony seated on a summit rock → À propos portrait (4:5 frame).
-- Not used: the lakeside shot (a third person is in frame, no consent; blurry) and the tropical beach
-  (1280 px, soft).
-- Two AI-generated images remain as **provisional visuals** ("Bouger" card, Reconnexion frame), each
-  carrying a visible "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. They never ship
-  to production. Needed: a bodyweight / mobility shot outdoors, and a parent / child (or regional trail) shot.
+- First real photos received 2026-09-28: Anthony's own photos, re-encoded with `sharp` (auto-rotated,
+  EXIF and GPS stripped, 1500×2000, JPEG 86) into `src/assets/photos/`, served through `Photo.astro`
+  (Astro `<Image>`, webp, responsive widths, `object-fit: cover`, optional `position` and `caption`).
+  Travel photos carry a small "Pérou" caption (bottom left) so nobody mistakes them for the region.
+  Placement: steep stone stairway (Peru) → home "Marcher, randonner"; crouched silhouette on sea rocks at
+  sunset (location to confirm, no caption) → home "Respirer, se concentrer"; glacier lake (Peru) → home
+  Reconnexion frame (mood image until a parent / child photo exists); Anthony seated on a summit rock
+  (Peru) → À propos portrait (4:5 frame).
+- Not used: shots with third parties in frame (no consent), the empty tropical beach (1280 px, soft),
+  and a 30 s 848×480 beach sunrise clip (too small for any frame, off-topic).
+- One AI-generated image remains as a **provisional visual** (the "Bouger" card), carrying a visible
+  "[IMAGE PROVISOIRE]" badge that the placeholder gate catches. It never ships to production. Needed: a
+  bodyweight / mobility shot outdoors.
 - Hero video received 2026-09-28. Source `assets/source/hero-source.mp4` is 1280×720, 24 fps, 8 s,
   no audio, so there is no 1080p encode (upscaling would add weight, not detail). Built files in
   `public/hero/`: `hero-720.mp4` (0.99 MB, desktop), `hero-540.mp4` (0.29 MB, phones),

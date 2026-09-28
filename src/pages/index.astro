@@ -1,8 +1,8 @@
 ---
 /**
  * Accueil (design.md v2 §6) : hero, pourquoi sortir, trois temps forts, Reconnexion, déroulement,
- * prix, formulaire. Le site parle en « je » : la personne qui encadre. Deux vraies photos (voyages d'Anthony,
- * légendées) ; les visuels encore provisoires restent étiquetés.
+ * prix, formulaire. Le site parle en « je » : la personne qui encadre. Vraies photos d'Anthony (celles du Pérou
+ * sont légendées) ; le seul visuel encore provisoire (« Bouger ») reste étiqueté.
  */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
@@ -21,8 +21,8 @@ import { formatPrice } from '@/lib/format';
 
 import marcheImg from '@/assets/photos/escalier-perou.jpg';
 import mobiliteImg from '@/assets/provisoire/mobilite.png';
-import respirationImg from '@/assets/photos/lac-perou.jpg';
-import reconnexImg from '@/assets/provisoire/parent-ado.png';
+import respirationImg from '@/assets/photos/rochers-coucher-soleil.jpg';
+import reconnexImg from '@/assets/photos/lac-perou.jpg';
 
 const page = usePage('home');
 const h1Lines = page.h1.split('\n');
@@ -189,7 +189,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
 
         <article class="moment card card--hover" data-reveal style="--reveal-delay: 160ms">
           <div class="moment__media">
-            <Photo src={respirationImg} alt="Un lac d’altitude à l’eau claire, immobile, au pied d’un glacier" caption="Pérou" position="center 45%" />
+            <Photo src={respirationImg} alt="Une personne accroupie sur les rochers, face à la mer, au coucher du soleil" position="center 35%" />
             <span class="moment__pill glass label-sm">Temps 03</span>
           </div>
           <div class="moment__body">
@@ -220,7 +220,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
         <div class="reconnex__visual">
           <div class="reconnex__media">
             <div class="reconnex__img frame">
-              <ProvisionalImage src={reconnexImg} alt="Un parent et son enfant assis côte à côte en pleine nature" sizes="(min-width: 64em) 45vw, 100vw" />
+              <Photo src={reconnexImg} alt="Un lac d’altitude immobile où se reflètent les glaciers" caption="Pérou" sizes="(min-width: 64em) 45vw, 100vw" position="center 55%" />
             </div>
             <span class="reconnex__badge glass label-sm">
               <Icon name="phone-off" size={18} class="reconnex__badge-icon" />
