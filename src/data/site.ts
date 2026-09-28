@@ -14,7 +14,7 @@ export const site = {
   locale: 'fr-FR',
 
   /** Prénom de la personne qui encadre : À propos, signature de l'email de confirmation. */
-  ownerFirstName: 'Antho',
+  ownerFirstName: 'Anthony',
 
   /** Une ligne, reprise dans le pied de page et les métadonnées. */
   tagline: 'Marche, mouvement et respiration, dehors, en solo ou en petit groupe.',
