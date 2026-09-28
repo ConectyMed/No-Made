@@ -140,6 +140,21 @@ Principle: calm, purposeful, cheap. One idea per screen. Never hide content behi
 4. **Contact / Demande de session:** form (name, email, phone, offer of interest, group size, preferred dates/availability, message) that notifies me by email. FAQ. Area: PACA.
 5. **Légal:** three separate routes, linked in the footer: `/mentions-legales`, `/cgv` (cancellation/refund), `/confidentialite` (RGPD). The form's consent checkbox links to `/confidentialite`. *(decision 2026-09-28, was one page)*
 
+### Wireframe of the Accueil, mapped from the reference screenshot (2026-09-28)
+
+The reference screenshot (`docs/reference/homepage-style-reference.jpg`) is the wireframe for the section compositions. Content, photos, stats and logos are never copied.
+
+| # | Block | Composition taken from the screenshot | Our content |
+|---|---|---|---|
+| 1 | Hero | Full-bleed media inside a large rounded container, eyebrow pill, headline with one highlighted word, subtitle, one CTA, **row of 4 small white tiles at the bottom of the hero container** (their stats row becomes our fact tiles). | Video per §4. **Divergence, design.md wins:** headline centered and top-anchored on the pale sky, not left-aligned next to a photo. No email field, no avatar stack, no play button, no floating mini-cards. |
+| 2 | Offres | "Initiatives" block: cards on the left in a horizontal row, text column on the right with eyebrow, headline, one paragraph and a "view all" link, **the lime highlight card sits under that text column**. | Our two offer cards (§6) in place of their three photo cards; "Voir les offres" link to `/offres`; the lime highlight card teases the contact form ("Demander une session"), no newsletter. |
+| 3 | Comment ça marche | Not in the screenshot. Simple row of 3 numbered white cards, same radius and hairline border as the fact tiles. | Tu nous écris / on cale une date ensemble / on marche. |
+| 4 | Les trois piliers | "Mission" block: eyebrow + headline + paragraph + two buttons on the left, **three tall photo cards on the right** with a dark bottom gradient, a small round icon, a title and one line. | Marche en nature / Coopération / Reconnex parents-ados. Photos are placeholders until the first outings. Buttons: "Demander une session" (primary), "À propos" (secondary). |
+| 5 | Témoignages | The "trusted by" strip is dropped. | Testimonials component behind `showTestimonials: false`, ships nothing until real ones exist. |
+| 6 | Footer | Brand + one-line tagline on the left, four link columns, social icons, tiny copyright. | Explorer / Infos pratiques / Légal / Suivre. |
+
+Inner pages reuse the same card system with a page intro (eyebrow, headline with highlighted word, lead) and no hero.
+
 Also: a `404` page in the same style. URLs, slugs, file names and the domain are ASCII only, no accent (`nomade-project`), while titles and metadata keep "Nó Made Project" and the nav wordmark "Nó Made".
 
 ---
