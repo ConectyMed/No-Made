@@ -69,6 +69,8 @@ export function readArticleForm(form: FormData): { input: ArticleInput; error: s
   let error: string | null = null;
   if (!input.title) error = 'Il faut un titre.';
   else if (input.status === 'publie' && !input.body.trim()) error = 'Le texte est vide : enregistre-le en brouillon, ou écris-le avant de publier.';
+  else if (input.status === 'publie' && input.coverId && !input.coverAlt)
+    error = 'Décris la photo de couverture (« Ce qu’on voit sur la photo ») avant de publier : c’est le texte lu à la place de l’image.';
   return { input, error };
 }
 

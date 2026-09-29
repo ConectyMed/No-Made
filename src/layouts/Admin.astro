@@ -18,13 +18,16 @@ const user = Astro.locals.user;
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
 const nav: { href: string; label: string; icon: IconName; soon?: boolean }[] = [
-  { href: '/admin', label: 'Tableau de bord', icon: 'leaf' },
-  { href: '/admin/demandes', label: 'Demandes', icon: 'mail' },
-  { href: '/admin/contacts', label: 'Contacts', icon: 'users' },
-  { href: '/admin/sessions', label: 'Sessions', icon: 'calendar' },
-  { href: '/admin/articles', label: 'Articles', icon: 'pen' },
+  { href: '/admin/', label: 'Tableau de bord', icon: 'leaf' },
+  { href: '/admin/demandes/', label: 'Demandes', icon: 'mail' },
+  { href: '/admin/contacts/', label: 'Contacts', icon: 'users' },
+  { href: '/admin/sessions/', label: 'Sessions', icon: 'calendar' },
+  { href: '/admin/articles/', label: 'Articles', icon: 'pen' },
 ];
-const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path.startsWith(href));
+const isActive = (href: string) => {
+  const h = href.replace(/\/+$/, '');
+  return h === '/admin' ? path === '/admin' : path.startsWith(h);
+};
 ---
 
 <!doctype html>
@@ -53,7 +56,7 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
     {
       !bare && (
         <aside class="adm__side">
-          <a href="/admin" class="adm__brand" aria-label="Tableau de bord">
+          <a href="/admin/" class="adm__brand" aria-label="Tableau de bord">
             <span class="adm__dot" aria-hidden="true" />
             <span>{site.shortName}<small>Admin</small></span>
           </a>
@@ -82,8 +85,8 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
               <strong>{user?.name}</strong>
               <small>{user?.email}</small>
             </span>
-            <a href="/admin/compte" class="adm__site small" aria-current={path === '/admin/compte' ? 'page' : undefined}>Mon compte</a>
-            <form method="post" action="/admin/deconnexion">
+            <a href="/admin/compte/" class="adm__site small" aria-current={path === '/admin/compte' ? 'page' : undefined}>Mon compte</a>
+            <form method="post" action="/admin/deconnexion/">
               <button type="submit" class="adm__logout">Se déconnecter</button>
             </form>
             <a href="/" class="adm__site small">Voir le site <Icon name="arrow-right" size={14} /></a>
@@ -97,7 +100,7 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
         !bare && user?.mustChangePassword && (
           <p class="adm-alert adm-alert--err adm__warn" role="alert">
             <strong>Compte temporaire.</strong> Ce compte utilise le mot de passe de démarrage.{' '}
-            <a href="/admin/compte">Change-le maintenant</a>, et mets ton prénom au passage.
+            <a href="/admin/compte/">Change-le maintenant</a>, et mets ton prénom au passage.
           </p>
         )
       }

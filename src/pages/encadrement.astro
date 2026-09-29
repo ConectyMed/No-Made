@@ -36,9 +36,9 @@ const before: { icon: IconName; title: string; text: string }[] = [
 
 const during: { title: string; text: string }[] = [
   { title: 'Rien n’est obligatoire', text: 'Chaque exercice reste facultatif. Le rythme et l’intensité suivent ton profil, pas l’inverse.' },
-  { title: 'Un seul encadrant, en personne', text: `C’est ${firstName} qui t’accueille, t’encadre et te ramène. Pas de sous-traitance, pas de remplaçant.` },
+  { title: 'Un seul encadrant, en personne', text: 'C’est moi qui t’accueille, t’encadre et te ramène. Pas de sous-traitance, pas de remplaçant.' },
   { title: 'Des petits groupes', text: 'Cinq personnes au plus en groupe, un duo ou deux en Reconnexion : je garde tout le monde à l’œil.' },
-  { title: 'Le téléphone dans le sac', text: 'Le tien reste rangé pour profiter de la sortie. Il reste joignable en cas de besoin.' },
+  { title: 'Le téléphone dans le sac', text: 'Le tien reste rangé pour profiter de la sortie. Le mien reste dans mon sac pour les urgences. Après confirmation, je te donne mon numéro WhatsApp pour le jour J.' },
 ];
 ---
 
@@ -51,10 +51,10 @@ const during: { title: string; text: string }[] = [
       <div class="who frame" data-reveal>
         <div class="who__text">
           <span class="eyebrow">Qui t’encadre</span>
-          <h2 id="qui-title">{firstName}, en personne, à chaque sortie</h2>
+          <h2 id="qui-title">C’est moi, {firstName}, en personne, à chaque sortie</h2>
           <p class="lead">
             Dix ans de voyage en autonomie, dans des natures très différentes, et une pratique sportive de toujours :
-            jiu-jitsu brésilien, escalade, boxe, préparation physique. <a href="/a-propos/">Son parcours</a>.
+            jiu-jitsu brésilien, escalade, boxe, préparation physique. <a href="/a-propos/">Mon parcours</a>.
           </p>
         </div>
         <dl class="who__facts">
@@ -114,21 +114,31 @@ const during: { title: string; text: string }[] = [
     </div>
   </section>
 
-  <!-- Météo + parents -->
-  <section class="section section--top0" aria-label="Météo et format parent / enfant">
+  <!-- Météo + pépin + parents -->
+  <section class="section section--top0" aria-label="Météo, imprévus et format parent / enfant">
     <div class="container duo">
-      <article class="card duo__item" id="meteo" data-reveal>
-        <span class="cards__icon"><Icon name="wind" size={22} /></span>
-        <h2>Et s’il pleut ?</h2>
-        <p>
-          On regarde la météo ensemble la veille. Si des intempéries sont annoncées, <strong>tu choisis</strong> : on
-          maintient la session si les conditions le permettent, ou on la reporte à une autre date, sans frais.
-        </p>
-        <p class="small muted">
-          En cas de danger (orage, vent violent, risque incendie, massifs fermés), je reporte la sortie et je te
-          propose une autre date ou le remboursement, à ton choix. Détails dans les <a href="/cgv/">CGV</a>.
-        </p>
-      </article>
+      <div class="duo__stack">
+        <article class="card duo__item" id="meteo" data-reveal>
+          <span class="cards__icon"><Icon name="wind" size={22} /></span>
+          <h2>Et s’il pleut ?</h2>
+          <p>
+            On regarde la météo ensemble la veille. Si des intempéries sont annoncées, <strong>tu choisis</strong> : on
+            maintient la session si les conditions le permettent, ou on la reporte à une autre date, sans frais.
+          </p>
+          <p class="small muted">
+            En cas de danger (orage, vent violent, risque incendie, massifs fermés), je reporte la sortie et je te
+            propose une autre date ou, si tu as déjà réglé, le remboursement, à ton choix. Détails dans les <a href="/cgv/">CGV</a>.
+          </p>
+        </article>
+
+        <article class="card duo__item" id="pepin" data-reveal style="--reveal-delay: 60ms">
+          <span class="cards__icon"><Icon name="shield" size={22} /></span>
+          <h2>Et en cas de pépin ?</h2>
+          <p>
+            J’emporte une trousse de secours et mon téléphone chargé. <Placeholder name="PROCÉDURE D’URGENCE À CONFIRMER" />
+          </p>
+        </article>
+      </div>
 
       <article class="card duo__item" id="parents" data-reveal style="--reveal-delay: 90ms">
         <span class="cards__icon"><Icon name="users" size={22} /></span>
@@ -150,8 +160,9 @@ const during: { title: string; text: string }[] = [
         <div>
           <h2 id="cta-title" class="cta__title">Une question sur la sécurité ?</h2>
           <p class="cta__text">
-            Pose-la en visio, 20 minutes, gratuites et sans engagement, ou écris-moi. Je te recommande aussi ta propre
-            assurance responsabilité civile, et une individuelle accident si tu en as une.
+            Pose-la en visio, 20 minutes, gratuites et sans engagement, ou écris-moi. Mon assurance responsabilité civile
+            professionnelle (<Placeholder name="NOM DE L’ASSUREUR" />) couvre la session. Une assurance individuelle
+            accident reste facultative, de ton côté.
           </p>
         </div>
         <div class="cta__actions">
@@ -282,6 +293,12 @@ const during: { title: string; text: string }[] = [
   .duo {
     display: grid;
     gap: var(--space-5);
+  }
+
+  .duo__stack {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
   }
 
   .duo__item {

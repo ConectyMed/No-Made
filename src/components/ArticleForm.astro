@@ -79,7 +79,7 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
     <div class="adm-field aform__cover" data-cover>
       <span class="adm-label">Photo de couverture <span class="muted">(facultatif)</span></span>
       <input type="hidden" name="coverId" value={v.coverId} data-cover-id />
-      <img class="aform__cover-img" src={v.coverId ? `/photos/${v.coverId}` : undefined} alt="" hidden={!v.coverId} data-cover-img />
+      <img class="aform__cover-img" src={v.coverId ? `/photos/${v.coverId}/` : undefined} alt="" hidden={!v.coverId} data-cover-img />
       <div class="aform__cover-actions">
         <button type="button" class="aform__tool" data-cover-pick>
           <Icon name="camera" size={16} /> <span data-cover-pick-label>{v.coverId ? 'Changer' : 'Choisir une photo'}</span>
@@ -89,7 +89,7 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
       </div>
       <p class="small aform__status-msg" data-cover-status role="status"></p>
       <div class="adm-field" data-cover-alt-wrap hidden={!v.coverId}>
-        <label for="coverAlt" class="small">Ce qu’on voit sur la photo</label>
+        <label for="coverAlt" class="small">Ce qu’on voit sur la photo <span class="muted">(obligatoire pour publier)</span></label>
         <input id="coverAlt" name="coverAlt" type="text" maxlength="200" value={v.coverAlt} placeholder="Ex. Un sentier au-dessus de la mer, au lever du jour" />
         <span class="small muted">Lu à voix haute aux personnes malvoyantes, et utile pour Google.</span>
       </div>
@@ -148,7 +148,7 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
     fd.append('height', String(height));
     say('Envoi…');
     try {
-      const res = await fetch('/admin/api/photos', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+      const res = await fetch('/admin/api/photos/', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
       const data = (await res.json().catch(() => ({}))) as { id?: string; error?: string };
       if (!res.ok || !data.id) {
         say(data.error ?? 'L’envoi a échoué. Es-tu toujours connecté ? Recharge la page et réessaie.', true);
@@ -221,7 +221,7 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
     if (coverId) coverId.value = id;
     if (coverImg) {
       coverImg.hidden = !id;
-      if (id) coverImg.src = `/photos/${id}`;
+      if (id) coverImg.src = `/photos/${id}/`;
       else coverImg.removeAttribute('src');
     }
     if (coverRemove) coverRemove.hidden = !id;

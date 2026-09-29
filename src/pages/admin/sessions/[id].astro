@@ -8,7 +8,7 @@ import Admin from '@/layouts/Admin.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import PublishFields from '@/components/PublishFields.astro';
-import { addParticipant, deleteOuting, getOuting, isOutingStatus, readPublishFields, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
+import { addParticipant, deleteOuting, getOuting, isOutingStatus, publishError, readPublishFields, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
 import { allContactsBrief } from '@/lib/crm/contacts';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { OUTING_STATUS_LABEL } from '@/lib/crm/labels';
@@ -27,31 +27,33 @@ if (Astro.request.method === 'POST') {
   const action = String(form.get('action') ?? '');
   if (action === 'supprimer') {
     await deleteOuting(id);
-    return Astro.redirect('/admin/sessions?supprimee=1', 303);
+    return Astro.redirect('/admin/sessions/?supprimee=1', 303);
   }
   if (action === 'statut') {
     const s = form.get('status');
     if (isOutingStatus(s)) await setOutingStatus(id, s);
-    return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
+    return Astro.redirect(`/admin/sessions/${id}/?ok=1`, 303);
   }
   if (action === 'participant') {
     const contactId = String(form.get('contactId') ?? '');
     const people = Math.max(1, Number(form.get('people') ?? 1) || 1);
     if (contactId) await addParticipant(id, contactId, people);
-    return Astro.redirect(`/admin/sessions/${id}?ok=1#participants`, 303);
+    return Astro.redirect(`/admin/sessions/${id}/?ok=1#participants`, 303);
   }
   if (action === 'retirer') {
     await removeParticipant(String(form.get('participantId') ?? ''));
-    return Astro.redirect(`/admin/sessions/${id}?ok=1#participants`, 303);
+    return Astro.redirect(`/admin/sessions/${id}/?ok=1#participants`, 303);
   }
   if (action === 'maj') {
     const offer = offers.find((o) => o.slug === String(form.get('offerSlug') ?? ''));
     const startsAt = parisToMs(String(form.get('date') ?? ''), String(form.get('time') ?? ''));
     const amountCents = parseEuros(String(form.get('amount') ?? ''));
     const duration = String(form.get('duration') ?? '').trim();
+    const publish = readPublishFields(form);
     if (!offer) error = 'Choisis une expérience.';
     else if (!startsAt) error = 'La date ou l’heure est illisible.';
     else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
+    else if (publishError(publish)) error = publishError(publish);
     else {
       await updateOuting(id, {
         offerSlug: offer.slug,
@@ -61,9 +63,9 @@ if (Astro.request.method === 'POST') {
         place: String(form.get('place') ?? ''),
         notes: String(form.get('notes') ?? ''),
         amountCents,
-        ...readPublishFields(form),
+        ...publish,
       });
-      return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
+      return Astro.redirect(`/admin/sessions/${id}/?ok=1`, 303);
     }
   }
 }
@@ -81,7 +83,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
 ---
 
 <Admin title={`Session du ${formatDateLong(o.startsAt)}`}>
-  <p class="back small"><a href="/admin/sessions">← Le planning</a></p>
+  <p class="back small"><a href="/admin/sessions/">← Le planning</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Session</span>
@@ -146,9 +148,9 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
             {participants.map(({ participant: p, contact: c }) => (
               <li>
                 <div>
-                  <a href={`/admin/contacts/${c.id}`}>{c.name}</a>
+                  <a href={`/admin/contacts/${c.id}/`}>{c.name}</a>
                   <span class="small muted">
-                    {' '}· {p.people} pers.{p.requestId && <> · <a href={`/admin/demandes/${p.requestId}`}>demande</a></>}
+                    {' '}· {p.people} pers.{p.requestId && <> · <a href={`/admin/demandes/${p.requestId}/`}>demande</a></>}
                   </span>
                 </div>
                 <form method="post">
@@ -176,7 +178,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
         </div>
         <Button type="submit" variant="dark">Ajouter</Button>
       </form>
-      <p class="small muted">Quelqu’un qui n’est pas dans le carnet : <a href="/admin/contacts/nouveau">crée d’abord son contact</a>.</p>
+      <p class="small muted">Quelqu’un qui n’est pas dans le carnet : <a href="/admin/contacts/nouveau/">crée d’abord son contact</a>.</p>
     </section>
 
     <form method="post" class="adm-card form" aria-labelledby="info-title">
@@ -212,7 +214,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
         <label for="notes">Notes</label>
         <textarea id="notes" name="notes" rows="3">{o.notes ?? ''}</textarea>
       </div>
-      <PublishFields isPublic={o.isPublic === 1} capacity={o.capacity} publicArea={o.publicArea} />
+      <PublishFields isPublic={o.isPublic === 1} capacity={o.capacity} publicArea={o.publicArea} difficulty={o.difficulty} />
       <div><Button type="submit" variant="dark" icon="check">Enregistrer</Button></div>
     </form>
   </div>

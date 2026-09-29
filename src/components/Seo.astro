@@ -26,7 +26,9 @@ const {
 
 const suffix = t('meta.titleSuffix');
 const fullTitle = isHome ? `${suffix} · ${title}` : `${title} · ${suffix}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Toujours avec barre finale (trailingSlash: 'always'), y compris sur les pages rendues à la demande.
+const path = Astro.url.pathname;
+const canonical = new URL(path.endsWith('/') || /\.\w+$/.test(path) ? path : `${path}/`, Astro.site);
 const ogImage = new URL(image, Astro.site);
 
 // Données structurées : uniquement des faits réels (pas de note, pas d'avis, pas d'adresse tant qu'elle manque).

@@ -17,7 +17,7 @@ const flash = Astro.url.searchParams.get('supprime') ? 'Article supprimé.' : nu
       <h1>Les articles</h1>
       <p>Ce que tu écris ici paraît sur la page <a href="/philosophie/">Ma philosophie</a> dès que tu le publies. Un brouillon reste invisible.</p>
     </div>
-    <a href="/admin/articles/nouveau" class="btn-ghost">Nouvel article</a>
+    <a href="/admin/articles/nouveau/" class="btn-ghost">Nouvel article</a>
   </div>
 
   {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
@@ -25,7 +25,7 @@ const flash = Astro.url.searchParams.get('supprime') ? 'Article supprimé.' : nu
   <section class="adm-card">
     {
       rows.length === 0 ? (
-        <p class="adm-empty">Aucun article pour l’instant. <a href="/admin/articles/nouveau">Écris le premier</a>.</p>
+        <p class="adm-empty">Aucun article pour l’instant. <a href="/admin/articles/nouveau/">Écris le premier</a>.</p>
       ) : (
         <table class="adm-table">
           <thead>
@@ -40,7 +40,7 @@ const flash = Astro.url.searchParams.get('supprime') ? 'Article supprimé.' : nu
             {rows.map((a) => (
               <tr>
                 <td>
-                  <a href={`/admin/articles/${a.id}`}>{a.title}</a>
+                  <a href={`/admin/articles/${a.id}/`}>{a.title}</a>
                 </td>
                 <td>
                   <span class:list={['badge', a.status === 'publie' ? 'badge--confirmee' : 'badge--nouvelle']}>{a.status === 'publie' ? 'Publié' : 'Brouillon'}</span>

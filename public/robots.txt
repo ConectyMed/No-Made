@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin/
-Disallow: /api/
-
-# [À COMPLÉTER] : remplacer par le vrai domaine
-Sitemap: https://nomade-project.example/sitemap-index.xml

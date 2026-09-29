@@ -50,7 +50,7 @@ export function renderMarkdown(src: string, dims: PhotoDims = {}): string {
       const size = d ? ` width="${d.width}" height="${d.height}"` : '';
       const alt = escapeHtml(caption.trim());
       out.push(
-        `<figure class="md-photo"><img src="/photos/${id}" alt="${alt}"${size} loading="lazy" decoding="async">` +
+        `<figure class="md-photo"><img src="/photos/${id}/" alt="${alt}"${size} loading="lazy" decoding="async">` +
           (caption.trim() ? `<figcaption>${inline(caption.trim())}</figcaption>` : '') +
           '</figure>',
       );

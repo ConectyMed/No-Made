@@ -25,7 +25,7 @@ const flash = Astro.url.searchParams.get('supprime') ? 'Contact supprimé.' : nu
         <input id="q" name="q" type="search" placeholder="Nom, email, téléphone…" value={q} />
         <button type="submit" aria-label="Rechercher"><Icon name="arrow-right" size={18} /></button>
       </form>
-      <a href="/admin/contacts/nouveau" class="btn-ghost">Nouveau contact</a>
+      <a href="/admin/contacts/nouveau/" class="btn-ghost">Nouveau contact</a>
     </div>
   </div>
 
@@ -50,7 +50,7 @@ const flash = Astro.url.searchParams.get('supprime') ? 'Contact supprimé.' : nu
             {rows.map((c) => (
               <tr>
                 <td>
-                  <a href={`/admin/contacts/${c.id}`}>{c.name}</a>
+                  <a href={`/admin/contacts/${c.id}/`}>{c.name}</a>
                 </td>
                 <td>
                   {c.email}

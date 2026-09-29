@@ -22,7 +22,7 @@ if (Astro.request.method === 'POST') {
   const email = normalizeEmail(String(form.get('email') ?? ''));
   if (email && (await canSetPassword(email))) {
     const token = await createPasswordToken(email);
-    const link = new URL(`/admin/mot-de-passe/${token}`, Astro.url.origin).toString();
+    const link = new URL(`/admin/mot-de-passe/${token}/`, Astro.url.origin).toString();
     const res = await sendMail({
       to: email,
       subject: `Ton accès à l’admin ${site.name}`,
@@ -79,7 +79,7 @@ if (Astro.request.method === 'POST') {
         </>
       )
     }
-    <p class="small"><a href="/admin/connexion">Retour à la connexion</a></p>
+    <p class="small"><a href="/admin/connexion/">Retour à la connexion</a></p>
   </div>
 </Admin>
 

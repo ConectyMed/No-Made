@@ -23,7 +23,7 @@ if (Astro.request.method === 'POST') {
   const action = String(form.get('action') ?? '');
   if (action === 'supprimer') {
     await deleteRequest(id);
-    return Astro.redirect('/admin/demandes?supprimee=1', 303);
+    return Astro.redirect('/admin/demandes/?supprimee=1', 303);
   }
   if (action === 'repondu-auto') {
     await markRepliedIfNew(id);
@@ -32,7 +32,7 @@ if (Astro.request.method === 'POST') {
   if (action === 'rattacher') {
     const outingId = String(form.get('outingId') ?? '');
     if (outingId) await attachRequest(id, outingId);
-    return Astro.redirect(`/admin/sessions/${outingId}?ok=1`, 303);
+    return Astro.redirect(`/admin/sessions/${outingId}/?ok=1`, 303);
   }
   if (action === 'maj') {
     const status = form.get('status');
@@ -42,7 +42,7 @@ if (Astro.request.method === 'POST') {
     });
     const contactId = String(form.get('contactId') ?? '');
     if (contactId) await updateContactNotes(contactId, String(form.get('contactNotes') ?? ''));
-    return Astro.redirect(`/admin/demandes/${id}?ok=1`, 303);
+    return Astro.redirect(`/admin/demandes/${id}/?ok=1`, 303);
   }
 }
 
@@ -68,7 +68,7 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
 ---
 
 <Admin title={`Demande de ${c.name}`}>
-  <p class="back small"><a href="/admin/demandes"><Icon name="arrow-right" size={14} class="back__icon" /> Toutes les demandes</a></p>
+  <p class="back small"><a href="/admin/demandes/"><Icon name="arrow-right" size={14} class="back__icon" /> Toutes les demandes</a></p>
 
   <div class="adm-head">
     <div>
@@ -106,11 +106,11 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
         {
           r.outingId ? (
             <p>
-              Rattachée à une session. <a href={`/admin/sessions/${r.outingId}`} class="strong">Voir la session</a>
+              Rattachée à une session. <a href={`/admin/sessions/${r.outingId}/`} class="strong">Voir la session</a>
             </p>
           ) : (
             <>
-              <a href={`/admin/sessions/nouvelle?demande=${r.id}`} class="btn-ghost">
+              <a href={`/admin/sessions/nouvelle/?demande=${r.id}`} class="btn-ghost">
                 <Icon name="calendar" size={16} /> Planifier une session
               </a>
               {upcoming.length > 0 && (
@@ -134,7 +134,7 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
       </section>
 
       <section class="adm-card" aria-labelledby="contact-title">
-        <h2 id="contact-title">Contact <a href={`/admin/contacts/${c.id}`} class="small fiche">voir la fiche</a></h2>
+        <h2 id="contact-title">Contact <a href={`/admin/contacts/${c.id}/`} class="small fiche">voir la fiche</a></h2>
         <dl class="facts facts--tight">
           <div><dt>Email</dt><dd><a href={`mailto:${c.email}`}>{c.email}</a></dd></div>
           <div><dt>Téléphone</dt><dd>{c.phone ? <a href={`tel:${c.phone.replace(/\s/g, '')}`}>{c.phone}</a> : <span class="muted">non renseigné</span>}</dd></div>
@@ -147,7 +147,7 @@ const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURICompone
               <ul class="others" role="list">
                 {others.map((o) => (
                   <li>
-                    <a href={`/admin/demandes/${o.id}`}>{o.offerLabel}</a>
+                    <a href={`/admin/demandes/${o.id}/`}>{o.offerLabel}</a>
                     <span class="small muted"> · {formatDateTime(o.createdAt)} · {REQUEST_STATUS_LABEL[o.status]}</span>
                   </li>
                 ))}

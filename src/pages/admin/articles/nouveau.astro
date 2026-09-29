@@ -15,13 +15,13 @@ if (Astro.request.method === 'POST') {
   error = read.error;
   if (!error) {
     const id = await createArticle(v);
-    return Astro.redirect(`/admin/articles/${id}?ok=${v.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
+    return Astro.redirect(`/admin/articles/${id}/?ok=${v.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
   }
 }
 ---
 
 <Admin title="Nouvel article">
-  <p class="back small"><a href="/admin/articles">← Les articles</a></p>
+  <p class="back small"><a href="/admin/articles/">← Les articles</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Ma philosophie</span>

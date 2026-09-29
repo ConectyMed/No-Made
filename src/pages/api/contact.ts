@@ -16,6 +16,7 @@ import { site } from '@/data/site';
 import { createRequest } from '@/lib/crm/requests';
 import { getPublicOuting, type PublicOuting } from '@/lib/crm/outings';
 import { formatDateLong, formatTime } from '@/lib/dates';
+import { sizesFor } from '@/lib/group-sizes';
 import type { SessionRequest } from '@/lib/types';
 
 export const prerender = false;
@@ -124,6 +125,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // --- Libellé de l'offre
   const offers = await getCollection('offers');
   const offerSlug = outing?.offerSlug ?? data.offerSlug;
+
+  // --- Nombre de personnes compatible avec la session (Reconnexion : 2 ou 4), comme dans le formulaire.
+  if (!sizesFor(offerSlug).some((s) => s.value === data.groupSize)) {
+    return respond(request, 422, { ok: false, errors: { groupSize: 'Ce nombre de personnes ne correspond pas à cette session.' } }, errUrl);
+  }
   const offer = offers.find((o) => o.data.slug === offerSlug);
   const offerLabel = offer ? `${offer.data.title} (${offer.data.duration})` : offerSlug === 'indecis' ? 'Ne sait pas encore' : offerSlug;
   const preferredPeriod = outingLabel ? `Session du ${outingLabel}` : data.preferredPeriod || 'À définir';
@@ -148,8 +154,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   } catch (e) {
     console.error('[contact] enregistrement en base impossible :', e);
   }
-  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}`, request.url).toString() : null;
-  const outingUrl = outing ? new URL(`/admin/sessions/${outing.id}`, request.url).toString() : null;
+  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}/`, request.url).toString() : null;
+  const outingUrl = outing ? new URL(`/admin/sessions/${outing.id}/`, request.url).toString() : null;
 
   // --- Email au propriétaire
   const { to } = mailConfig();
@@ -207,8 +213,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         ? `J’ai bien reçu ta demande de place pour « ${offerLabel} », le ${outingLabel}, pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}.`
         : `J’ai bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
       outingLabel
-        ? 'Je te confirme la place par email, avec le point de rendez-vous exact. Pas de paiement en ligne : tout se règle après confirmation.'
-        : 'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+        ? 'Je te confirme la place par email, avec le point de rendez-vous exact. Pas de paiement en ligne : tout se règle après confirmation, par lien de paiement ou virement.'
+        : 'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation, par lien de paiement ou virement.',
       `Si tu préfères qu’on en parle d’abord, tu peux réserver un créneau visio ici : ${new URL('/contact/#visio', request.url).toString()}`,
       '',
       'À bientôt dehors,',

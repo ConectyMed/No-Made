@@ -25,7 +25,7 @@ if (Astro.request.method === 'POST') {
     const res = await changePassword(user.id, current, next, name);
     if (res.ok) {
       await destroyOtherSessions(user.id, Astro.cookies.get(COOKIE_NAME)?.value);
-      return Astro.redirect('/admin/compte?ok=1', 303);
+      return Astro.redirect('/admin/compte/?ok=1', 303);
     }
     error = res.reason === 'wrong-current' ? 'Le mot de passe actuel est incorrect.' : 'Compte introuvable.';
   }

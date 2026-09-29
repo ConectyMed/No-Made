@@ -3,13 +3,17 @@
  * Admin : champs « Publier sur le site » d'une session (création et édition).
  * Une session publiée apparaît dans « Prochaines sorties » (accueil, offres) et on peut y demander une place.
  * Le lieu de rendez-vous exact n'est jamais publié : seule la zone l'est.
+ * Le niveau est obligatoire pour publier (vérifié à l'enregistrement, voir publishError).
  */
+import { OUTING_DIFFICULTIES } from '@/lib/db/schema';
+
 interface Props {
   isPublic?: boolean;
   capacity?: number | null;
   publicArea?: string | null;
+  difficulty?: string | null;
 }
-const { isPublic = false, capacity = 5, publicArea = '' } = Astro.props;
+const { isPublic = false, capacity = 5, publicArea = '', difficulty = null } = Astro.props;
 ---
 
 <fieldset class="pub">
@@ -26,6 +30,13 @@ const { isPublic = false, capacity = 5, publicArea = '' } = Astro.props;
     <div class="adm-field">
       <label for="publicArea">Zone affichée</label>
       <input id="publicArea" name="publicArea" type="text" maxlength="80" value={publicArea ?? ''} placeholder="Ex. Calanques, Marseille" />
+    </div>
+    <div class="adm-field">
+      <label for="difficulty">Niveau</label>
+      <select id="difficulty" name="difficulty">
+        <option value="" selected={!difficulty}>À choisir</option>
+        {OUTING_DIFFICULTIES.map((d) => <option value={d} selected={d === difficulty}>{d}</option>)}
+      </select>
     </div>
   </div>
   <span class="small muted">Le lieu de rendez-vous exact reste privé : il part par email une fois la place confirmée.</span>
@@ -67,7 +78,7 @@ const { isPublic = false, capacity = 5, publicArea = '' } = Astro.props;
 
   @media (min-width: 40em) {
     .pub__row {
-      grid-template-columns: 9rem minmax(0, 1fr);
+      grid-template-columns: 9rem minmax(0, 1fr) 10rem;
     }
   }
 </style>

@@ -56,7 +56,10 @@ const prices = Object.fromEntries(
           <span data-price></span>
         </span>
       </div>
-      <span class="slot__seats label-sm" data-seats></span>
+      <span class="slot__badges">
+        <span class="slot__level label-sm" data-level><span class="visually-hidden">Niveau : </span><span data-level-text></span></span>
+        <span class="slot__seats label-sm" data-seats></span>
+      </span>
       <a class="slot__cta" data-cta>
         <span>Demander une place</span>
         <Icon name="arrow-right" size={16} />
@@ -72,6 +75,7 @@ const prices = Object.fromEntries(
     offerLabel: string;
     area: string | null;
     seatsLeft: number | null;
+    difficulty: string | null;
     dateLabel: string;
     timeLabel: string;
     full: boolean;
@@ -87,7 +91,7 @@ const prices = Object.fromEntries(
 
     let sessions: Slot[] = [];
     try {
-      const res = await fetch('/api/sessions', { headers: { Accept: 'application/json' } });
+      const res = await fetch('/api/sessions/', { headers: { Accept: 'application/json' } });
       if (res.ok) sessions = ((await res.json()) as { sessions?: Slot[] }).sessions ?? [];
     } catch {
       /* hors ligne ou base indisponible : on garde le bloc tel quel */
@@ -111,6 +115,12 @@ const prices = Object.fromEntries(
       set('[data-price]', prices[s.offerSlug] ?? '');
       if (s.area) set('[data-area-text]', s.area);
       else row.querySelector('[data-area]')?.remove();
+
+      const level = row.querySelector<HTMLElement>('[data-level]');
+      if (level) {
+        if (s.difficulty) set('[data-level-text]', s.difficulty);
+        else level.remove();
+      }
 
       const seats = row.querySelector<HTMLElement>('[data-seats]');
       if (seats) {
@@ -211,10 +221,18 @@ const prices = Object.fromEntries(
     gap: 0.3rem;
   }
 
-  .slot__seats {
+  .slot__badges {
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .slot__level,
+  .slot__seats {
     padding: 0.3rem 0.75rem;
     border-radius: var(--radius-pill);
     background: var(--surface-low);
@@ -258,7 +276,7 @@ const prices = Object.fromEntries(
       grid-column: 2;
     }
 
-    .slot__seats {
+    .slot__badges {
       grid-column: 3;
     }
 

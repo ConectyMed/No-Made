@@ -4,7 +4,7 @@
  */
 import { and, asc, desc, eq, gte, lt, sql } from 'drizzle-orm';
 import { getDb, schema } from '../db';
-import { OUTING_STATUSES, type OutingStatus } from '../db/schema';
+import { OUTING_DIFFICULTIES, OUTING_STATUSES, type OutingDifficulty, type OutingStatus } from '../db/schema';
 
 const now = () => Date.now();
 
@@ -86,6 +86,7 @@ export interface OutingInput {
   isPublic?: boolean;
   capacity?: number | null;
   publicArea?: string;
+  difficulty?: OutingDifficulty | null;
 }
 
 export async function createOuting(input: OutingInput): Promise<string> {
@@ -104,6 +105,7 @@ export async function createOuting(input: OutingInput): Promise<string> {
     isPublic: input.isPublic ? 1 : 0,
     capacity: input.capacity ?? null,
     publicArea: input.publicArea?.trim() || null,
+    difficulty: input.difficulty ?? null,
     status: 'prevue',
     createdAt: t,
     updatedAt: t,
@@ -124,6 +126,7 @@ export async function updateOuting(id: string, input: Partial<OutingInput>): Pro
   if (input.isPublic !== undefined) set.isPublic = input.isPublic ? 1 : 0;
   if (input.capacity !== undefined) set.capacity = input.capacity;
   if (input.publicArea !== undefined) set.publicArea = input.publicArea.trim() || null;
+  if (input.difficulty !== undefined) set.difficulty = input.difficulty;
   await db.update(schema.outings).set(set).where(eq(schema.outings.id, id));
 }
 
@@ -146,13 +149,20 @@ export async function deleteOuting(id: string): Promise<void> {
 // ---------- Sessions publiées (site public) ----------
 
 /** Lit les champs « Publier sur le site » d'un formulaire de l'admin (composant PublishFields). */
-export function readPublishFields(form: FormData): Pick<OutingInput, 'isPublic' | 'capacity' | 'publicArea'> {
+export function readPublishFields(form: FormData): Pick<OutingInput, 'isPublic' | 'capacity' | 'publicArea' | 'difficulty'> {
   const cap = Number(form.get('capacity') ?? '');
+  const difficulty = String(form.get('difficulty') ?? '');
   return {
     isPublic: form.get('isPublic') === '1',
     capacity: Number.isInteger(cap) && cap > 0 ? Math.min(cap, 20) : null,
     publicArea: String(form.get('publicArea') ?? ''),
+    difficulty: (OUTING_DIFFICULTIES as readonly string[]).includes(difficulty) ? (difficulty as OutingDifficulty) : null,
   };
+}
+
+/** Une session publiée doit avoir un niveau : message d'erreur pour l'admin, ou null. */
+export function publishError(p: Pick<OutingInput, 'isPublic' | 'difficulty'>): string | null {
+  return p.isPublic && !p.difficulty ? 'Choisis le niveau (Facile, Modéré ou Soutenu) pour publier la session.' : null;
 }
 
 /** Ce que le site public montre d'une session : jamais le lieu exact, les notes ni les participants. */
@@ -166,9 +176,10 @@ export interface PublicOuting {
   capacity: number | null;
   /** null quand aucune capacité n'est fixée. */
   seatsLeft: number | null;
+  difficulty: OutingDifficulty | null;
 }
 
-const toPublic = (r: { id: string; offerSlug: string; offerLabel: string; startsAt: number; durationMin: number | null; publicArea: string | null; capacity: number | null; people: number }): PublicOuting => ({
+const toPublic = (r: { id: string; offerSlug: string; offerLabel: string; startsAt: number; durationMin: number | null; publicArea: string | null; capacity: number | null; difficulty: OutingDifficulty | null; people: number }): PublicOuting => ({
   id: r.id,
   offerSlug: r.offerSlug,
   offerLabel: r.offerLabel,
@@ -177,6 +188,7 @@ const toPublic = (r: { id: string; offerSlug: string; offerLabel: string; starts
   area: r.publicArea,
   capacity: r.capacity,
   seatsLeft: r.capacity === null ? null : Math.max(0, r.capacity - Number(r.people)),
+  difficulty: r.difficulty,
 });
 
 const publicColumns = {
@@ -187,6 +199,7 @@ const publicColumns = {
   durationMin: schema.outings.durationMin,
   publicArea: schema.outings.publicArea,
   capacity: schema.outings.capacity,
+  difficulty: schema.outings.difficulty,
   people: peopleSql,
 };
 

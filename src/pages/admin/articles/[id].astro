@@ -16,19 +16,19 @@ if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
   if (form.get('action') === 'supprimer') {
     await deleteArticle(id);
-    return Astro.redirect('/admin/articles?supprime=1', 303);
+    return Astro.redirect('/admin/articles/?supprime=1', 303);
   }
   const read = readArticleForm(form);
   posted = read.input;
   error = read.error;
   if (!error) {
     await updateArticle(id, read.input);
-    return Astro.redirect(`/admin/articles/${id}?ok=${read.input.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
+    return Astro.redirect(`/admin/articles/${id}/?ok=${read.input.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
   }
 }
 
 const a = await getArticle(id);
-if (!a) return Astro.redirect('/admin/articles', 303);
+if (!a) return Astro.redirect('/admin/articles/', 303);
 
 const v: ArticleInput = posted ?? { title: a.title, slug: a.slug, excerpt: a.excerpt ?? '', body: a.body, status: a.status, coverId: a.coverId ?? '', coverAlt: a.coverAlt ?? '' };
 const ok = Astro.url.searchParams.get('ok');
@@ -37,7 +37,7 @@ const publicUrl = `/philosophie/${a.slug}/`;
 ---
 
 <Admin title={a.title}>
-  <p class="back small"><a href="/admin/articles">← Les articles</a></p>
+  <p class="back small"><a href="/admin/articles/">← Les articles</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Ma philosophie</span>

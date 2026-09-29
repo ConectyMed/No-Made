@@ -26,13 +26,13 @@ const flash = Astro.url.searchParams.get('supprimee') ? 'Session supprimée.' : 
       <h1>Le planning</h1>
       <p>Les sorties datées, avec qui vient. Coche une session « faite » une fois passée : son montant compte alors dans le chiffre.</p>
     </div>
-    <a href="/admin/sessions/nouvelle" class="btn-ghost">Nouvelle session</a>
+    <a href="/admin/sessions/nouvelle/" class="btn-ghost">Nouvelle session</a>
   </div>
 
   {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
 
   <nav class="tabs" aria-label="Filtrer">
-    {tabs.map((t) => <a href={`/admin/sessions?vue=${t.key}`} class="tab" aria-current={t.key === scope ? 'page' : undefined}>{t.label}</a>)}
+    {tabs.map((t) => <a href={`/admin/sessions/?vue=${t.key}`} class="tab" aria-current={t.key === scope ? 'page' : undefined}>{t.label}</a>)}
   </nav>
 
   <section class="adm-card">
@@ -57,7 +57,7 @@ const flash = Astro.url.searchParams.get('supprimee') ? 'Session supprimée.' : 
             {rows.map((o) => (
               <tr>
                 <td>
-                  <a href={`/admin/sessions/${o.id}`}>{formatDateLong(o.startsAt)}</a>
+                  <a href={`/admin/sessions/${o.id}/`}>{formatDateLong(o.startsAt)}</a>
                   <br />
                   <span class="small">{formatTime(o.startsAt)}{o.durationMin ? ` · ${Math.floor(o.durationMin / 60)}h${o.durationMin % 60 ? String(o.durationMin % 60).padStart(2, '0') : ''}` : ''}</span>
                 </td>
