@@ -5,13 +5,19 @@
  * ?id=<id> : une seule session (formulaire de demande de place).
  */
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import { getPublicOuting, listPublicOutings, type PublicOuting } from '@/lib/crm/outings';
 import { formatDateLong, formatTime } from '@/lib/dates';
 
 export const prerender = false;
 
+// Le libellé enregistré avec la session date de sa création : on affiche le nom actuel de l'offre.
+const offers = await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'));
+const titles = new Map(offers.map((o) => [o.data.slug, `${o.data.title} (${o.data.duration})`]));
+
 const view = (o: PublicOuting) => ({
   ...o,
+  offerLabel: titles.get(o.offerSlug) ?? o.offerLabel,
   dateLabel: formatDateLong(o.startsAt).replace(/ \d{4}$/, ''),
   timeLabel: formatTime(o.startsAt).replace(':', 'h').replace(/^0/, ''),
   full: o.seatsLeft === 0,

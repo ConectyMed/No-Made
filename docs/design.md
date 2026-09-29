@@ -130,7 +130,7 @@ Split layout (v3, 2026-09-28), on a light frame: text left, media right, floatin
   56px real-photo thumbnail (stairs, crouched silhouette on rocks, altitude lake) and one line; they link
   to the "Trois temps forts" section. Thumbnails are decorative (`alt=""`), too small to carry the "Pérou"
   caption; the full cards below keep it. On mobile the three cards overlap the bottom of the media.
-- Facts row (4 tiles, `.glass`, the last one lime-soft): 2h30 session corps / aventure · 3h Reconnexion ·
+- Facts row (4 tiles, `.glass`, the last one lime-soft): 2h30 Nó Made Experience · 3h Reconnexion ·
   20 min de visio · 0 écran. Values come from the offers' `duration` and `site.visio.duration`, never
   typed numbers: the reference layout's "520K+ trees" style counters are exactly what this site does not do.
 
@@ -272,7 +272,7 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver." ("dehors" dropped from the hero title
       later the same day; the OG image follows).
 - [x] The format is spelled "Reconnexion" (2026-09-28) and is the parent / child half-day. The adult session
-      is "Expérience corps / aventure".
+      is "Nó Made Experience" (renamed from "Expérience corps / aventure").
 - [x] One voice, "je" (2026-09-28). The owner's micro-entreprise is the legal entity. No "éducateur" or
       diploma on the site. The owner answers requests himself on nomadeproject@outlook.fr.
 - [x] Visio before booking (2026-09-28): external booking page (Cal.com recommended), click-to-load, on
