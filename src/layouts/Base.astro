@@ -36,6 +36,16 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
       })();
     </script>
     <slot name="head" />
+    {
+      /* Mesure d'audience Vercel Web Analytics : sans cookie, pages publiques seulement (pas l'admin).
+         À activer dans Vercel → Project → Analytics ; sans cela le script répond 404 et rien n'est mesuré. */
+      import.meta.env.PROD && (
+        <>
+          <script is:inline>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+          <script is:inline defer src="/_vercel/insights/script.js"></script>
+        </>
+      )
+    }
   </head>
   <body class={bodyClass}>
     <a href="#contenu" class="skip-link">{t('common.skipToContent')}</a>
@@ -46,6 +56,9 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
     <Footer />
 
     <script>
+      import { trackClicks } from '@/lib/track';
+      trackClicks();
+
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
       if (!reduce && items.length && 'IntersectionObserver' in window) {

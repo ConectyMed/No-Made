@@ -37,7 +37,10 @@ const jsonLd = {
   url: Astro.site?.toString(),
   email: site.email.startsWith('[') ? undefined : site.email,
   description: t('meta.defaultDescription'),
-  areaServed: { '@type': 'AdministrativeArea', name: site.areaLong },
+  areaServed: [
+    ...site.places.map((name) => ({ '@type': 'City', name })),
+    { '@type': 'AdministrativeArea', name: site.areaLong },
+  ],
   logo: new URL('/favicon.svg', Astro.site).toString(),
 };
 ---

@@ -1,15 +1,18 @@
 ---
 /**
- * Formulaire "Demander une session" (design.md §8). Balisage et validation HTML natifs.
- * Le point d'entrée /api/contact (envoi d'email, anti-spam) arrive au jalon M3 :
- * jusque-là le bouton est actif mais la soumission renvoie une 404.
+ * Formulaire "Demander une session" (design.md §8). Balisage et validation HTML natifs, envoi en fetch
+ * avec repli sans JavaScript (le serveur redirige vers #merci ou #erreur).
+ * Peu de champs obligatoires : la session, le nombre de personnes, le nom, l'email. Le reste est facultatif.
+ * Présélection depuis l'URL : ?offre=<slug> ou ?session=<id> (une sortie groupée publiée, voir UpcomingSessions).
+ * Turnstile (anti-robot) s'affiche seulement si PUBLIC_TURNSTILE_SITE_KEY est défini au build.
  */
 import { getCollection } from 'astro:content';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
+import { site, VISIO_HREF } from '@/data/site';
 
 interface Props {
-  /** Pré-sélection depuis ?offre=slug */
+  /** Pré-sélection d'une offre (sinon lue dans ?offre=slug côté navigateur). */
   selected?: string | null;
   id?: string;
 }
@@ -18,19 +21,60 @@ const { selected = null, id = 'demande' } = Astro.props;
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() || null;
+const mail = `mailto:${site.email}`;
+const sizes = [
+  { value: 1, label: 'Juste moi' },
+  { value: 2, label: '2 personnes' },
+  { value: 3, label: '3 personnes' },
+  { value: 4, label: '4 personnes' },
+  { value: 5, label: '5 personnes' },
+];
 ---
 
 <!-- États sans JavaScript : la redirection du serveur cible #merci ou #erreur, affichés via :target -->
 <div class="notice notice--ok card" id="merci" role="status">
   <strong>Merci, j’ai bien reçu ta demande.</strong>
-  <span>Je te réponds par email pour caler une date ensemble. Un accusé de réception vient de partir.</span>
+  <span>Je te réponds par email pour caler une date ensemble. Un accusé de réception vient de partir. En attendant, tu peux <a href={VISIO_HREF}>réserver un créneau visio</a>.</span>
 </div>
 <div class="notice notice--err card" id="erreur" role="alert">
   <strong>L’envoi n’a pas fonctionné.</strong>
-  <span>Réessaie dans un moment, ou écris-moi directement par email.</span>
+  <span>Réessaie dans un moment, ou écris-moi directement à <a href={mail}>{site.email}</a>.</span>
 </div>
 
-<form class="form card" id={id} action="/api/contact" method="post" data-contact-form>
+<form class="form card" id={id} action="/api/contact" method="post" data-contact-form data-mail={site.email} data-visio={VISIO_HREF}>
+  <!-- Sortie groupée choisie depuis « Prochaines sorties » (?session=<id>) -->
+  <div class="picked" data-picked hidden>
+    <Icon name="calendar" size={20} class="picked__icon" />
+    <p class="picked__text"><span class="small muted">Tu demandes une place pour</span><strong data-picked-label></strong></p>
+    <button type="button" class="picked__clear small" data-picked-clear>Changer</button>
+  </div>
+  <p class="picked picked--gone small" data-picked-gone hidden>
+    Cette date n’est plus disponible. Dis-moi quand tu serais libre, je te propose la suivante.
+  </p>
+  <input type="hidden" name="sessionId" value="" data-session-id />
+
+  <div class="form__row">
+    <div class="field" data-session-hide>
+      <label for={`${id}-offer`}>Quelle session ?</label>
+      <select id={`${id}-offer`} name="offerSlug" required>
+        <option value="" disabled selected={!selected}>Choisis une session</option>
+        {offers.map((o) => (
+          <option value={o.data.slug} selected={selected === o.data.slug}>
+            {o.data.title} — {o.data.duration}
+          </option>
+        ))}
+        <option value="indecis" selected={selected === 'indecis'}>Je ne sais pas encore</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for={`${id}-size`}>Combien de personnes ?</label>
+      <select id={`${id}-size`} name="groupSize" required>
+        {sizes.map((s) => <option value={s.value} selected={s.value === 1}>{s.label}</option>)}
+      </select>
+    </div>
+  </div>
+
   <div class="form__row">
     <div class="field">
       <label for={`${id}-name`}>Prénom et nom</label>
@@ -43,52 +87,28 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   </div>
 
   <div class="form__row">
+    <div class="field" data-session-hide>
+      <label for={`${id}-period`}>Quand ? <span class="muted">(facultatif)</span></label>
+      <input id={`${id}-period`} name="preferredPeriod" type="text" maxlength="200" placeholder="Ex. un samedi matin en octobre" />
+    </div>
     <div class="field">
       <label for={`${id}-phone`}>Téléphone <span class="muted">(facultatif)</span></label>
       <input id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="06 00 00 00 00" />
     </div>
-    <div class="field">
-      <label for={`${id}-size`}>Nombre de personnes</label>
-      <input id={`${id}-size`} name="groupSize" type="number" inputmode="numeric" min="1" max="5" required placeholder="1 si tu viens seul" />
-    </div>
-  </div>
-
-  <div class="field">
-    <label for={`${id}-offer`}>Session souhaitée</label>
-    <select id={`${id}-offer`} name="offerSlug" required>
-      <option value="" disabled selected={!selected}>Choisis une session</option>
-      {offers.map((o) => (
-        <option value={o.data.slug} selected={selected === o.data.slug}>
-          {o.data.title} — {o.data.duration}
-        </option>
-      ))}
-      <option value="indecis" selected={selected === 'indecis'}>Je ne sais pas encore</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for={`${id}-period`}>Période souhaitée</label>
-    <input id={`${id}-period`} name="preferredPeriod" type="text" required maxlength="200" placeholder="Ex. un samedi matin en octobre, ou les vacances de la Toussaint" />
   </div>
 
   <div class="field">
     <label for={`${id}-message`}>Ton message <span class="muted">(facultatif)</span></label>
-    <textarea id={`${id}-message`} name="message" rows="4" maxlength="2000" placeholder="Une question, une précision, ce qui te ferait plaisir…"></textarea>
+    <textarea id={`${id}-message`} name="message" rows="3" maxlength="2000" placeholder="Une question, une précision, ce qui te ferait plaisir…"></textarea>
   </div>
 
-  <div class="field field--check">
-    <input id={`${id}-consent`} name="consent" type="checkbox" required />
-    <label for={`${id}-consent`}>
-      J’accepte que ces informations servent à répondre à ma demande. <a href="/confidentialite/">Comment on traite tes données</a>.
-    </label>
-  </div>
-
-  <!-- Anti-spam : champ piège invisible + horodatage (vérifiés côté serveur au jalon M3) -->
+  <!-- Anti-spam : champ piège invisible + horodatage, et Turnstile si une clé est configurée -->
   <div class="hp" aria-hidden="true">
     <label for={`${id}-website`}>Site web</label>
     <input id={`${id}-website`} name="website" type="text" tabindex="-1" autocomplete="off" />
   </div>
   <input type="hidden" name="startedAt" value={String(Date.now())} data-started-at />
+  {turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-language="fr" data-size="flexible"></div>}
 
   <Button type="submit" variant="lime" size="lg" icon="send" block data-submit>Envoyer ma demande</Button>
 
@@ -96,34 +116,110 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 
   <p class="form__note small muted">
     <Icon name="shield" size={16} />
-    <span>Pas de paiement en ligne. Je te réponds par email.</span>
+    <span>
+      Pas de paiement en ligne. Tes informations servent seulement à te répondre (<a href="/confidentialite/">détails</a>).
+    </span>
   </p>
 </form>
 
-<script>
-  // 1. Horodatage réel côté client (le rendu statique fige la valeur au build).
-  document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => {
-    el.value = String(Date.now());
-  });
+{turnstileKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
-  // 2. Envoi en fetch avec retour inline. Sans JS, le formulaire poste normalement
-  //    et le serveur redirige vers #merci ou #erreur.
+<script>
+  import { track } from '@/lib/track';
+
+  declare global {
+    interface Window {
+      turnstile?: { reset: (el?: string | HTMLElement) => void };
+    }
+  }
+
+  type PublicSession = { id: string; offerSlug: string; offerLabel: string; area: string | null; dateLabel: string; timeLabel: string; full: boolean };
+
+  // 1. Horodatage réel côté client (le rendu statique fige la valeur au build).
+  const stamp = () =>
+    document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => {
+      el.value = String(Date.now());
+    });
+  stamp();
+
   document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('[data-status]');
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
     const fields = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+    const offer = form.querySelector<HTMLSelectElement>('select[name="offerSlug"]');
+    const period = form.querySelector<HTMLInputElement>('input[name="preferredPeriod"]');
+    const sessionInput = form.querySelector<HTMLInputElement>('[data-session-id]');
+    const picked = form.querySelector<HTMLElement>('[data-picked]');
+    const gone = form.querySelector<HTMLElement>('[data-picked-gone]');
+    const mail = form.dataset.mail ?? '';
+    const visio = form.dataset.visio ?? '/contact/#visio';
 
-    const setStatus = (text: string, kind: 'ok' | 'err' | '') => {
+    // 2. Présélection depuis l'URL : ?offre=<slug>, ou ?session=<id> (sortie groupée publiée).
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('offre');
+    if (slug && offer && [...offer.options].some((o) => o.value === slug)) offer.value = slug;
+
+    // Une date choisie fixe déjà la session et la période : ces deux champs deviennent inutiles.
+    const toggleSessionFields = (hide: boolean) =>
+      form.querySelectorAll<HTMLElement>('[data-session-hide]').forEach((el) => (el.hidden = hide));
+
+    const clearSession = () => {
+      if (sessionInput) sessionInput.value = '';
+      if (picked) picked.hidden = true;
+      toggleSessionFields(false);
+      if (period && period.dataset.fromSession) {
+        period.value = '';
+        delete period.dataset.fromSession;
+      }
+    };
+    form.querySelector('[data-picked-clear]')?.addEventListener('click', () => {
+      clearSession();
+      offer?.focus();
+    });
+
+    const sessionId = params.get('session');
+    if (sessionId && sessionInput) {
+      fetch(`/api/sessions?id=${encodeURIComponent(sessionId)}`, { headers: { Accept: 'application/json' } })
+        .then((r) => (r.ok ? r.json() : { session: null }))
+        .then(({ session }: { session: PublicSession | null }) => {
+          if (!session || session.full) {
+            if (gone) gone.hidden = false;
+            return;
+          }
+          const label = `${session.dateLabel}, ${session.timeLabel} · ${session.offerLabel.replace(/\s*\(.*\)$/, '')}${session.area ? ` · ${session.area}` : ''}`;
+          sessionInput.value = session.id;
+          if (offer && [...offer.options].some((o) => o.value === session.offerSlug)) offer.value = session.offerSlug;
+          if (period && !period.value) {
+            period.value = `${session.dateLabel}, ${session.timeLabel}`;
+            period.dataset.fromSession = '1';
+          }
+          const text = picked?.querySelector('[data-picked-label]');
+          if (text) text.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+          if (picked) picked.hidden = false;
+          toggleSessionFields(true);
+        })
+        .catch(() => {});
+    }
+
+    const setStatus = (kind: 'ok' | 'err' | '', text: string, link?: { href: string; label: string }) => {
       if (!status) return;
       status.textContent = text;
+      if (link) {
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.label;
+        status.append(' ', a, '.');
+      }
       status.dataset.kind = kind;
     };
+    const mailLink = mail ? { href: `mailto:${mail}`, label: mail } : undefined;
 
+    // 3. Envoi en fetch avec retour inline. Sans JS, le formulaire poste normalement.
     form.addEventListener('submit', async (e) => {
       if (!form.checkValidity()) return; // le navigateur affiche ses messages natifs
       e.preventDefault();
       fields.forEach((f) => f.setCustomValidity(''));
-      setStatus('Envoi en cours…', '');
+      setStatus('', 'Envoi en cours…');
       if (submit) submit.disabled = true;
 
       try {
@@ -135,10 +231,14 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
         const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; errors?: Record<string, string> };
 
         if (res.ok && data.ok) {
+          const offerSlug = offer?.value ?? '';
+          const withSession = Boolean(sessionInput?.value);
           form.reset();
-          document.querySelectorAll<HTMLInputElement>('[data-started-at]').forEach((el) => (el.value = String(Date.now())));
-          setStatus('Merci, j’ai bien reçu ta demande. Je te réponds par email.', 'ok');
-          form.querySelector<HTMLElement>('[data-status]')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          clearSession();
+          stamp();
+          setStatus('ok', 'Merci, j’ai bien reçu ta demande. Je te réponds par email. Envie d’en parler avant ?', { href: visio, label: 'Réserve un créneau visio' });
+          status?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          track('demande-envoyee', { offre: offerSlug || 'inconnue', datee: withSession ? 'oui' : 'non' });
         } else if (data.errors) {
           const first = Object.entries(data.errors)[0];
           const field = first && form.elements.namedItem(first[0]);
@@ -146,14 +246,15 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
             (field as HTMLInputElement).setCustomValidity(first[1]);
             (field as HTMLInputElement).reportValidity();
           }
-          setStatus(first ? first[1] : 'Vérifie les champs du formulaire.', 'err');
+          setStatus('err', first ? first[1] : 'Vérifie les champs du formulaire.');
         } else {
-          setStatus(data.error ?? 'L’envoi n’a pas fonctionné. Réessaie dans un moment.', 'err');
+          setStatus('err', `${data.error ?? 'L’envoi n’a pas fonctionné.'} Tu peux aussi m’écrire à`, mailLink);
         }
       } catch {
-        setStatus('Pas de réseau ? Réessaie dans un moment, ou écris-moi directement par email.', 'err');
+        setStatus('err', 'Pas de réseau ? Réessaie dans un moment, ou écris-moi à', mailLink);
       } finally {
         if (submit) submit.disabled = false;
+        window.turnstile?.reset(); // un jeton Turnstile ne sert qu'une fois
       }
     });
   });
@@ -169,6 +270,10 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   .form__row {
     display: grid;
     gap: var(--space-5);
+  }
+
+  .field[hidden] {
+    display: none;
   }
 
   .field {
@@ -222,30 +327,6 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     outline: none;
     border-color: var(--green-600);
     box-shadow: 0 0 0 3px var(--focus-ring);
-  }
-
-  .field--check {
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    gap: var(--space-3);
-  }
-
-  .field--check input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-top: 0.15rem;
-    accent-color: var(--deep);
-  }
-
-  .field--check label {
-    font-weight: 400;
-    color: var(--ink-2);
-    font-size: var(--body-sm);
-    line-height: 1.5;
-  }
-
-  .field--check a {
-    color: var(--green-600);
   }
 
   .hp {
@@ -306,13 +387,64 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   .form__note {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
     gap: 0.4rem;
     color: var(--ink-2);
   }
 
   .form__note :global(.icon) {
+    flex: none;
     color: var(--green-600);
+  }
+
+  .form__note a,
+  .form__status a,
+  .notice a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  /* Sortie groupée présélectionnée */
+  .picked {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-box);
+    background: var(--lime-soft);
+    border: 1px solid var(--lime);
+  }
+
+  .picked[hidden] {
+    display: none;
+  }
+
+  .picked--gone {
+    display: block;
+    background: var(--surface-low);
+    border: var(--border);
+    color: var(--ink-2);
+  }
+
+  .picked :global(.picked__icon) {
+    color: var(--green-600);
+  }
+
+  .picked__text {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .picked__text strong {
+    color: var(--green-900);
+  }
+
+  .picked__clear {
+    color: var(--green-600);
+    font-weight: 600;
+    text-decoration: underline;
   }
 
   @media (min-width: 40em) {

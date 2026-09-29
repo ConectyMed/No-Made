@@ -1,0 +1,368 @@
+---
+/**
+ * Encadrement et sécurité : lever les freins avant la demande, surtout pour les parents (format Reconnexion).
+ * Rien d'inventé : ce qui vient des CGV et des offres est écrit ; ce qui reste à confirmer par la personne
+ * qui encadre (qualification, premiers secours, assurance, âge minimum) est en [PLACEHOLDER].
+ */
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import type { IconName } from '@/components/Icon.astro';
+import Placeholder from '@/components/Placeholder.astro';
+import { usePage } from '@/i18n';
+import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
+
+const page = usePage('safety');
+const firstName = site.ownerFirstName;
+
+const before: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'pin',
+    title: 'Un sentier choisi pour toi',
+    text: `Autour de ${site.zone.replace(' et alentours', '')} : je choisis le parcours selon la saison, ton niveau et, en duo, l’âge de ton enfant. Pas de passage technique imposé.`,
+  },
+  {
+    icon: 'sun',
+    title: 'La météo et les massifs vérifiés',
+    text: 'La veille, je regarde la météo et l’accès aux massifs : en été, ils peuvent être fermés par arrêté préfectoral à cause du risque incendie.',
+  },
+  {
+    icon: 'chat',
+    title: 'Un mot sur ta forme',
+    text: 'Avant la session, tu me signales une blessure, un traitement ou une condition médicale utile. Je m’en sers seulement pour adapter la sortie.',
+  },
+];
+
+const during: { title: string; text: string }[] = [
+  { title: 'Rien n’est obligatoire', text: 'Chaque exercice reste facultatif. Le rythme et l’intensité suivent ton profil, pas l’inverse.' },
+  { title: 'Un seul encadrant, en personne', text: `C’est ${firstName} qui t’accueille, t’encadre et te ramène. Pas de sous-traitance, pas de remplaçant.` },
+  { title: 'Des petits groupes', text: 'Cinq personnes au plus en groupe, un duo ou deux en Reconnexion : je garde tout le monde à l’œil.' },
+  { title: 'Le téléphone dans le sac', text: 'Le tien reste rangé pour profiter de la sortie. Il reste joignable en cas de besoin.' },
+];
+---
+
+<Base title={page.title} description={page.description}>
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
+
+  <!-- Qui encadre -->
+  <section class="section section--top0" aria-labelledby="qui-title">
+    <div class="container">
+      <div class="who frame" data-reveal>
+        <div class="who__text">
+          <span class="eyebrow">Qui t’encadre</span>
+          <h2 id="qui-title">{firstName}, en personne, à chaque sortie</h2>
+          <p class="lead">
+            Dix ans de voyage en autonomie, dans des natures très différentes, et une pratique sportive de toujours :
+            jiu-jitsu brésilien, escalade, boxe, préparation physique. <a href="/a-propos/">Son parcours</a>.
+          </p>
+        </div>
+        <dl class="who__facts">
+          <div>
+            <dt><Icon name="shield" size={16} /> Qualification</dt>
+            <dd><Placeholder name="DIPLÔME OU CARTE PROFESSIONNELLE D’ÉDUCATEUR SPORTIF" /></dd>
+          </div>
+          <div>
+            <dt><Icon name="hands" size={16} /> Premiers secours</dt>
+            <dd><Placeholder name="FORMATION PREMIERS SECOURS, EX. PSC1 (ANNÉE)" /></dd>
+          </div>
+          <div>
+            <dt><Icon name="check" size={16} /> Assurance</dt>
+            <dd>Responsabilité civile professionnelle, <Placeholder name="NOM DE L’ASSUREUR" /></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Avant -->
+  <section class="section section--top0" aria-labelledby="avant-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Avant la sortie</span>
+        <h2 id="avant-title">Chaque session se prépare</h2>
+      </div>
+      <ul class="cards" role="list">
+        {before.map((b, i) => (
+          <li class="card cards__item" data-reveal style={`--reveal-delay: ${i * 70}ms`}>
+            <span class="cards__icon"><Icon name={b.icon} size={22} /></span>
+            <h3>{b.title}</h3>
+            <p class="small muted">{b.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Pendant -->
+  <section class="section section--top0" aria-labelledby="pendant-title">
+    <div class="container">
+      <div class="during frame" data-reveal>
+        <div class="section-head">
+          <span class="eyebrow">Pendant la sortie</span>
+          <h2 id="pendant-title">À ton rythme, sous un œil attentif</h2>
+        </div>
+        <ul class="checks" role="list">
+          {during.map((d) => (
+            <li>
+              <span class="checks__dot"><Icon name="check" size={14} /></span>
+              <span><strong>{d.title}.</strong> {d.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Météo + parents -->
+  <section class="section section--top0" aria-label="Météo et format parent / enfant">
+    <div class="container duo">
+      <article class="card duo__item" id="meteo" data-reveal>
+        <span class="cards__icon"><Icon name="wind" size={22} /></span>
+        <h2>Et s’il pleut ?</h2>
+        <p>
+          On regarde la météo ensemble la veille. Si des intempéries sont annoncées, <strong>tu choisis</strong> : on
+          maintient la session si les conditions le permettent, ou on la reporte à une autre date, sans frais.
+        </p>
+        <p class="small muted">
+          En cas de danger (orage, vent violent, risque incendie, massifs fermés), je reporte la sortie et je te
+          propose une autre date ou le remboursement, à ton choix. Détails dans les <a href="/cgv/">CGV</a>.
+        </p>
+      </article>
+
+      <article class="card duo__item" id="parents" data-reveal style="--reveal-delay: 90ms">
+        <span class="cards__icon"><Icon name="users" size={22} /></span>
+        <h2>Tu viens avec ton enfant ?</h2>
+        <ul class="plain">
+          <li>Tu restes avec lui pendant toute la session : c’est tout le principe de la Reconnexion.</li>
+          <li>Les exercices se font à deux et s’adaptent à son âge et à son envie. Rien n’est imposé.</li>
+          <li>Âge : <Placeholder name="ÂGE MINIMUM ÉVENTUEL" />.</li>
+          <li>Prévois de l’eau, un encas, une tenue confortable et des chaussures fermées, pour vous deux.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- Assurance + CTA -->
+  <section class="section section--top0" aria-labelledby="cta-title">
+    <div class="container">
+      <div class="cta frame" data-reveal>
+        <div>
+          <h2 id="cta-title" class="cta__title">Une question sur la sécurité ?</h2>
+          <p class="cta__text">
+            Pose-la en visio, 20 minutes, gratuites et sans engagement, ou écris-moi. Je te recommande aussi ta propre
+            assurance responsabilité civile, et une individuelle accident si tu en as une.
+          </p>
+        </div>
+        <div class="cta__actions">
+          <Button href={CTA_HREF} variant="lime" icon="arrow-right">{CTA_LABEL}</Button>
+          <a href={VISIO_HREF} class="cta__link label">{VISIO_LABEL}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section--top0 {
+    padding-top: 0;
+  }
+
+  .who {
+    display: grid;
+    gap: var(--space-6);
+    padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+    background: var(--surface-low);
+    border: var(--border);
+  }
+
+  .who__text {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .who__text a,
+  .duo a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  .who__facts {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .who__facts > div {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-box);
+    background: var(--surface);
+    border: var(--border);
+  }
+
+  .who__facts dt {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.3rem;
+    font-size: var(--label-sm);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green-600);
+  }
+
+  .who__facts dd {
+    color: var(--ink-2);
+    font-size: var(--body-sm);
+  }
+
+  .cards {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .cards__item {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+  }
+
+  .cards__icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-box);
+    background: var(--surface-low);
+    color: var(--green-900);
+  }
+
+  .cards__item h3 {
+    font-size: var(--text-sm-h);
+  }
+
+  .during {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+    border: var(--border);
+  }
+
+  .checks {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .checks li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    color: var(--ink-2);
+  }
+
+  .checks strong {
+    color: var(--green-900);
+    font-weight: 600;
+  }
+
+  .checks__dot {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.1rem;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--on-lime);
+  }
+
+  .duo {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .duo__item {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+    scroll-margin-top: var(--header-offset);
+  }
+
+  .duo__item h2 {
+    font-size: var(--text-md);
+  }
+
+  .duo__item p,
+  .plain li {
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+
+  .plain {
+    display: grid;
+    gap: var(--space-2);
+    padding-left: 1.1em;
+  }
+
+  .cta {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    background: var(--deep);
+    color: var(--on-dark);
+  }
+
+  .cta__title {
+    color: var(--on-dark);
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .cta__text {
+    color: var(--on-dark-muted);
+    max-width: 44ch;
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .cta__link {
+    color: var(--on-dark);
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 48em) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .duo {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .checks {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5) var(--space-7);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .who {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    .cta {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+</style>

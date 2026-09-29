@@ -1,7 +1,7 @@
 {
   "meta": {
     "titleSuffix": "Nó Made Project",
-    "defaultDescription": "Sorties nature en région PACA : marche, préparation physique au poids du corps, mobilité et respiration. En solo, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
+    "defaultDescription": "Sorties nature autour de Marseille, Cannes et Saint-Tropez : marche, préparation physique au poids du corps, mobilité et respiration. En solo avec moi, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
   },
   "common": {
     "skipToContent": "Aller au contenu",
@@ -19,18 +19,18 @@
   },
   "pages": {
     "home": {
-      "title": "Sorties nature, corps et aventure en PACA",
-      "description": "Nó Made Project : marche, préparation physique au poids du corps, mobilité et respiration, dehors, en solo ou en petit groupe. Et un format Reconnexion parent / enfant. Région PACA.",
-      "tag": "Région PACA · en solo ou en petit groupe",
+      "title": "Sorties nature à Marseille, Cannes, Saint-Tropez",
+      "description": "Nó Made Project : marche, préparation physique au poids du corps, mobilité et respiration, dehors, autour de Marseille, Cannes et Saint-Tropez. En solo, en petit groupe ou en duo parent / enfant.",
+      "tag": "Marseille · Cannes · Saint-Tropez",
       "h1": "Marcher. Respirer.\nSe retrouver.",
-      "lead": "Je t’emmène dehors, sur les sentiers de la région PACA, pour remettre le corps et la tête en mouvement : de la marche, du travail au poids du corps, de la mobilité, de la respiration. En solo, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
+      "lead": "Je t’emmène dehors, sur les sentiers autour de Marseille, Cannes et Saint-Tropez, pour remettre le corps et la tête en mouvement : de la marche, du travail au poids du corps, de la mobilité, de la respiration. En solo avec moi, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
     },
     "offers": {
       "title": "Les sessions",
-      "description": "Deux formats en phase de test : Expérience corps / aventure (2h30, en solo ou de 3 à 5 personnes) et Reconnexion parent / enfant (3h, en duo ou à 4).",
+      "description": "Deux formats, à tarif de lancement : Expérience corps / aventure (2h30, en solo ou en groupe de 3 à 5) et Reconnexion parent / enfant (3h, en duo ou à 4). Autour de Marseille, Cannes et Saint-Tropez.",
       "eyebrow": "Les sessions",
       "h1": "Deux façons de sortir",
-      "lead": "Deux formats, en phase de test. Les prix peuvent bouger. Tu choisis, tu m’écris, on cale une date ensemble. Et si tu préfères en parler d’abord, on se fait une visio."
+      "lead": "Deux formats, à tarif de lancement. Tu choisis, tu m’écris, on cale une date ensemble, ou tu rejoins une sortie groupée déjà prévue. Et si tu préfères en parler d’abord, on se fait une visio."
     },
     "about": {
       "title": "À propos",
@@ -41,10 +41,17 @@
     },
     "contact": {
       "title": "Demander une session",
-      "description": "Dis-moi quelle session t’intéresse, seul ou à plusieurs, et quand. Je te réponds par email. Tu peux aussi réserver un créneau visio pour en parler d’abord.",
+      "description": "Dis-moi quelle session t’intéresse, seul ou à plusieurs. Je te réponds par email et on cale une date ensemble. Tu peux aussi réserver un créneau visio pour en parler d’abord.",
       "eyebrow": "Prends contact",
       "h1": "Envie de sortir ? Écris-moi.",
-      "lead": "Pas de calendrier de réservation pour l’instant : tu m’écris, je te réponds par email et on cale une date ensemble. Tu préfères en parler avant ? Réserve un créneau visio, c’est gratuit."
+      "lead": "Deux minutes pour me dire ce qui te tente. Je te réponds par email et on cale une date ensemble. Tu préfères en parler avant ? Réserve un créneau visio, c’est gratuit."
+    },
+    "safety": {
+      "title": "Encadrement et sécurité",
+      "description": "Qui encadre les sessions Nó Made Project, comment elles sont préparées, ce qui se passe s’il pleut, et ce qu’il faut savoir pour venir avec son enfant.",
+      "eyebrow": "Encadrement et sécurité",
+      "h1": "Sortir dehors, l’esprit tranquille",
+      "lead": "Qui t’encadre, comment je prépare chaque sortie, ce qui se passe quand la météo tourne, et ce qu’il faut savoir pour venir avec ton enfant."
     },
     "legalNotice": {
       "title": "Mentions légales",

@@ -11,6 +11,9 @@ export const site = {
   slug: 'nomade-project', // ASCII, sans accent : slugs, domaine, fichiers
   area: 'PACA',
   areaLong: 'Provence-Alpes-Côte d’Azur',
+  /** Où ont lieu les sessions : repris dans le hero, les offres, la FAQ, les mentions légales, le JSON-LD. */
+  places: ['Marseille', 'Cannes', 'Saint-Tropez'],
+  zone: 'Marseille, Cannes, Saint-Tropez et alentours',
   locale: 'fr-FR',
 
   /** Prénom de la personne qui encadre : À propos, signature de l'email de confirmation. */

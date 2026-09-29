@@ -6,12 +6,14 @@ import { usePage } from '@/i18n';
 import { site } from '@/data/site';
 
 const page = usePage('privacy');
+const turnstile = Boolean(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim());
 ---
 
 <Legal title={page.title} description={page.description} h1={page.h1} updated="[DATE DE MISE À JOUR]">
   <p class="lead">
     Version courte : je ne collecte que ce que tu écris dans le formulaire, ou ce que tu saisis pour réserver un
-    créneau visio, uniquement pour te répondre et organiser ta session. Pas de cookie, pas de traceur, pas de revente.
+    créneau visio, uniquement pour te répondre et organiser ta session. Pas de cookie, pas de publicité, pas de revente.
+    Une mesure d’audience anonyme compte les visites, sans rien savoir de toi.
   </p>
 
   <h2>1. Qui est responsable</h2>
@@ -42,6 +44,12 @@ const page = usePage('privacy');
         <td>Intérêt légitime : sécurité du service (art. 6.1.f)</td>
       </tr>
       <tr>
+        <td>Mesure d’audience anonyme : page vue, page d’origine, type d’appareil, pays, clics sur les boutons de
+          demande et de visio. Aucun cookie, aucun identifiant conservé d’un jour à l’autre</td>
+        <td>Savoir quelles pages aident les visiteurs et améliorer le site</td>
+        <td>Intérêt légitime (art. 6.1.f), mesure exemptée de consentement (recommandations CNIL)</td>
+      </tr>
+      <tr>
         <td>Adresse IP et journaux techniques de l’hébergeur</td>
         <td>Fonctionnement et sécurité du site</td>
         <td>Intérêt légitime (art. 6.1.f)</td>
@@ -60,6 +68,8 @@ const page = usePage('privacy');
     <li><strong>Turso</strong>, qui héberge la base de données où sont enregistrées les demandes, sur des serveurs situés
       en Irlande (Union européenne).</li>
     <li><strong>Microsoft</strong>, fournisseur de ma boîte email (Outlook).</li>
+    <li><strong>Vercel</strong> (États-Unis), qui héberge le site et fournit la mesure d’audience anonyme (Vercel Web
+      Analytics, sans cookie). Transfert encadré par les clauses contractuelles types de la Commission européenne.</li>
     <li><strong>Cal.com</strong>, le service de prise de rendez-vous, uniquement si tu réserves un créneau visio : le
       calendrier ne se charge que quand tu cliques dessus, et la réservation se fait chez Cal.com selon sa
       <a href="https://cal.com/privacy" rel="noopener">politique de confidentialité</a>.</li>
@@ -82,10 +92,18 @@ const page = usePage('privacy');
 
   <h2>6. Cookies et mesure d’audience</h2>
   <p>
-    Le site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ou de publicité. Il n’intègre aucun
-    contenu tiers (polices, vidéos, cartes) chargé automatiquement. Le seul contenu externe est le calendrier de
-    rendez-vous visio, affiché uniquement si tu cliques sur le bouton prévu, et il peut alors déposer ses propres cookies.
-    <Placeholder name="SI TURNSTILE EST ACTIVÉ : MENTIONNER CLOUDFLARE TURNSTILE (ANTI-ROBOT, SANS COOKIE PUBLICITAIRE)" />
+    Le site ne dépose aucun cookie et n’utilise aucun outil de publicité. La mesure d’audience (Vercel Web Analytics)
+    fonctionne sans cookie ni identifiant persistant : elle compte des visites, pas des personnes, et ne permet pas de
+    te suivre d’un site à l’autre. Le site n’intègre aucun contenu tiers (polices, vidéos, cartes) chargé
+    automatiquement. Le calendrier de rendez-vous visio ne s’affiche que si tu cliques sur le bouton prévu, et il peut
+    alors déposer ses propres cookies.
+    {turnstile && (
+      <>
+        Le formulaire est protégé contre les robots par <strong>Cloudflare Turnstile</strong>, qui analyse des
+        signaux techniques du navigateur, sans cookie publicitaire, selon sa
+        <a href="https://www.cloudflare.com/turnstile-privacy-policy/" rel="noopener">politique de confidentialité</a>.
+      </>
+    )}
   </p>
 
   <h2>7. Sécurité</h2>

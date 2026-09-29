@@ -5,6 +5,7 @@ import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import OfferCard from '@/components/OfferCard.astro';
 import Button from '@/components/Button.astro';
+import UpcomingSessions from '@/components/UpcomingSessions.astro';
 import { usePage } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 
@@ -23,13 +24,24 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
     </div>
   </section>
 
+  <div class="section section--top0">
+    <div class="container" data-reveal>
+      <UpcomingSessions
+        headingId="sorties-offres"
+        lead="Des dates fixes pour l’Expérience en groupe, de 3 à 5 personnes. Tu viens seul ou à deux, le groupe se forme sur place."
+        emptyText="Pas de sortie groupée publiée pour l’instant : la prochaine arrive vite. Tu veux être prévenu, ou monter ton propre groupe ?"
+      />
+    </div>
+  </div>
+
   <section class="section section--top0" aria-label="Infos pratiques">
     <div class="container practical">
       <div class="card practical__info" data-reveal>
         <h2 class="practical__title">Bon à savoir</h2>
         <ul class="practical__list">
-          <li>Les sessions ont lieu en région {site.area}. Le point de rendez-vous est précisé par email.</li>
-          <li>Pas de calendrier public pour l’instant : on cale chaque date ensemble, après ta demande.</li>
+          <li>Les sessions ont lieu autour de {site.zone.replace(' et alentours', '')}, et alentours. Le point de rendez-vous exact est précisé par email.</li>
+          <li>En solo, la session est rien qu’avec moi, à la date qui te va. En groupe, tu rejoins une sortie datée ci-dessus, ou tu viens avec tes proches et on cale la date ensemble.</li>
+          <li>S’il pleut : on choisit ensemble selon la météo, maintenir ou reporter, sans frais. <a href="/encadrement/">Encadrement et sécurité</a>.</li>
           <li>Le paiement se règle après confirmation, pas en ligne. Les conditions sont dans les <a href="/cgv/">CGV</a>.</li>
           <li>Aucun niveau requis : j’adapte le rythme et l’intensité à ton profil, en solo comme en groupe. Pour le format parent / enfant, à l’âge de chacun.</li>
         </ul>

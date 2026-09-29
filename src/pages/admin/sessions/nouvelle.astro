@@ -5,7 +5,8 @@
  */
 import Admin from '@/layouts/Admin.astro';
 import Button from '@/components/Button.astro';
-import { createOuting, attachRequest } from '@/lib/crm/outings';
+import PublishFields from '@/components/PublishFields.astro';
+import { createOuting, attachRequest, readPublishFields } from '@/lib/crm/outings';
 import { getRequest } from '@/lib/crm/requests';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { parisToMs } from '@/lib/dates';
@@ -26,6 +27,7 @@ const v = {
   notes: fromRequest ? `Demande de ${fromRequest.contact.name} : ${fromRequest.request.preferredPeriod}` : '',
   amount: '',
 };
+let publish: ReturnType<typeof readPublishFields> = { isPublic: false, capacity: 5, publicArea: '' };
 if (fromRequest) {
   const s = await suggestAmount(fromRequest.request.offerSlug, fromRequest.request.groupSize);
   if (s.amountCents !== null) v.amount = String(s.amountCents / 100);
@@ -40,6 +42,7 @@ if (Astro.request.method === 'POST') {
   v.place = String(form.get('place') ?? '');
   v.notes = String(form.get('notes') ?? '');
   v.amount = String(form.get('amount') ?? '');
+  publish = readPublishFields(form);
   const offer = offers.find((o) => o.slug === v.offerSlug);
   const startsAt = parisToMs(v.date, v.time);
   const amountCents = parseEuros(v.amount);
@@ -48,7 +51,7 @@ if (Astro.request.method === 'POST') {
   else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
   else {
     const durationMin = v.duration.trim() ? Number(v.duration) || null : offer.durationMin;
-    const id = await createOuting({ offerSlug: offer.slug, offerLabel: offer.label, startsAt, durationMin, place: v.place, notes: v.notes, amountCents });
+    const id = await createOuting({ offerSlug: offer.slug, offerLabel: offer.label, startsAt, durationMin, place: v.place, notes: v.notes, amountCents, ...publish });
     if (fromRequest) await attachRequest(fromRequest.request.id, id);
     return Astro.redirect(`/admin/sessions/${id}?creee=1`, 303);
   }
@@ -101,6 +104,7 @@ if (Astro.request.method === 'POST') {
       <label for="notes">Notes</label>
       <textarea id="notes" name="notes" rows="3">{v.notes}</textarea>
     </div>
+    <PublishFields isPublic={publish.isPublic} capacity={publish.capacity} publicArea={publish.publicArea} />
     <div><Button type="submit" variant="dark" icon="calendar">Créer la session</Button></div>
   </form>
 </Admin>

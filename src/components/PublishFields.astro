@@ -1,0 +1,73 @@
+---
+/**
+ * Admin : champs « Publier sur le site » d'une session (création et édition).
+ * Une session publiée apparaît dans « Prochaines sorties » (accueil, offres) et on peut y demander une place.
+ * Le lieu de rendez-vous exact n'est jamais publié : seule la zone l'est.
+ */
+interface Props {
+  isPublic?: boolean;
+  capacity?: number | null;
+  publicArea?: string | null;
+}
+const { isPublic = false, capacity = 5, publicArea = '' } = Astro.props;
+---
+
+<fieldset class="pub">
+  <legend class="adm-label">Site public</legend>
+  <label class="pub__check">
+    <input type="checkbox" name="isPublic" value="1" checked={isPublic} />
+    <span>Publier comme session groupée : elle s’affiche dans « Prochaines sorties » et on peut y demander une place.</span>
+  </label>
+  <div class="pub__row">
+    <div class="adm-field">
+      <label for="capacity">Places au total</label>
+      <input id="capacity" name="capacity" type="number" min="1" max="20" value={capacity ?? ''} placeholder="5" />
+    </div>
+    <div class="adm-field">
+      <label for="publicArea">Zone affichée</label>
+      <input id="publicArea" name="publicArea" type="text" maxlength="80" value={publicArea ?? ''} placeholder="Ex. Calanques, Marseille" />
+    </div>
+  </div>
+  <span class="small muted">Le lieu de rendez-vous exact reste privé : il part par email une fois la place confirmée.</span>
+</fieldset>
+
+<style>
+  .pub {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-4);
+    border: var(--border);
+    border-radius: var(--radius-box);
+  }
+
+  .pub legend {
+    padding-inline: 0.4rem;
+  }
+
+  .pub__check {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    font-size: var(--body-sm);
+    color: var(--ink-2);
+  }
+
+  .pub__check input {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.15rem;
+    accent-color: var(--deep);
+  }
+
+  .pub__row {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 40em) {
+    .pub__row {
+      grid-template-columns: 9rem minmax(0, 1fr);
+    }
+  }
+</style>
