@@ -6,7 +6,7 @@
 import Admin from '@/layouts/Admin.astro';
 import Button from '@/components/Button.astro';
 import PublishFields from '@/components/PublishFields.astro';
-import { createOuting, attachRequest, readPublishFields } from '@/lib/crm/outings';
+import { createOuting, attachRequest, publishError, readPublishFields } from '@/lib/crm/outings';
 import { getRequest } from '@/lib/crm/requests';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { parisToMs } from '@/lib/dates';
@@ -27,7 +27,7 @@ const v = {
   notes: fromRequest ? `Demande de ${fromRequest.contact.name} : ${fromRequest.request.preferredPeriod}` : '',
   amount: '',
 };
-let publish: ReturnType<typeof readPublishFields> = { isPublic: false, capacity: 5, publicArea: '' };
+let publish: ReturnType<typeof readPublishFields> = { isPublic: false, capacity: 5, publicArea: '', difficulty: null };
 if (fromRequest) {
   const s = await suggestAmount(fromRequest.request.offerSlug, fromRequest.request.groupSize);
   if (s.amountCents !== null) v.amount = String(s.amountCents / 100);
@@ -49,6 +49,7 @@ if (Astro.request.method === 'POST') {
   if (!offer) error = 'Choisis une expérience.';
   else if (!startsAt) error = 'La date ou l’heure est illisible.';
   else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
+  else if (publishError(publish)) error = publishError(publish);
   else {
     const durationMin = v.duration.trim() ? Number(v.duration) || null : offer.durationMin;
     const id = await createOuting({ offerSlug: offer.slug, offerLabel: offer.label, startsAt, durationMin, place: v.place, notes: v.notes, amountCents, ...publish });
@@ -104,7 +105,7 @@ if (Astro.request.method === 'POST') {
       <label for="notes">Notes</label>
       <textarea id="notes" name="notes" rows="3">{v.notes}</textarea>
     </div>
-    <PublishFields isPublic={publish.isPublic} capacity={publish.capacity} publicArea={publish.publicArea} />
+    <PublishFields isPublic={publish.isPublic} capacity={publish.capacity} publicArea={publish.publicArea} difficulty={publish.difficulty} />
     <div><Button type="submit" variant="dark" icon="calendar">Créer la session</Button></div>
   </form>
 </Admin>

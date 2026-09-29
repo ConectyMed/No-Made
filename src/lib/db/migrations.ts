@@ -7,6 +7,7 @@ import m0001 from '../../../drizzle/0001_must_change_password.sql?raw';
 import m0002 from '../../../drizzle/0002_public_group_sessions.sql?raw';
 import m0003 from '../../../drizzle/0003_articles.sql?raw';
 import m0004 from '../../../drizzle/0004_article_photos.sql?raw';
+import m0005 from '../../../drizzle/0005_outing_difficulty.sql?raw';
 
 export const migrations: { name: string; sql: string }[] = [
   { name: '0000_init', sql: m0000 },
@@ -14,4 +15,5 @@ export const migrations: { name: string; sql: string }[] = [
   { name: '0002_public_group_sessions', sql: m0002 },
   { name: '0003_articles', sql: m0003 },
   { name: '0004_article_photos', sql: m0004 },
+  { name: '0005_outing_difficulty', sql: m0005 },
 ];

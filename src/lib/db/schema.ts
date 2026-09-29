@@ -16,6 +16,10 @@ export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 export const OUTING_STATUSES = ['prevue', 'faite', 'annulee'] as const;
 export type OutingStatus = (typeof OUTING_STATUSES)[number];
 
+/** Niveau d'une session groupée publiée, affiché en badge dans « Prochaines sorties ». */
+export const OUTING_DIFFICULTIES = ['Facile', 'Modéré', 'Soutenu'] as const;
+export type OutingDifficulty = (typeof OUTING_DIFFICULTIES)[number];
+
 export const ARTICLE_STATUSES = ['brouillon', 'publie'] as const;
 export type ArticleStatus = (typeof ARTICLE_STATUSES)[number];
 
@@ -107,6 +111,8 @@ export const outings = sqliteTable(
     capacity: integer('capacity'),
     /** Zone affichée publiquement (ex. « Calanques, Marseille ») ; le lieu exact reste privé, envoyé par email. */
     publicArea: text('public_area'),
+    /** Niveau affiché publiquement. Obligatoire pour publier (contrôlé par l'admin) ; vide pour les sessions privées. */
+    difficulty: text('difficulty', { enum: OUTING_DIFFICULTIES }),
     doneAt: integer('done_at'),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),

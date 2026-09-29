@@ -10,6 +10,7 @@ import { getCollection } from 'astro:content';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import { site, VISIO_HREF } from '@/data/site';
+import { ALL_SIZES, SIZES_BY_OFFER, sizesFor } from '@/lib/group-sizes';
 
 interface Props {
   /** Pré-sélection d'une offre (sinon lue dans ?experience=slug côté navigateur). */
@@ -23,26 +24,21 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 );
 const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() || null;
 const mail = `mailto:${site.email}`;
-const sizes = [
-  { value: 1, label: 'Juste moi' },
-  { value: 2, label: '2 personnes' },
-  { value: 3, label: '3 personnes' },
-  { value: 4, label: '4 personnes' },
-  { value: 5, label: '5 personnes' },
-];
+// Options selon la session (Reconnexion : 2 ou 4) ; le script refait la liste quand la session change.
+const sizes = sizesFor(selected);
 ---
 
 <!-- États sans JavaScript : la redirection du serveur cible #merci ou #erreur, affichés via :target -->
 <div class="notice notice--ok card" id="merci" role="status">
   <strong>Merci, j’ai bien reçu ta demande.</strong>
-  <span>Je te réponds par email pour caler une date ensemble. Un accusé de réception vient de partir. En attendant, tu peux <a href={VISIO_HREF}>réserver un créneau visio</a>.</span>
+  <span>Je te réponds par email pour caler une date ensemble. Un accusé de réception vient de partir. Pense à regarder tes spams si tu ne vois rien. En attendant, tu peux <a href={VISIO_HREF}>réserver un créneau visio</a>.</span>
 </div>
 <div class="notice notice--err card" id="erreur" role="alert">
   <strong>L’envoi n’a pas fonctionné.</strong>
   <span>Réessaie dans un moment, ou écris-moi directement à <a href={mail}>{site.email}</a>.</span>
 </div>
 
-<form class="form card" id={id} action="/api/contact" method="post" data-contact-form data-mail={site.email} data-visio={VISIO_HREF}>
+<form class="form card" id={id} action="/api/contact" method="post" data-contact-form data-mail={site.email} data-visio={VISIO_HREF} data-sizes={JSON.stringify(SIZES_BY_OFFER)} data-all-sizes={JSON.stringify(ALL_SIZES)}>
   <!-- Sortie groupée choisie depuis « Prochaines sorties » (?session=<id>) -->
   <div class="picked" data-picked hidden>
     <Icon name="calendar" size={20} class="picked__icon" />
@@ -69,9 +65,10 @@ const sizes = [
     </div>
     <div class="field">
       <label for={`${id}-size`}>Combien de personnes ?</label>
-      <select id={`${id}-size`} name="groupSize" required>
-        {sizes.map((s) => <option value={s.value} selected={s.value === 1}>{s.label}</option>)}
+      <select id={`${id}-size`} name="groupSize" required aria-describedby={`${id}-size-help`} data-size>
+        {sizes.map((s, i) => <option value={s.value} selected={i === 0}>{s.label}</option>)}
       </select>
+      <span class="field__help small muted" id={`${id}-size-help`}>Pour la Reconnexion, compte parents et enfants au total.</span>
     </div>
   </div>
 
@@ -99,7 +96,7 @@ const sizes = [
 
   <div class="field">
     <label for={`${id}-message`}>Ton message <span class="muted">(facultatif)</span></label>
-    <textarea id={`${id}-message`} name="message" rows="3" maxlength="2000" placeholder="Une question, une précision, ce qui te ferait plaisir…"></textarea>
+    <textarea id={`${id}-message`} name="message" rows="3" maxlength="2000" placeholder="Blessure, traitement, âge de ton enfant, une question ?"></textarea>
   </div>
 
   <!-- Anti-spam : champ piège invisible + horodatage, et Turnstile si une clé est configurée -->
@@ -111,6 +108,7 @@ const sizes = [
   {turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-language="fr" data-size="flexible"></div>}
 
   <Button type="submit" variant="lime" size="lg" icon="send" block data-submit>Envoyer ma demande</Button>
+  <p class="form__reply small muted">Je te réponds sous 24 h.</p>
 
   <p class="form__status small" data-status aria-live="polite"></p>
 
@@ -133,6 +131,7 @@ const sizes = [
     }
   }
 
+  type SizeOption = { value: number; label: string };
   type PublicSession = { id: string; offerSlug: string; offerLabel: string; area: string | null; dateLabel: string; timeLabel: string; full: boolean };
 
   // 1. Horodatage réel côté client (le rendu statique fige la valeur au build).
@@ -147,6 +146,10 @@ const sizes = [
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
     const fields = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
     const offer = form.querySelector<HTMLSelectElement>('select[name="offerSlug"]');
+    const size = form.querySelector<HTMLSelectElement>('[data-size]');
+    const sizesByOffer = JSON.parse(form.dataset.sizes ?? '{}') as Record<string, SizeOption[]>;
+    // Toutes les options : « Je ne sais pas encore » ou session sans liste dédiée.
+    const allSizes = JSON.parse(form.dataset.allSizes ?? '[]') as SizeOption[];
     const period = form.querySelector<HTMLInputElement>('input[name="preferredPeriod"]');
     const sessionInput = form.querySelector<HTMLInputElement>('[data-session-id]');
     const picked = form.querySelector<HTMLElement>('[data-picked]');
@@ -154,10 +157,25 @@ const sizes = [
     const mail = form.dataset.mail ?? '';
     const visio = form.dataset.visio ?? '/contact/#visio';
 
+    // Le nombre de personnes dépend de la session. `reset` : la personne a changé de session, elle rechoisit.
+    const syncSizes = (reset: boolean) => {
+      if (!size) return;
+      const list = (offer && sizesByOffer[offer.value]) || allSizes;
+      const keep = reset ? null : list.find((s) => String(s.value) === size.value);
+      size.replaceChildren(
+        ...(reset ? [new Option('Choisis', '', true, true)] : []),
+        ...list.map((s) => new Option(s.label, String(s.value))),
+      );
+      if (reset) size.options[0].disabled = true;
+      size.value = keep ? String(keep.value) : reset ? '' : String(list[0]?.value ?? '');
+    };
+    offer?.addEventListener('change', () => syncSizes(true));
+
     // 2. Présélection depuis l'URL : ?experience=<slug>, ou ?session=<id> (sortie groupée publiée).
     const params = new URLSearchParams(location.search);
     const slug = params.get('experience') ?? params.get('offre'); // ?offre= : anciens liens
     if (slug && offer && [...offer.options].some((o) => o.value === slug)) offer.value = slug;
+    syncSizes(false);
 
     // Une date choisie fixe déjà la session et la période : ces deux champs deviennent inutiles.
     const toggleSessionFields = (hide: boolean) =>
@@ -188,7 +206,10 @@ const sizes = [
           }
           const label = `${session.dateLabel}, ${session.timeLabel} · ${session.offerLabel.replace(/\s*\(.*\)$/, '')}${session.area ? ` · ${session.area}` : ''}`;
           sessionInput.value = session.id;
-          if (offer && [...offer.options].some((o) => o.value === session.offerSlug)) offer.value = session.offerSlug;
+          if (offer && [...offer.options].some((o) => o.value === session.offerSlug)) {
+            offer.value = session.offerSlug;
+            syncSizes(false);
+          }
           if (period && !period.value) {
             period.value = `${session.dateLabel}, ${session.timeLabel}`;
             period.dataset.fromSession = '1';
@@ -235,8 +256,9 @@ const sizes = [
           const withSession = Boolean(sessionInput?.value);
           form.reset();
           clearSession();
+          syncSizes(false);
           stamp();
-          setStatus('ok', 'Merci, j’ai bien reçu ta demande. Je te réponds par email. Envie d’en parler avant ?', { href: visio, label: 'Réserve un créneau visio' });
+          setStatus('ok', 'Merci, j’ai bien reçu ta demande. Je te réponds par email. Pense à regarder tes spams si tu ne vois rien. Envie d’en parler avant ?', { href: visio, label: 'Réserve un créneau visio' });
           status?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           track('demande-envoyee', { offre: offerSlug || 'inconnue', datee: withSession ? 'oui' : 'non' });
         } else if (data.errors) {
@@ -327,6 +349,11 @@ const sizes = [
     outline: none;
     border-color: var(--green-600);
     box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  .form__reply {
+    margin-top: calc(-1 * var(--space-3));
+    text-align: center;
   }
 
   .hp {

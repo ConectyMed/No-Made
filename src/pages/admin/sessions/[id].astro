@@ -8,7 +8,7 @@ import Admin from '@/layouts/Admin.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
 import PublishFields from '@/components/PublishFields.astro';
-import { addParticipant, deleteOuting, getOuting, isOutingStatus, readPublishFields, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
+import { addParticipant, deleteOuting, getOuting, isOutingStatus, publishError, readPublishFields, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
 import { allContactsBrief } from '@/lib/crm/contacts';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { OUTING_STATUS_LABEL } from '@/lib/crm/labels';
@@ -49,9 +49,11 @@ if (Astro.request.method === 'POST') {
     const startsAt = parisToMs(String(form.get('date') ?? ''), String(form.get('time') ?? ''));
     const amountCents = parseEuros(String(form.get('amount') ?? ''));
     const duration = String(form.get('duration') ?? '').trim();
+    const publish = readPublishFields(form);
     if (!offer) error = 'Choisis une expérience.';
     else if (!startsAt) error = 'La date ou l’heure est illisible.';
     else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
+    else if (publishError(publish)) error = publishError(publish);
     else {
       await updateOuting(id, {
         offerSlug: offer.slug,
@@ -61,7 +63,7 @@ if (Astro.request.method === 'POST') {
         place: String(form.get('place') ?? ''),
         notes: String(form.get('notes') ?? ''),
         amountCents,
-        ...readPublishFields(form),
+        ...publish,
       });
       return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
     }
@@ -212,7 +214,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
         <label for="notes">Notes</label>
         <textarea id="notes" name="notes" rows="3">{o.notes ?? ''}</textarea>
       </div>
-      <PublishFields isPublic={o.isPublic === 1} capacity={o.capacity} publicArea={o.publicArea} />
+      <PublishFields isPublic={o.isPublic === 1} capacity={o.capacity} publicArea={o.publicArea} difficulty={o.difficulty} />
       <div><Button type="submit" variant="dark" icon="check">Enregistrer</Button></div>
     </form>
   </div>

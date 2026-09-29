@@ -16,6 +16,7 @@ import { site } from '@/data/site';
 import { createRequest } from '@/lib/crm/requests';
 import { getPublicOuting, type PublicOuting } from '@/lib/crm/outings';
 import { formatDateLong, formatTime } from '@/lib/dates';
+import { sizesFor } from '@/lib/group-sizes';
 import type { SessionRequest } from '@/lib/types';
 
 export const prerender = false;
@@ -124,6 +125,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // --- Libellé de l'offre
   const offers = await getCollection('offers');
   const offerSlug = outing?.offerSlug ?? data.offerSlug;
+
+  // --- Nombre de personnes compatible avec la session (Reconnexion : 2 ou 4), comme dans le formulaire.
+  if (!sizesFor(offerSlug).some((s) => s.value === data.groupSize)) {
+    return respond(request, 422, { ok: false, errors: { groupSize: 'Ce nombre de personnes ne correspond pas à cette session.' } }, errUrl);
+  }
   const offer = offers.find((o) => o.data.slug === offerSlug);
   const offerLabel = offer ? `${offer.data.title} (${offer.data.duration})` : offerSlug === 'indecis' ? 'Ne sait pas encore' : offerSlug;
   const preferredPeriod = outingLabel ? `Session du ${outingLabel}` : data.preferredPeriod || 'À définir';

@@ -6,6 +6,7 @@ Généré par `npm run build` le 2026-09-29.
 |---|---|
 | `[ADRESSE ET SITE DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[ADRESSE POSTALE]` | /confidentialite/, /mentions-legales/ |
+| `[AVANT / APRÈS LA SORTIE : À CONFIRMER]` | /contact/ |
 | `[AVIS PROVISOIRE]` | / |
 | `[DATE DE MISE À JOUR]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[DIPLÔME OU CARTE PROFESSIONNELLE D’ÉDUCATEUR SPORTIF]` | /encadrement/ |
@@ -16,6 +17,7 @@ Généré par `npm run build` le 2026-09-29.
 | `[NOM DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[NUMÉRO DE CONTRAT]` | /mentions-legales/ |
 | `[NUMÉRO SIRET]` | /cgv/, /mentions-legales/ |
+| `[PROCÉDURE D’URGENCE À CONFIRMER]` | /encadrement/ |
 | `[PRÉNOM NOM]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[TARIF SOLO]` | /, /cgv/, /experiences/ |
 | `[ZONE GÉOGRAPHIQUE COUVERTE]` | /mentions-legales/ |
