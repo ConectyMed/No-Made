@@ -39,7 +39,7 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
     return { ok: false, error: 'Configuration email manquante (RESEND_API_KEY / CONTACT_FROM_EMAIL).' };
   }
 
-  const fromName = env('CONTACT_FROM_NAME') ?? 'Nó Made Project';
+  const fromName = env('CONTACT_FROM_NAME') ?? "No'Made";
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',

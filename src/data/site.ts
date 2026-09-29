@@ -6,8 +6,8 @@
  * Le site est celui de la personne qui encadre les sessions. Il parle en « je ».
  */
 export const site = {
-  name: 'Nó Made Project', // titres, métadonnées
-  shortName: 'Nó Made', // wordmark de la nav
+  name: "No'Made", // titres, métadonnées
+  shortName: "No'Made", // wordmark de la nav
   slug: 'nomade-project', // ASCII, sans accent : slugs, domaine, fichiers
   area: 'PACA',
   areaLong: 'Provence-Alpes-Côte d’Azur',

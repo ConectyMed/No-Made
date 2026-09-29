@@ -1,4 +1,4 @@
-# design.md — Nó Made Project (v2)
+# design.md — No'Made (v2)
 
 > Source of truth for the website's look, feel and behaviour. Rewritten on 2026-09-28 from the Stitch
 > mockup (`docs/reference/stitch-accueil.png`, `docs/reference/stitch-accueil.html`). The previous
@@ -9,7 +9,7 @@
 
 ## 1. Project
 
-**Nó Made Project**: outdoor "body / adventure" experiences in the PACA region (France), solo or in a small
+**No'Made**: outdoor "body / adventure" experiences in the PACA region (France), solo or in a small
 group, plus a "Reconnexion" parent / child format. Each session mixes walking or hiking, functional bodyweight
 preparation, mobility (yoga and animal-movement inspired), and breathing / concentration techniques, adapted to
 each profile. The problems it answers, in the owner's words: get body and mind moving again, regain a good
@@ -103,7 +103,7 @@ eyebrows / links lime-dim, glass `rgba(18,26,21,.78)`, hairlines white at 8 % / 
 Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: short brand under 26em, toggle, a labelled « Demander » pill (not a mail icon), burger.
 
 Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
-Left: lime dot + "Nó Made Project". Centre (desktop): Accueil, Offres, À propos, Contact.
+Left: lime dot + "No'Made". Centre (desktop): Accueil, Offres, À propos, Contact.
 Right: CTA pill in green-800 with an arrow. Mobile: brand, « Demander » pill, burger opening a full-screen panel
 with large links and the CTA. Escape closes, focus managed.
 
@@ -130,7 +130,7 @@ Split layout (v3, 2026-09-28), on a light frame: text left, media right, floatin
   56px real-photo thumbnail (stairs, crouched silhouette on rocks, altitude lake) and one line; they link
   to the "Trois temps forts" section. Thumbnails are decorative (`alt=""`), too small to carry the "Pérou"
   caption; the full cards below keep it. On mobile the three cards overlap the bottom of the media.
-- Facts row (4 tiles, `.glass`, the last one lime-soft): 2h30 Nó Made Experience · 3h Reconnexion ·
+- Facts row (4 tiles, `.glass`, the last one lime-soft): 2h30 No'Made Experience · 3h Reconnexion ·
   20 min de visio · 0 écran. Values come from the offers' `duration` and `site.visio.duration`, never
   typed numbers: the reference layout's "520K+ trees" style counters are exactly what this site does not do.
 
@@ -170,7 +170,7 @@ First name + initial, month, offer; no stars, no ratings.
   and `reconnexion-parent-enfant` (3h, duo 60 € or four people 80 €).
 - **/a-propos** — the owner in the first person: "Moi, c'est Anthony", his story in his own facts (10 years
   of autonomous travel, knowledge of the terrain, BJJ / climbing / boxing / physical prep, FR EN ES, a taste
-  for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why Nó Made exists,
+  for passing things on; his 15 years behind a bar are NOT mentioned, by his request), why No'Made exists,
   a four-item facts list, his portrait (travel photo, captioned Pérou), a Montaigne pull quote (*Essais*, III, 3,
   public domain, chosen by the representative 2026-09-28) as the bridge, then "Ma façon de faire" (walk / bodyweight / mobility / breathing). No title, no diploma, no other person.
 - **/contact** — intro, the form, the **visio block** (`VisioBooking.astro`, anchor `#visio`): a booking
@@ -272,7 +272,7 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [x] Slogan validated (2026-09-28): "Marcher. Respirer. Se retrouver." ("dehors" dropped from the hero title
       later the same day; the OG image follows).
 - [x] The format is spelled "Reconnexion" (2026-09-28) and is the parent / child half-day. The adult session
-      is "Nó Made Experience" (renamed from "Expérience corps / aventure").
+      is "No'Made Experience" (renamed from "Expérience corps / aventure").
 - [x] One voice, "je" (2026-09-28). The owner's micro-entreprise is the legal entity. No "éducateur" or
       diploma on the site. The owner answers requests himself on nomadeproject@outlook.fr.
 - [x] Visio before booking (2026-09-28): external booking page (Cal.com recommended), click-to-load, on

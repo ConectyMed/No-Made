@@ -199,7 +199,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // Le prénom vient de site.ts : tant que c'est un placeholder, il apparaît aussi sur À propos et bloque la production.
   const ack = await sendMail({
     to: req.email,
-    subject: 'J’ai bien reçu ta demande — Nó Made Project',
+    subject: "J’ai bien reçu ta demande — No'Made",
     text: [
       `Bonjour ${req.name},`,
       '',
@@ -212,7 +212,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       `Si tu préfères qu’on en parle d’abord, tu peux réserver un créneau visio ici : ${new URL('/contact/#visio', request.url).toString()}`,
       '',
       'À bientôt dehors,',
-      `${site.ownerFirstName} — Nó Made Project`,
+      `${site.ownerFirstName} — No'Made`,
     ].join('\n'),
   });
   if (!ack.ok) console.warn('[contact] accusé de réception non envoyé :', ack.error);
