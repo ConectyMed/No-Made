@@ -18,7 +18,7 @@ export const GET: APIRoute = async ({ params, url }) => {
   const { outing: o, participants, people } = data;
   const end = o.startsAt + (o.durationMin ?? 150) * 60_000;
   const who = participants.map((p) => `${p.contact.name} (${p.participant.people})`).join(', ') || 'à confirmer';
-  const description = [`${people} personne${people > 1 ? 's' : ''} : ${who}`, o.notes ?? '', `Admin : ${new URL(`/admin/sessions/${o.id}`, url.origin)}`]
+  const description = [`${people} personne${people > 1 ? 's' : ''} : ${who}`, o.notes ?? '', `Admin : ${new URL(`/admin/sessions/${o.id}/`, url.origin)}`]
     .filter(Boolean)
     .join('\n');
   const lines = [
@@ -35,7 +35,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     `SUMMARY:${esc(`${site.shortName} · ${o.offerLabel}`)}`,
     o.place ? `LOCATION:${esc(o.place)}` : '',
     `DESCRIPTION:${esc(description)}`,
-    `URL:${new URL(`/admin/sessions/${o.id}`, url.origin)}`,
+    `URL:${new URL(`/admin/sessions/${o.id}/`, url.origin)}`,
     `STATUS:${o.status === 'annulee' ? 'CANCELLED' : 'CONFIRMED'}`,
     'END:VEVENT',
     'END:VCALENDAR',

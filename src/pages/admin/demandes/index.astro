@@ -14,7 +14,7 @@ const statut = isRequestStatus(statutParam) ? statutParam : 'toutes';
 const q = Astro.url.searchParams.get('q') ?? '';
 const [rows, counts] = await Promise.all([listRequests({ status: statut, q }), countRequestsByStatus()]);
 const tabs = [{ key: 'toutes', label: 'Toutes' }, ...REQUEST_STATUSES.map((s) => ({ key: s, label: REQUEST_STATUS_LABEL[s] }))];
-const href = (key: string) => `/admin/demandes?statut=${key}${q ? `&q=${encodeURIComponent(q)}` : ''}`;
+const href = (key: string) => `/admin/demandes/?statut=${key}${q ? `&q=${encodeURIComponent(q)}` : ''}`;
 ---
 
 <Admin title="Demandes">
@@ -62,7 +62,7 @@ const href = (key: string) => `/admin/demandes?statut=${key}${q ? `&q=${encodeUR
             {rows.map((r) => (
               <tr>
                 <td>
-                  <a href={`/admin/demandes/${r.id}`}>{r.contactName}</a>
+                  <a href={`/admin/demandes/${r.id}/`}>{r.contactName}</a>
                   <br />
                   <span class="small">{r.contactEmail}</span>
                 </td>

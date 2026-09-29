@@ -6,8 +6,8 @@ import { login, createSession, setSessionCookie } from '@/lib/auth/session';
 
 export const prerender = false;
 
-const suiteRaw = Astro.url.searchParams.get('suite') ?? '/admin';
-const suite = /^\/admin(\/[^/].*)?$/.test(suiteRaw) ? suiteRaw : '/admin';
+const suiteRaw = Astro.url.searchParams.get('suite') ?? '/admin/';
+const suite = /^\/admin(\/([^/].*)?)?$/.test(suiteRaw) ? suiteRaw : '/admin/';
 
 let error: string | null = null;
 let email = '';
@@ -53,7 +53,7 @@ if (Astro.request.method === 'POST') {
     </form>
 
     <p class="small login__alt">
-      <a href="/admin/mot-de-passe">Mot de passe oublié, ou première connexion</a>
+      <a href="/admin/mot-de-passe/">Mot de passe oublié, ou première connexion</a>
     </p>
   </div>
 </Admin>

@@ -38,7 +38,7 @@ const sizes = sizesFor(selected);
   <span>Réessaie dans un moment, ou écris-moi directement à <a href={mail}>{site.email}</a>.</span>
 </div>
 
-<form class="form card" id={id} action="/api/contact" method="post" data-contact-form data-mail={site.email} data-visio={VISIO_HREF} data-sizes={JSON.stringify(SIZES_BY_OFFER)} data-all-sizes={JSON.stringify(ALL_SIZES)}>
+<form class="form card" id={id} action="/api/contact/" method="post" data-contact-form data-mail={site.email} data-visio={VISIO_HREF} data-sizes={JSON.stringify(SIZES_BY_OFFER)} data-all-sizes={JSON.stringify(ALL_SIZES)}>
   <!-- Sortie groupée choisie depuis « Prochaines sorties » (?session=<id>) -->
   <div class="picked" data-picked hidden>
     <Icon name="calendar" size={20} class="picked__icon" />
@@ -197,7 +197,7 @@ const sizes = sizesFor(selected);
 
     const sessionId = params.get('session');
     if (sessionId && sessionInput) {
-      fetch(`/api/sessions?id=${encodeURIComponent(sessionId)}`, { headers: { Accept: 'application/json' } })
+      fetch(`/api/sessions/?id=${encodeURIComponent(sessionId)}`, { headers: { Accept: 'application/json' } })
         .then((r) => (r.ok ? r.json() : { session: null }))
         .then(({ session }: { session: PublicSession | null }) => {
           if (!session || session.full) {

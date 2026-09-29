@@ -28,9 +28,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isPublic = PUBLIC_ADMIN.some((re) => re.test(pathname));
   if (!user && !isPublic) {
     const suite = encodeURIComponent(pathname + context.url.search);
-    return context.redirect(`/admin/connexion?suite=${suite}`, 303);
+    return context.redirect(`/admin/connexion/?suite=${suite}`, 303);
   }
-  if (user && /^\/admin\/connexion\/?$/.test(pathname)) return context.redirect('/admin', 303);
+  if (user && /^\/admin\/connexion\/?$/.test(pathname)) return context.redirect('/admin/', 303);
 
   const response = await next();
   response.headers.set('X-Robots-Tag', 'noindex, nofollow');

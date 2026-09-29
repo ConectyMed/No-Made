@@ -2,6 +2,8 @@
 
 À coller dans l'admin : **Articles → Nouvel article**, un champ à la fois (Titre, Chapô, Texte), la photo de couverture si tu veux, puis « Publié » et **Enregistrer**.
 
+Avec une photo de couverture, le champ « Ce qu’on voit sur la photo » (texte alternatif) est obligatoire pour publier : le texte à coller est donné sous chaque article. Si un article est déjà publié sans ce texte, ouvre-le dans l'admin, remplis le champ et enregistre.
+
 Les photos proposées sont celles déjà sur le site (dossier `src/assets/photos/` du dépôt, téléchargeables depuis GitHub). Anthony peut évidemment mettre les siennes.
 
 Écrits dans la voix d'Anthony, uniquement à partir de ce qu'il a déjà dit pour le site (son parcours, sa façon de faire, la citation de Montaigne qu'il a choisie). Aucune anecdote, aucun chiffre inventé. **À lui faire relire avant publication** : c'est sa signature qui est en bas.
@@ -17,6 +19,12 @@ Pourquoi le téléphone reste dans le sac
 ```
 
 **Photo de couverture proposée** : `src/assets/photos/rochers-coucher-soleil.jpg` (déjà sur l'accueil, bloc « Respirer »). Ce qu'on voit : *Une personne accroupie sur les rochers, face à la mer, au coucher du soleil*.
+
+**Texte alternatif de la couverture** (champ « Ce qu’on voit sur la photo »)
+
+```
+Une personne accroupie en haut d’un rocher, face à la mer, au coucher du soleil
+```
 
 **Chapô**
 
@@ -66,7 +74,15 @@ Envie d'essayer ? Deux heures et demie dehors, sans écran : [les expériences s
 Mes pensées dorment si je les assis
 ```
 
-**Photo de couverture proposée** : `src/assets/photos/escalier-perou.jpg` (Pérou). Ce qu'on voit : *Un escalier de pierre qui descend à pic dans la montagne, au Pérou*. Et, si tu veux une photo dans le texte, juste après la partie « Ce que le voyage m'a appris » : `src/assets/photos/lac-perou.jpg`, légende *Un lac de montagne au Pérou*.
+**Photo de couverture proposée** : `src/assets/photos/escalier-perou.jpg` (Pérou). Ce qu'on voit : *Un escalier de pierre qui descend à pic dans la montagne, au Pérou*.
+
+**Texte alternatif de la couverture** (champ « Ce qu’on voit sur la photo »)
+
+```
+Un escalier de pierre qui descend à pic dans la montagne verdoyante, au-dessus d’une vallée, au Pérou
+```
+
+ Et, si tu veux une photo dans le texte, juste après la partie « Ce que le voyage m'a appris » : `src/assets/photos/lac-perou.jpg`, légende *Un lac de montagne au Pérou*.
 
 **Chapô**
 

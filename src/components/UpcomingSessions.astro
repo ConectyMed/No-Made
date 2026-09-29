@@ -91,7 +91,7 @@ const prices = Object.fromEntries(
 
     let sessions: Slot[] = [];
     try {
-      const res = await fetch('/api/sessions', { headers: { Accept: 'application/json' } });
+      const res = await fetch('/api/sessions/', { headers: { Accept: 'application/json' } });
       if (res.ok) sessions = ((await res.json()) as { sessions?: Slot[] }).sessions ?? [];
     } catch {
       /* hors ligne ou base indisponible : on garde le bloc tel quel */

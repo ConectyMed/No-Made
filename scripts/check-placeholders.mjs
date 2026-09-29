@@ -8,6 +8,7 @@
  */
 import { readdirSync, readFileSync, statSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { PLACEHOLDER_SITE_URL } from '../src/lib/site-url.mjs';
 
 const ROOT = process.cwd();
 // Avec l'adaptateur Vercel, les pages statiques sont dans dist/client/.
@@ -24,14 +25,22 @@ const files = [];
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p);
-    else if (p.endsWith('.html')) files.push(p);
+    else if (/\.(html|xml|txt)$/.test(p)) files.push(p);
   }
 })(DIST);
+
+// Domaine provisoire (PUBLIC_SITE_URL absente) : signalé comme un placeholder, dans les pages, le sitemap et robots.txt.
+const SITE_KEY = `[DOMAINE DU SITE : PUBLIC_SITE_URL] (${PLACEHOLDER_SITE_URL})`;
 
 const found = new Map(); // placeholder → Set(pages)
 for (const file of files) {
   const html = readFileSync(file, 'utf8').replace(/<script[\s\S]*?<\/script>/g, '');
   const page = '/' + relative(DIST, file).replace(/index\.html$/, '').replace(/\\/g, '/');
+  if (html.includes(PLACEHOLDER_SITE_URL)) {
+    if (!found.has(SITE_KEY)) found.set(SITE_KEY, new Set());
+    found.get(SITE_KEY).add(page);
+  }
+  if (!file.endsWith('.html')) continue;
   for (const m of html.matchAll(PATTERN)) {
     const key = m[0];
     if (!found.has(key)) found.set(key, new Set());
@@ -51,7 +60,7 @@ if (found.size === 0) {
 } else {
   lines.push('| Placeholder | Pages |', '|---|---|');
   for (const [key, pages] of [...found].sort()) lines.push(`| \`${key}\` | ${[...pages].sort().join(', ')} |`);
-  lines.push('', 'Où les remplir : `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/assets/provisoire/` (images encore provisoires).');
+  lines.push('', 'Où les remplir : variable `PUBLIC_SITE_URL` (domaine), `src/data/site.ts` (email, réseaux), `src/content/offers/fr/*.md` (partenaire), `src/assets/provisoire/` (images encore provisoires).');
 }
 writeFileSync(join(ROOT, 'docs', 'PLACEHOLDERS.md'), lines.join('\n') + '\n');
 

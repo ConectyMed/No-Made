@@ -54,13 +54,13 @@ if (Astro.request.method === 'POST') {
     const durationMin = v.duration.trim() ? Number(v.duration) || null : offer.durationMin;
     const id = await createOuting({ offerSlug: offer.slug, offerLabel: offer.label, startsAt, durationMin, place: v.place, notes: v.notes, amountCents, ...publish });
     if (fromRequest) await attachRequest(fromRequest.request.id, id);
-    return Astro.redirect(`/admin/sessions/${id}?creee=1`, 303);
+    return Astro.redirect(`/admin/sessions/${id}/?creee=1`, 303);
   }
 }
 ---
 
 <Admin title="Nouvelle session">
-  <p class="back small"><a href={fromRequest ? `/admin/demandes/${fromRequest.request.id}` : '/admin/sessions'}>← {fromRequest ? 'Retour à la demande' : 'Le planning'}</a></p>
+  <p class="back small"><a href={fromRequest ? `/admin/demandes/${fromRequest.request.id}/` : '/admin/sessions/'}>← {fromRequest ? 'Retour à la demande' : 'Le planning'}</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Sessions</span>

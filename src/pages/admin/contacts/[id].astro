@@ -17,7 +17,7 @@ if (Astro.request.method === 'POST') {
   const action = String(form.get('action') ?? '');
   if (action === 'supprimer') {
     await deleteContact(id);
-    return Astro.redirect('/admin/contacts?supprime=1', 303);
+    return Astro.redirect('/admin/contacts/?supprime=1', 303);
   }
   if (action === 'maj') {
     const res = await updateContact(id, {
@@ -26,7 +26,7 @@ if (Astro.request.method === 'POST') {
       phone: String(form.get('phone') ?? ''),
       notes: String(form.get('notes') ?? ''),
     });
-    if ('ok' in res) return Astro.redirect(`/admin/contacts/${id}?ok=1`, 303);
+    if ('ok' in res) return Astro.redirect(`/admin/contacts/${id}/?ok=1`, 303);
     error = res.error;
   }
 }
@@ -38,7 +38,7 @@ const ok = Astro.url.searchParams.get('ok') === '1';
 ---
 
 <Admin title={c.name}>
-  <p class="back small"><a href="/admin/contacts">← Tous les contacts</a></p>
+  <p class="back small"><a href="/admin/contacts/">← Tous les contacts</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Contact</span>
@@ -87,7 +87,7 @@ const ok = Astro.url.searchParams.get('ok') === '1';
             <ul class="hist" role="list">
               {requests.map((r) => (
                 <li>
-                  <a href={`/admin/demandes/${r.id}`}>{r.offerLabel}</a>
+                  <a href={`/admin/demandes/${r.id}/`}>{r.offerLabel}</a>
                   <span class="small muted">
                     {formatDateTime(r.createdAt)} · {r.groupSize} pers. · {REQUEST_STATUS_LABEL[r.status]}
                   </span>
@@ -107,7 +107,7 @@ const ok = Astro.url.searchParams.get('ok') === '1';
             <ul class="hist" role="list">
               {participations.map(({ participant: p, outing: o }) => (
                 <li>
-                  <a href={`/admin/sessions/${o.id}`}>{o.offerLabel}</a>
+                  <a href={`/admin/sessions/${o.id}/`}>{o.offerLabel}</a>
                   <span class="small muted">
                     {formatDateTime(o.startsAt)} · {p.people} pers. · {OUTING_STATUS_LABEL[o.status]}
                     {o.status === 'faite' && <> · {formatPrice(o.amountCents)}</>}

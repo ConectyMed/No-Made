@@ -6,11 +6,12 @@
  */
 import Base from '@/layouts/Base.astro';
 import Button from '@/components/Button.astro';
+import CtaBand from '@/components/CtaBand.astro';
 import { getPublishedArticle } from '@/lib/crm/articles';
 import { mediaDims, mediaIdsOf } from '@/lib/crm/media';
 import { renderMarkdown, readingMinutes } from '@/lib/markdown';
 import { formatDateLong } from '@/lib/dates';
-import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
+import { site } from '@/data/site';
 
 export const prerender = false;
 
@@ -31,7 +32,7 @@ if (!article) {
   Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=600');
 }
 const html = article ? renderMarkdown(article.body, dims) : '';
-const cover = article?.coverId ? { src: `/photos/${article.coverId}`, alt: article.coverAlt ?? '', ...dims[article.coverId] } : null;
+const cover = article?.coverId ? { src: `/photos/${article.coverId}/`, alt: article.coverAlt ?? '', ...dims[article.coverId] } : null;
 const published = article ? (article.publishedAt ?? article.createdAt) : 0;
 ---
 
@@ -70,20 +71,9 @@ const published = article ? (article.publishedAt ?? article.createdAt) : 0;
     </div>
   </article>
 
-  <section class="section" aria-labelledby="suite-title">
-    <div class="container">
-      <div class="cta frame">
-        <div>
-          <h2 id="suite-title" class="cta__title">On en parle dehors ?</h2>
-          <p class="cta__text">Une session, c’est ce texte en mouvement : de la marche, du souffle, et le téléphone dans le sac.</p>
-        </div>
-        <div class="cta__actions">
-          <Button href={CTA_HREF} variant="lime" icon="arrow-right">{CTA_LABEL}</Button>
-          <a href={VISIO_HREF} class="cta__link label">{VISIO_LABEL}</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <CtaBand title="On en parle dehors ?" headingId="suite-title">
+    Une session, c’est ce texte en mouvement : de la marche, du souffle, et le téléphone dans le sac.
+  </CtaBand>
 </Base>
 )}
 
@@ -147,41 +137,4 @@ const published = article ? (article.publishedAt ?? article.createdAt) : 0;
     color: var(--ink);
   }
 
-  .cta {
-    display: grid;
-    gap: var(--space-5);
-    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
-    background: var(--deep);
-    color: var(--on-dark);
-  }
-
-  .cta__title {
-    color: var(--on-dark);
-    font-size: var(--text-md);
-    margin-bottom: var(--space-2);
-  }
-
-  .cta__text {
-    color: var(--on-dark-muted);
-    max-width: 44ch;
-  }
-
-  .cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3) var(--space-5);
-  }
-
-  .cta__link {
-    color: var(--on-dark);
-    text-underline-offset: 0.2em;
-  }
-
-  @media (min-width: 64em) {
-    .cta {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-    }
-  }
 </style>

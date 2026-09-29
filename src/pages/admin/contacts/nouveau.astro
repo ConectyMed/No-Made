@@ -16,13 +16,13 @@ if (Astro.request.method === 'POST') {
   values.phone = String(form.get('phone') ?? '');
   values.notes = String(form.get('notes') ?? '');
   const res = await createContact(values);
-  if ('id' in res) return Astro.redirect(`/admin/contacts/${res.id}`, 303);
+  if ('id' in res) return Astro.redirect(`/admin/contacts/${res.id}/`, 303);
   error = res.error;
 }
 ---
 
 <Admin title="Nouveau contact">
-  <p class="back small"><a href="/admin/contacts">← Tous les contacts</a></p>
+  <p class="back small"><a href="/admin/contacts/">← Tous les contacts</a></p>
   <div class="adm-head">
     <div>
       <span class="eyebrow">Contacts</span>

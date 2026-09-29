@@ -154,8 +154,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   } catch (e) {
     console.error('[contact] enregistrement en base impossible :', e);
   }
-  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}`, request.url).toString() : null;
-  const outingUrl = outing ? new URL(`/admin/sessions/${outing.id}`, request.url).toString() : null;
+  const adminUrl = requestId ? new URL(`/admin/demandes/${requestId}/`, request.url).toString() : null;
+  const outingUrl = outing ? new URL(`/admin/sessions/${outing.id}/`, request.url).toString() : null;
 
   // --- Email au propriétaire
   const { to } = mailConfig();
@@ -213,8 +213,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         ? `J’ai bien reçu ta demande de place pour « ${offerLabel} », le ${outingLabel}, pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}.`
         : `J’ai bien reçu ta demande pour « ${offerLabel} », pour ${req.groupSize} personne${req.groupSize > 1 ? 's' : ''}, période souhaitée : ${req.preferredPeriod}.`,
       outingLabel
-        ? 'Je te confirme la place par email, avec le point de rendez-vous exact. Pas de paiement en ligne : tout se règle après confirmation.'
-        : 'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation.',
+        ? 'Je te confirme la place par email, avec le point de rendez-vous exact. Pas de paiement en ligne : tout se règle après confirmation, par lien de paiement ou virement.'
+        : 'Je te réponds par email pour caler une date ensemble. Pas de paiement en ligne : tout se règle après confirmation, par lien de paiement ou virement.',
       `Si tu préfères qu’on en parle d’abord, tu peux réserver un créneau visio ici : ${new URL('/contact/#visio', request.url).toString()}`,
       '',
       'À bientôt dehors,',

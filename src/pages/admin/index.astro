@@ -67,19 +67,19 @@ const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: '
 
   <!-- 1. Ce qui attend -->
   <div class="tiles">
-    <a href="/admin/demandes?statut=nouvelle" class="tile adm-card tile--accent">
+    <a href="/admin/demandes/?statut=nouvelle" class="tile adm-card tile--accent">
       <span class="tile__num">{counts.nouvelle}</span>
       <span class="tile__label">{counts.nouvelle > 1 ? 'demandes à traiter' : 'demande à traiter'}</span>
     </a>
-    <a href="/admin/demandes?statut=repondue" class="tile adm-card">
+    <a href="/admin/demandes/?statut=repondue" class="tile adm-card">
       <span class="tile__num">{counts.repondue}</span>
       <span class="tile__label">en attente d’une réponse du client</span>
     </a>
-    <a href="/admin/sessions" class="tile adm-card">
+    <a href="/admin/sessions/" class="tile adm-card">
       <span class="tile__num">{upcoming.length}</span>
       <span class="tile__label">session{upcoming.length > 1 ? 's' : ''} à venir</span>
     </a>
-    <a href="/admin/contacts" class="tile adm-card">
+    <a href="/admin/contacts/" class="tile adm-card">
       <span class="tile__num">{contacts}</span>
       <span class="tile__label">personne{contacts > 1 ? 's' : ''} dans le carnet</span>
     </a>
@@ -167,16 +167,16 @@ const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: '
     <section class="adm-card" aria-labelledby="next-title">
       <div class="card-head">
         <h2 id="next-title">Prochaines sessions</h2>
-        <a href="/admin/sessions" class="small">Le planning</a>
+        <a href="/admin/sessions/" class="small">Le planning</a>
       </div>
       {
         upcoming.length === 0 ? (
-          <p class="adm-empty">Rien de prévu. <a href="/admin/sessions/nouvelle">Créer une session</a>, ou planifier depuis une demande.</p>
+          <p class="adm-empty">Rien de prévu. <a href="/admin/sessions/nouvelle/">Créer une session</a>, ou planifier depuis une demande.</p>
         ) : (
           <ul class="next" role="list">
             {upcoming.slice(0, 5).map((o) => (
               <li>
-                <a href={`/admin/sessions/${o.id}`} class="next__date">
+                <a href={`/admin/sessions/${o.id}/`} class="next__date">
                   <Icon name="calendar" size={16} />
                   {formatDateLong(o.startsAt)}, {formatTime(o.startsAt)}
                 </a>
@@ -194,7 +194,7 @@ const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: '
     <section class="adm-card latest" aria-labelledby="latest-title">
       <div class="card-head">
         <h2 id="latest-title">Dernières demandes</h2>
-        <a href="/admin/demandes" class="small">Tout voir</a>
+        <a href="/admin/demandes/" class="small">Tout voir</a>
       </div>
       {
         latest.length === 0 ? (
@@ -204,7 +204,7 @@ const monthLabel = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: '
             {latest.slice(0, 6).map((r) => (
               <li>
                 <div class="latest__row">
-                  <a href={`/admin/demandes/${r.id}`} class="next__date">{r.contactName}</a>
+                  <a href={`/admin/demandes/${r.id}/`} class="next__date">{r.contactName}</a>
                   <span class:list={['badge', `badge--${r.status}`]}>{REQUEST_STATUS_LABEL[r.status]}</span>
                 </div>
                 <span class="small muted">{r.offerLabel} · {r.groupSize} pers. · {formatRelative(r.createdAt)}</span>

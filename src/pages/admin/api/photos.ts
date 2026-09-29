@@ -28,7 +28,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   try {
     const id = await saveMedia(data, mime, Number(form.get('width')), Number(form.get('height')));
-    return json({ id, url: `/photos/${id}` });
+    return json({ id, url: `/photos/${id}/` });
   } catch (e) {
     console.error('[photos] enregistrement impossible :', e);
     return json({ error: 'Enregistrement impossible, réessaie dans un instant.' }, 503);

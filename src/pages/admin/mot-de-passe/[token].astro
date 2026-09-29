@@ -23,7 +23,7 @@ if (info && Astro.request.method === 'POST') {
     const user = await setPasswordWithToken(token, password, name);
     if (user) {
       setSessionCookie(Astro.cookies, await createSession(user.id));
-      return Astro.redirect('/admin', 303);
+      return Astro.redirect('/admin/', 303);
     }
     error = 'Ce lien n’est plus valable.';
   }
@@ -37,7 +37,7 @@ if (info && Astro.request.method === 'POST') {
         <>
           <h1>Lien expiré</h1>
           <p class="muted">Ce lien n’est plus valable : il a déjà servi ou il a plus d’une heure.</p>
-          <a href="/admin/mot-de-passe" class="btn-ghost">Demander un nouveau lien</a>
+          <a href="/admin/mot-de-passe/" class="btn-ghost">Demander un nouveau lien</a>
         </>
       ) : (
         <>
