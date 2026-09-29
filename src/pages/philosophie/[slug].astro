@@ -7,6 +7,7 @@
 import Base from '@/layouts/Base.astro';
 import Button from '@/components/Button.astro';
 import { getPublishedArticle } from '@/lib/crm/articles';
+import { mediaDims, mediaIdsOf } from '@/lib/crm/media';
 import { renderMarkdown, readingMinutes } from '@/lib/markdown';
 import { formatDateLong } from '@/lib/dates';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
@@ -15,8 +16,10 @@ export const prerender = false;
 
 const slug = Astro.params.slug ?? '';
 let article = null;
+let dims: Awaited<ReturnType<typeof mediaDims>> = {};
 try {
   article = await getPublishedArticle(slug);
+  if (article) dims = await mediaDims(mediaIdsOf(article));
 } catch (e) {
   console.error('[philosophie] lecture impossible :', e);
   return new Response('Service momentanément indisponible.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
@@ -27,7 +30,8 @@ if (!article) {
 } else {
   Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=600');
 }
-const html = article ? renderMarkdown(article.body) : '';
+const html = article ? renderMarkdown(article.body, dims) : '';
+const cover = article?.coverId ? { src: `/photos/${article.coverId}`, alt: article.coverAlt ?? '', ...dims[article.coverId] } : null;
 const published = article ? (article.publishedAt ?? article.createdAt) : 0;
 ---
 
@@ -41,7 +45,7 @@ const published = article ? (article.publishedAt ?? article.createdAt) : 0;
   </header>
 </Base>
 ) : (
-<Base title={article.title} description={article.excerpt ?? `Un texte de ${site.ownerFirstName}, de ${site.name}.`}>
+<Base title={article.title} description={article.excerpt ?? `Un texte de ${site.ownerFirstName}, de ${site.name}.`} image={cover?.src}>
   <article class="article">
     <header class="article__head container article__col">
       <a href="/philosophie/" class="article__back label-sm">← Ma philosophie</a>
@@ -54,6 +58,12 @@ const published = article ? (article.publishedAt ?? article.createdAt) : 0;
       {article.excerpt && <p class="lead">{article.excerpt}</p>}
       <p class="article__by small muted">Par {site.ownerFirstName}</p>
     </header>
+
+    {cover && (
+      <div class="container article__cover-wrap">
+        <img class="article__cover" src={cover.src} alt={cover.alt} width={cover.width} height={cover.height} fetchpriority="high" decoding="async" />
+      </div>
+    )}
 
     <div class="container article__col">
       <div class="prose article__body" set:html={html} />
@@ -87,6 +97,21 @@ const published = article ? (article.publishedAt ?? article.createdAt) : 0;
     gap: var(--space-3);
     justify-items: start;
     padding-block: clamp(2rem, 1.5rem + 3vw, 4rem) var(--space-6);
+  }
+
+  .article__cover-wrap {
+    max-width: calc(56rem + 2 * var(--gutter));
+    margin-bottom: var(--space-7);
+  }
+
+  .article__cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 34rem;
+    object-fit: cover;
+    border-radius: var(--radius-frame);
+    background: var(--surface-low);
   }
 
   .article__back {

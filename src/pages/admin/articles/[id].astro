@@ -30,7 +30,7 @@ if (Astro.request.method === 'POST') {
 const a = await getArticle(id);
 if (!a) return Astro.redirect('/admin/articles', 303);
 
-const v: ArticleInput = posted ?? { title: a.title, slug: a.slug, excerpt: a.excerpt ?? '', body: a.body, status: a.status };
+const v: ArticleInput = posted ?? { title: a.title, slug: a.slug, excerpt: a.excerpt ?? '', body: a.body, status: a.status, coverId: a.coverId ?? '', coverAlt: a.coverAlt ?? '' };
 const ok = Astro.url.searchParams.get('ok');
 const flash = !error && ok ? (ok === 'publie' ? 'Enregistré. L’article est en ligne (le site se met à jour en une minute environ).' : 'Brouillon enregistré.') : null;
 const publicUrl = `/philosophie/${a.slug}/`;

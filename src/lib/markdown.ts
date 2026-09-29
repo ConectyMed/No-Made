@@ -4,6 +4,8 @@
  *   ## Titre / ### Sous-titre (un # seul compte comme ##, le titre de l'article est le seul h1)
  *   - élément de liste (ou * ), 1. liste numérotée
  *   > citation
+ *   ![légende](/photos/<id>) seul sur sa ligne : une photo de l'article (bouton « Insérer une photo » de l'admin),
+ *   avec la légende dessous. Seules les photos du site sont acceptées, pas d'image extérieure.
  *   **gras**, *italique* ou _italique_, [texte](https://lien), [texte](/page-du-site/)
  *   ligne vide = nouveau paragraphe ; retour à la ligne simple = saut de ligne.
  */
@@ -28,13 +30,32 @@ function inline(raw: string): string {
   return emphasis(text).replace(/\u0000(\d+)\u0000/g, (_, i: string) => links[Number(i)] ?? '');
 }
 
-export function renderMarkdown(src: string): string {
+const PHOTO_RE = /^!\[([^\]]*)\]\(\/photos\/([0-9a-f-]{36})\)$/;
+
+export type PhotoDims = Record<string, { width: number; height: number }>;
+
+/** `dims` : dimensions connues des photos, pour réserver leur place (facultatif, l'aperçu de l'admin s'en passe). */
+export function renderMarkdown(src: string, dims: PhotoDims = {}): string {
   const blocks = src.replace(/\r\n?/g, '\n').trim().split(/\n\s*\n/);
   const out: string[] = [];
   for (const block of blocks) {
     const lines = block.split('\n').map((l) => l.trimEnd());
     const first = lines[0]?.trim() ?? '';
     if (!first) continue;
+
+    const photo = lines.length === 1 ? first.match(PHOTO_RE) : null;
+    if (photo) {
+      const [, caption, id] = photo;
+      const d = dims[id];
+      const size = d ? ` width="${d.width}" height="${d.height}"` : '';
+      const alt = escapeHtml(caption.trim());
+      out.push(
+        `<figure class="md-photo"><img src="/photos/${id}" alt="${alt}"${size} loading="lazy" decoding="async">` +
+          (caption.trim() ? `<figcaption>${inline(caption.trim())}</figcaption>` : '') +
+          '</figure>',
+      );
+      continue;
+    }
 
     const heading = first.match(/^(#{1,3})\s+(.+)$/);
     if (heading && lines.length === 1) {

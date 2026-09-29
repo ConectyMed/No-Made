@@ -368,3 +368,25 @@ h4 {
     transform: none;
   }
 }
+
+/* Photos des articles (« Ma philosophie »), rendues par src/lib/markdown.ts : sur le site et dans l'aperçu de l'admin. */
+.prose .md-photo {
+  margin-block: 1.6em;
+}
+
+.prose .md-photo img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  /* Une photo en hauteur ne doit pas remplir plusieurs écrans. */
+  max-height: min(80vh, 42rem);
+  border-radius: var(--radius-box);
+  background: var(--surface-low);
+}
+
+.prose .md-photo figcaption {
+  margin-top: 0.6em;
+  color: var(--ink-2);
+  font-size: var(--body-sm);
+}
