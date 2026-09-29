@@ -223,7 +223,7 @@ Turnstile dormant behind env keys. No payment.
 ## 11. Tech (unchanged decisions)
 
 Astro, static output, plain CSS tokens, no UI framework. Adapter: Vercel, swappable for Netlify or
-Cloudflare Pages. Self-hosted font. Cookieless audience measurement only (Vercel Web Analytics, public pages, plus click events on the request and visio CTAs via `src/lib/track.ts`), no cookies, no banner. Offers in Markdown with a
+Cloudflare Pages. Self-hosted font. Cookieless audience measurement only (Vercel Web Analytics via `<Analytics />` from `@vercel/analytics/astro` in Base.astro, public pages, plus click events on the request and visio CTAs via `src/lib/track.ts`), no cookies, no banner. Offers in Markdown with a
 validated schema; prices in integer cents. `Session` type reserved for v2. Production build fails while
 any [PLACEHOLDER] remains (override for previews).
 

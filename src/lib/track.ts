@@ -1,17 +1,14 @@
 /**
  * Événements de mesure d'audience (Vercel Web Analytics : sans cookie, sans donnée personnelle).
- * Sans script d'analyse chargé (développement, autre hébergeur, bloqueur), l'appel ne fait rien.
- * Les événements personnalisés ne remontent qu'avec une offre Vercel qui les inclut ; les pages vues, toujours.
+ * Le script est chargé par <Analytics /> dans src/layouts/Base.astro. Sans lui (bloqueur, autre hébergeur),
+ * l'appel ne fait rien. Les événements personnalisés ne remontent qu'avec une offre Vercel qui les inclut ;
+ * les pages vues, toujours.
  */
-declare global {
-  interface Window {
-    va?: (event: 'event', props: { name: string; data?: Record<string, string | number | boolean> }) => void;
-  }
-}
+import { track as vercelTrack } from '@vercel/analytics';
 
 export function track(name: string, data?: Record<string, string | number | boolean>): void {
   try {
-    window.va?.('event', { name, data });
+    vercelTrack(name, data);
   } catch {
     /* la mesure ne doit jamais casser la page */
   }
