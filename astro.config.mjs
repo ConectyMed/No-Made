@@ -13,7 +13,8 @@ export default defineConfig({
   // Portabilité : c'est la seule ligne liée à Vercel. Pour Netlify ou Cloudflare Pages,
   // remplacer par @astrojs/netlify ou @astrojs/cloudflare et rien d'autre ne change.
   adapter: vercel(),
-  integrations: [sitemap()],
+  // /philosophie/ est rendue à la demande : on l'ajoute au plan du site à la main.
+  integrations: [sitemap({ customPages: [`${SITE_URL}/philosophie/`] })],
   i18n: {
     defaultLocale: 'fr',
     locales: ['fr'], // [À COMPLÉTER] : ajouter 'en' etc. plus tard, sans préfixe pour le français.

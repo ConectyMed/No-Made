@@ -276,7 +276,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Un vrai temps à deux :</strong> loin de la maison, loin des écrans.</span></li>
           </ul>
           <div class="reconnex__cta">
-            <Button href={`/contact/?offre=${reconnex?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
+            <Button href={`/contact/?experience=${reconnex?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
             {duoPrice?.amountCents !== undefined && (
               <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · tarif de lancement</span>
             )}
@@ -343,8 +343,8 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
                   </span>
                 )}
               </div>
-              <Button href={`/contact/?offre=${entry.data.slug}#demande`} variant="lime" size="lg" icon="arrow-right">Demander cette session</Button>
-              <a href="/offres/" class="price__link label-sm">Voir les deux sessions</a>
+              <Button href={`/contact/?experience=${entry.data.slug}#demande`} variant="lime" size="lg" icon="arrow-right">Demander cette session</Button>
+              <a href="/experiences/" class="price__link label-sm">Voir les deux expériences</a>
             </div>
           </div>
         </div>

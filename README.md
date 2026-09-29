@@ -60,7 +60,7 @@ puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un termin
 |---|---|---|
 | M0 | Squelette : tokens, gabarit, en-tête, pied de page, 8 routes | fait |
 | M1 | Hero vidéo : encodages, boucle fondue, poster, entrée, pause, mouvement réduit | fait |
-| M2 | Accueil complet, Offres, À propos (design v2, images provisoires) | fait |
+| M2 | Accueil complet, Expériences (ex-Offres), À propos (design v2, images provisoires) | fait |
 | M3 | Formulaire de demande, envoi d'email, anti-spam, FAQ | fait (clés Resend à renseigner) |
 | M4 | Pages légales, contrôle des placeholders, SEO, audit accessibilité | fait |
 | + | Mode sombre : suit le système, bascule discrète dans la nav, choix mémorisé | fait |
@@ -68,3 +68,4 @@ puis ajouter le fichier dans `src/lib/db/migrations.ts`. Compte depuis un termin
 | M5.2 | Admin : contacts, sessions, participants, paiement au cochage, export .ics vers l'agenda | fait |
 | M5.3 | Admin : tableau de bord (chiffre, sessions, conversion, douze mois, par offre) | fait |
 | M5.4 | Édition du contenu par Anthony : abandonnée (2026-09-28), les modifications passent par l'administrateur du site | — |
+| M6 | Page Ma philosophie : articles écrits et publiés par Anthony depuis l'admin (brouillon / publié, aperçu) | fait |

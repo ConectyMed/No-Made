@@ -1,0 +1,39 @@
+---
+/** Nouvel article de « Ma philosophie ». */
+import Admin from '@/layouts/Admin.astro';
+import ArticleForm from '@/components/ArticleForm.astro';
+import { createArticle, readArticleForm, type ArticleInput } from '@/lib/crm/articles';
+
+export const prerender = false;
+
+let error: string | null = null;
+let v: ArticleInput = { title: '', slug: '', excerpt: '', body: '', status: 'brouillon' };
+
+if (Astro.request.method === 'POST') {
+  const read = readArticleForm(await Astro.request.formData());
+  v = read.input;
+  error = read.error;
+  if (!error) {
+    const id = await createArticle(v);
+    return Astro.redirect(`/admin/articles/${id}?ok=${v.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
+  }
+}
+---
+
+<Admin title="Nouvel article">
+  <p class="back small"><a href="/admin/articles">← Les articles</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Ma philosophie</span>
+      <h1>Nouvel article</h1>
+    </div>
+  </div>
+
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <ArticleForm value={v} submitLabel="Enregistrer" />
+</Admin>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+</style>

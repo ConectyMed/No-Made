@@ -3,7 +3,7 @@
  * Formulaire "Demander une session" (design.md §8). Balisage et validation HTML natifs, envoi en fetch
  * avec repli sans JavaScript (le serveur redirige vers #merci ou #erreur).
  * Peu de champs obligatoires : la session, le nombre de personnes, le nom, l'email. Le reste est facultatif.
- * Présélection depuis l'URL : ?offre=<slug> ou ?session=<id> (une sortie groupée publiée, voir UpcomingSessions).
+ * Présélection depuis l'URL : ?experience=<slug> ou ?session=<id> (une sortie groupée publiée, voir UpcomingSessions).
  * Turnstile (anti-robot) s'affiche seulement si PUBLIC_TURNSTILE_SITE_KEY est défini au build.
  */
 import { getCollection } from 'astro:content';
@@ -12,7 +12,7 @@ import Icon from './Icon.astro';
 import { site, VISIO_HREF } from '@/data/site';
 
 interface Props {
-  /** Pré-sélection d'une offre (sinon lue dans ?offre=slug côté navigateur). */
+  /** Pré-sélection d'une offre (sinon lue dans ?experience=slug côté navigateur). */
   selected?: string | null;
   id?: string;
 }
@@ -154,9 +154,9 @@ const sizes = [
     const mail = form.dataset.mail ?? '';
     const visio = form.dataset.visio ?? '/contact/#visio';
 
-    // 2. Présélection depuis l'URL : ?offre=<slug>, ou ?session=<id> (sortie groupée publiée).
+    // 2. Présélection depuis l'URL : ?experience=<slug>, ou ?session=<id> (sortie groupée publiée).
     const params = new URLSearchParams(location.search);
-    const slug = params.get('offre');
+    const slug = params.get('experience') ?? params.get('offre'); // ?offre= : anciens liens
     if (slug && offer && [...offer.options].some((o) => o.value === slug)) offer.value = slug;
 
     // Une date choisie fixe déjà la session et la période : ces deux champs deviennent inutiles.

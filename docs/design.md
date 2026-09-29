@@ -103,7 +103,7 @@ eyebrows / links lime-dim, glass `rgba(18,26,21,.78)`, hairlines white at 8 % / 
 Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: short brand under 26em, toggle, a labelled « Demander » pill (not a mail icon), burger.
 
 Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
-Left: lime dot + "No'Made". Centre (desktop): Accueil, Offres, À propos, Contact.
+Left: lime dot + "No'Made". Centre (desktop): Accueil, Expériences, Ma philosophie, À propos, Contact (Accueil hidden between 56em and 75em: the logo links home).
 Right: CTA pill in green-800 with an arrow. Mobile: brand, « Demander » pill, burger opening a full-screen panel
 with large links and the CTA. Escape closes, focus managed.
 
@@ -147,9 +147,9 @@ Split layout (v3, 2026-09-28), on a light frame: text left, media right, floatin
 5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu m'écris ·
    On cale une date · On se retrouve dehors.
 6. **Prix** — deep-green banner: label "Tarif de lancement", the entry offer, its group price large in lime, the
-   solo price as a placeholder until known, CTA, link to /offres, link to the visio block.
+   solo price as a placeholder until known, CTA, link to /experiences, link to the visio block.
 7. **Contact** — centred intro and the request form in a white card (see §8).
-8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
+8. **Footer** — tinted, rounded top: brand + one line, link row (Expériences, Ma philosophie, À propos, Contact, Mentions
    légales, CGV, Confidentialité, Instagram), copyright row.
 
 Quotes are not a section but **pull quotes** (`Quote.astro`) woven into the page: a public-domain author
@@ -164,7 +164,7 @@ First name + initial, month, offer; no stars, no ratings.
 
 ## 7. Other pages
 
-- **/offres** — one detailed card per offer (category pill, duration, group, prices, for whom, programme,
+- **/experiences** (was /offres, 301) — one detailed card per offer (category pill, duration, group, prices, for whom, programme,
   what to bring, CTA + "Échanger en visio d'abord" link), practical notes, visio teaser.
   Offers: `experience-corps-aventure` (2h30, solo or 3–5, 30 € per person in a group, solo price [TARIF SOLO])
   and `reconnexion-parent-enfant` (3h, duo 60 € or four people 80 €).
@@ -299,12 +299,25 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - Zone named everywhere: Marseille, Cannes, Saint-Tropez et alentours (`site.zone`, `site.places`).
 - Solo means one-to-one with Anthony. Groups of 3–5 run on dated sessions published from the admin
   (« Publier sur le site » on a session: capacity, public area; the exact meeting point stays private).
-  They show in « Prochaines sorties » (home, /offres) via `/api/sessions`, and « Demander une place »
+  They show in « Prochaines sorties » (home, /experiences) via `/api/sessions`, and « Demander une place »
   opens the form with `?session=<id>`.
 - Request form: session, number of people (select 1–5), name, email required; period, phone, message
   optional; no consent checkbox (art. 6.1.b, a notice under the button). Turnstile widget rendered when
   `PUBLIC_TURNSTILE_SITE_KEY` is set; the server only enforces it when both keys exist.
 - « Prix de test » becomes « Tarif de lancement ». Hero facts: 2h30 · 3h · dès 30 € · 0 écran.
 - New page /encadrement/ (who supervises, preparation, weather, parent / child, insurance), linked from
-  the footer, the Reconnexion block, /offres and the FAQ. Weather: chosen together, keep or postpone, free.
+  the footer, the Reconnexion block, /experiences and the FAQ. Weather: chosen together, keep or postpone, free.
 
+
+## Expériences and Ma philosophie (2026-09-29)
+
+- The word « offre » is gone from the site: the page is « Expériences » at /experiences/ (/offres redirects
+  there, 301), the form preselects with `?experience=<slug>` (`?offre=` still read for old links). Internal
+  names (`offers` collection, `offerSlug`) are unchanged.
+- New page « Ma philosophie » (/philosophie/, in the main nav): Anthony's articles, written in the admin
+  (Articles), stored in the `articles` table (migration 0003). Draft or published; the publication date
+  is set on first publish. Rendered on demand, CDN cache 60 s. Body in a small Markdown subset
+  (`src/lib/markdown.ts`: everything is HTML-escaped first; headings, lists, quotes, bold, italic, http(s),
+  mailto and site-relative links). The admin editor shows a live preview with the same renderer.
+- Not yet: images in articles (would need file storage, e.g. Vercel Blob), individual articles in the
+  sitemap (only /philosophie/ is listed), RSS.

@@ -26,7 +26,7 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
       <ul class="nav__list" role="list">
         {
           nav.map((item) => (
-            <li>
+            <li class:list={{ 'nav__item--home': item.href === '/' }}>
               <a href={item.href} class="nav__link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
                 {item.label}
               </a>
@@ -240,7 +240,8 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     display: inline-flex;
     align-items: center;
     min-height: var(--tap-min);
-    padding: 0 0.8rem;
+    padding: 0 clamp(0.4rem, 0.8vw, 0.8rem);
+    white-space: nowrap;
     border-radius: var(--radius-pill);
     color: var(--ink-2);
     font-size: var(--label);
@@ -404,6 +405,13 @@ const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === curren
     .header__cta-short,
     .burger,
     .menu {
+      display: none;
+    }
+  }
+
+  /* Entre tablette et grand écran, cinq liens + le bouton ne tiennent pas : le logo mène déjà à l'accueil. */
+  @media (min-width: 56em) and (max-width: 74.99em) {
+    .nav__item--home {
       display: none;
     }
   }

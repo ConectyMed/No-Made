@@ -1,0 +1,220 @@
+---
+/**
+ * Formulaire d'article de l'admin (nouveau et modification) : titre, chapô, texte en Markdown simple
+ * avec aperçu en direct (même rendu que le site, src/lib/markdown.ts), adresse, brouillon ou publié.
+ */
+import Button from './Button.astro';
+import type { ArticleInput } from '@/lib/crm/articles';
+
+interface Props {
+  value: ArticleInput;
+  submitLabel: string;
+  /** Adresse actuelle, pour afficher le lien public. */
+  currentSlug?: string;
+}
+const { value: v, submitLabel, currentSlug } = Astro.props;
+---
+
+<form method="post" class="aform">
+  <input type="hidden" name="action" value="enregistrer" />
+
+  <div class="adm-card aform__main">
+    <div class="adm-field">
+      <label for="title">Titre</label>
+      <input id="title" name="title" type="text" required maxlength="200" value={v.title} placeholder="Ex. Pourquoi je laisse le téléphone dans le sac" />
+    </div>
+
+    <div class="adm-field">
+      <label for="excerpt">Chapô <span class="muted">(facultatif)</span></label>
+      <textarea id="excerpt" name="excerpt" rows="2" maxlength="400" placeholder="Une ou deux phrases qui donnent envie de lire. Affichées dans la liste et sur Google.">{v.excerpt}</textarea>
+    </div>
+
+    <div class="aform__write">
+      <div class="adm-field">
+        <label for="body">Texte</label>
+        <textarea id="body" name="body" rows="22" data-md-input>{v.body}</textarea>
+        <details class="aform__help small">
+          <summary>Mise en forme</summary>
+          <ul>
+            <li>Ligne vide : nouveau paragraphe.</li>
+            <li><code>## Un intertitre</code>, <code>### Un sous-titre</code></li>
+            <li><code>**gras**</code>, <code>*italique*</code></li>
+            <li><code>- </code> en début de ligne : liste à puces ; <code>1. </code> : liste numérotée</li>
+            <li><code>&gt; </code> en début de ligne : citation</li>
+            <li><code>[le texte](https://le-lien.fr)</code>, ou <code>[mes sessions](/experiences/)</code></li>
+          </ul>
+        </details>
+      </div>
+      <div class="adm-field aform__preview-wrap">
+        <span class="adm-label">Aperçu</span>
+        <div class="prose aform__preview" data-md-preview aria-live="off"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="adm-card aform__side">
+    <fieldset class="adm-field aform__status">
+      <legend class="adm-label">Sur le site</legend>
+      <label class="aform__radio">
+        <input type="radio" name="status" value="brouillon" checked={v.status !== 'publie'} />
+        <span><strong>Brouillon</strong><br /><span class="small muted">Visible seulement ici.</span></span>
+      </label>
+      <label class="aform__radio">
+        <input type="radio" name="status" value="publie" checked={v.status === 'publie'} />
+        <span><strong>Publié</strong><br /><span class="small muted">Visible sur la page Ma philosophie.</span></span>
+      </label>
+    </fieldset>
+
+    <div class="adm-field">
+      <label for="slug">Adresse <span class="muted">(facultatif)</span></label>
+      <input id="slug" name="slug" type="text" maxlength="80" value={v.slug} placeholder="tirée du titre" />
+      <span class="small muted">
+        {currentSlug ? <>En ligne sous <code>/philosophie/{currentSlug}/</code>. La changer casse les liens déjà partagés.</> : <>Laisse vide : elle sera tirée du titre.</>}
+      </span>
+    </div>
+
+    <div><Button type="submit" variant="dark" icon="check">{submitLabel}</Button></div>
+  </div>
+</form>
+
+<script>
+  import { renderMarkdown } from '@/lib/markdown';
+
+  const input = document.querySelector<HTMLTextAreaElement>('[data-md-input]');
+  const preview = document.querySelector<HTMLElement>('[data-md-preview]');
+  if (input && preview) {
+    let timer = 0;
+    const render = () => {
+      // renderMarkdown échappe tout le texte saisi : aucun HTML de l'utilisateur n'est interprété.
+      preview.innerHTML = renderMarkdown(input.value) || '<p class="muted">Le texte apparaîtra ici, comme sur le site.</p>';
+    };
+    render();
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(render, 150);
+    });
+  }
+
+  // Quitter la page avec des changements non enregistrés : on prévient.
+  const form = document.querySelector<HTMLFormElement>('.aform');
+  if (form) {
+    let dirty = false;
+    form.addEventListener('input', () => (dirty = true));
+    form.addEventListener('submit', () => (dirty = false));
+    window.addEventListener('beforeunload', (e) => {
+      if (dirty) e.preventDefault();
+    });
+  }
+</script>
+
+<style>
+  .aform {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .aform__main,
+  .aform__side {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .aform__write {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .aform textarea#body {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: var(--body-sm);
+    line-height: 1.6;
+  }
+
+  .aform__help {
+    color: var(--ink-2);
+  }
+
+  .aform__help summary {
+    cursor: pointer;
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  .aform__help ul {
+    display: grid;
+    gap: 0.3rem;
+    margin-top: var(--space-2);
+    padding-left: 1.1em;
+  }
+
+  .aform code {
+    padding: 0.05em 0.35em;
+    border-radius: 0.35rem;
+    background: var(--surface-low);
+    font-size: 0.92em;
+  }
+
+  .aform__preview-wrap {
+    align-content: start;
+  }
+
+  .aform__preview {
+    min-height: 12rem;
+    max-height: 42rem;
+    overflow: auto;
+    padding: var(--space-4) var(--space-5);
+    border: 1px dashed var(--line-strong);
+    border-radius: 1rem;
+    background: var(--bg);
+  }
+
+  .aform__preview :global(blockquote) {
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--lime);
+    font-style: italic;
+  }
+
+  .aform__status {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .aform__radio {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+    padding: var(--space-3) var(--space-4);
+    border: var(--border);
+    border-radius: 1rem;
+    cursor: pointer;
+  }
+
+  .aform__radio:has(input:checked) {
+    border-color: var(--green-600);
+    background: var(--lime-soft);
+  }
+
+  .aform__radio input {
+    margin-top: 0.3rem;
+    accent-color: var(--green-600);
+  }
+
+  @media (min-width: 72em) {
+    .aform {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+    }
+
+    .aform__side {
+      position: sticky;
+      top: var(--space-5);
+    }
+  }
+
+  @media (min-width: 90em) {
+    .aform__write {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

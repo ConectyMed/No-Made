@@ -1,0 +1,79 @@
+---
+/** Modifier un article de « Ma philosophie » : texte, statut (brouillon / publié), adresse, suppression. */
+import Admin from '@/layouts/Admin.astro';
+import ArticleForm from '@/components/ArticleForm.astro';
+import Icon from '@/components/Icon.astro';
+import { deleteArticle, getArticle, readArticleForm, updateArticle, type ArticleInput } from '@/lib/crm/articles';
+import { formatDateTime } from '@/lib/dates';
+
+export const prerender = false;
+
+const id = Astro.params.id ?? '';
+let error: string | null = null;
+let posted: ArticleInput | null = null;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  if (form.get('action') === 'supprimer') {
+    await deleteArticle(id);
+    return Astro.redirect('/admin/articles?supprime=1', 303);
+  }
+  const read = readArticleForm(form);
+  posted = read.input;
+  error = read.error;
+  if (!error) {
+    await updateArticle(id, read.input);
+    return Astro.redirect(`/admin/articles/${id}?ok=${read.input.status === 'publie' ? 'publie' : 'brouillon'}`, 303);
+  }
+}
+
+const a = await getArticle(id);
+if (!a) return Astro.redirect('/admin/articles', 303);
+
+const v: ArticleInput = posted ?? { title: a.title, slug: a.slug, excerpt: a.excerpt ?? '', body: a.body, status: a.status };
+const ok = Astro.url.searchParams.get('ok');
+const flash = !error && ok ? (ok === 'publie' ? 'Enregistré. L’article est en ligne (le site se met à jour en une minute environ).' : 'Brouillon enregistré.') : null;
+const publicUrl = `/philosophie/${a.slug}/`;
+---
+
+<Admin title={a.title}>
+  <p class="back small"><a href="/admin/articles">← Les articles</a></p>
+  <div class="adm-head">
+    <div>
+      <span class="eyebrow">Ma philosophie</span>
+      <h1>{a.title}</h1>
+      <p class="small">
+        {a.status === 'publie' ? <span class="badge badge--confirmee">Publié</span> : <span class="badge badge--nouvelle">Brouillon</span>}
+        {' '}Modifié le {formatDateTime(a.updatedAt)}{a.publishedAt ? ` · publié le ${formatDateTime(a.publishedAt)}` : ''}
+      </p>
+    </div>
+    {a.status === 'publie' && (
+      <a href={publicUrl} class="btn-ghost" target="_blank" rel="noopener">
+        Voir sur le site <Icon name="arrow-right" size={14} />
+      </a>
+    )}
+  </div>
+
+  {flash && <p class="adm-alert adm-alert--ok" role="status">{flash}</p>}
+  {error && <p class="adm-alert adm-alert--err" role="alert">{error}</p>}
+
+  <ArticleForm value={v} submitLabel="Enregistrer" currentSlug={a.status === 'publie' ? a.slug : undefined} />
+
+  <form method="post" class="danger" data-confirm="Supprimer cet article ? Il disparaît du site et ne peut pas être récupéré.">
+    <input type="hidden" name="action" value="supprimer" />
+    <button type="submit" class="btn-ghost btn-danger">Supprimer l’article</button>
+  </form>
+</Admin>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-confirm]').forEach((f) => {
+    f.addEventListener('submit', (e) => {
+      if (!confirm(f.dataset.confirm ?? 'Confirmer ?')) e.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .back a { color: var(--green-600); text-decoration: none; }
+  .danger { margin-top: var(--space-6); }
+</style>

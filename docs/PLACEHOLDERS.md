@@ -10,14 +10,14 @@ Généré par `npm run build` le 2026-09-29.
 | `[DATE DE MISE À JOUR]` | /cgv/, /confidentialite/, /mentions-legales/ |
 | `[DIPLÔME OU CARTE PROFESSIONNELLE D’ÉDUCATEUR SPORTIF]` | /encadrement/ |
 | `[IMAGE PROVISOIRE]` | / |
-| `[LIEN FACEBOOK]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /encadrement/, /mentions-legales/, /offres/ |
-| `[LIEN INSTAGRAM]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /encadrement/, /mentions-legales/, /offres/ |
+| `[LIEN FACEBOOK]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /encadrement/, /experiences/, /mentions-legales/ |
+| `[LIEN INSTAGRAM]` | /, /404.html, /a-propos/, /cgv/, /confidentialite/, /contact/, /encadrement/, /experiences/, /mentions-legales/ |
 | `[NOM DE L’ASSUREUR]` | /cgv/, /encadrement/, /mentions-legales/ |
 | `[NOM DU MÉDIATEUR]` | /cgv/, /mentions-legales/ |
 | `[NUMÉRO DE CONTRAT]` | /mentions-legales/ |
 | `[NUMÉRO SIRET]` | /cgv/, /mentions-legales/ |
 | `[PRÉNOM NOM]` | /cgv/, /confidentialite/, /mentions-legales/ |
-| `[TARIF SOLO]` | /, /cgv/, /offres/ |
+| `[TARIF SOLO]` | /, /cgv/, /experiences/ |
 | `[ZONE GÉOGRAPHIQUE COUVERTE]` | /mentions-legales/ |
 | `[À CONFIRMER : STATUT JURIDIQUE]` | /mentions-legales/ |
 | `[À CONFIRMER]` | /confidentialite/ |
