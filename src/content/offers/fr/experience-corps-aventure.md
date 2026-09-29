@@ -1,6 +1,6 @@
 ---
 slug: experience-corps-aventure
-title: Expérience corps / aventure
+title: Nó Made Experience
 category: En solo ou en petit groupe
 summary: 2h30 dehors, sur un sentier autour de Marseille, Cannes ou Saint-Tropez. De la marche, du travail au poids du corps, de la mobilité et de la respiration. En solo rien qu’avec moi, ou en petit groupe. Le téléphone reste dans le sac.
 duration: 2h30

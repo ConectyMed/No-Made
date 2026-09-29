@@ -90,7 +90,7 @@ Chaque case correspond à un placeholder jaune. Le build de production refuse de
 - [x] **Lui** : prénom et parcours reçus (Anthony). Pas de diplôme ni de titre, et pas un mot sur le bar : c'est décidé.
 - [x] **Son portrait** pour la page À propos : reçu le 28 septembre 2026 (photo de voyage, Pérou).
 - [ ] **Son nom complet** pour les pages légales (éditeur, vendeur, responsable des données) : « Anthony A. » ne suffit pas là.
-- [ ] **Tarif en solo** de l'Expérience corps / aventure (aujourd'hui `[TARIF SOLO]`).
+- [ ] **Tarif en solo** de la Nó Made Experience (aujourd'hui `[TARIF SOLO]`).
 - [x] **Lien Cal.com** pour la visio : reçu le 28 septembre 2026 (`cal.com/nomadeproject/presentation`), en place.
 - [ ] **Les trois avis** annoncés : prénom, initiale, texte, mois, offre, accord de la personne (étape 6 quater).
 - [ ] **Adresse email publique** (étape 3).

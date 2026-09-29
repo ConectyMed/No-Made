@@ -1,6 +1,6 @@
 # Nó Made Project — site web
 
-Site vitrine de Nó Made Project : sorties nature « corps / aventure » en solo ou en petit groupe, et un format Reconnexion parent / enfant, région PACA. Le site parle en « je » : la personne qui encadre les sessions.
+Site vitrine de Nó Made Project : sorties nature « Nó Made Experience » en solo ou en petit groupe, et un format Reconnexion parent / enfant, région PACA. Le site parle en « je » : la personne qui encadre les sessions.
 Le brief complet (look, ton, pages, offres, décisions) est dans [`docs/design.md`](docs/design.md).
 
 ## Démarrer

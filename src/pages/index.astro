@@ -33,7 +33,7 @@ const h1Lines = page.h1.split('\n');
 const offers = (await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'))).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const entry = offers[0]; // Expérience corps / aventure, 2h30
+const entry = offers[0]; // Nó Made Experience, 2h30
 const groupPrice = entry?.data.pricing.find((p) => p.amountCents !== undefined);
 const soloPrice = entry?.data.pricing.find((p) => p.amountCents === undefined);
 const reconnex = offers.find((o) => o.data.slug === 'reconnexion-parent-enfant');
@@ -42,7 +42,7 @@ const duoPrice = reconnex?.data.pricing[0];
 // Bandeau de repères du hero : uniquement des données du site (durées et prix des offres), rien d'inventé.
 // La visio a déjà sa ligne sous les boutons : sa tuile laisse la place au prix d'entrée.
 const facts: { value: string; label: string; accent?: boolean }[] = [
-  { value: entry?.data.duration ?? '2h30', label: 'Session corps / aventure, en solo ou en groupe' },
+  { value: entry?.data.duration ?? '2h30', label: 'Nó Made Experience, en solo ou en groupe' },
   { value: reconnex?.data.duration ?? '3h', label: 'Reconnexion parent / enfant' },
   groupPrice?.amountCents !== undefined
     ? { value: `dès ${formatPrice(groupPrice.amountCents)}`, label: 'Par personne, en groupe · tarif de lancement' }
@@ -184,7 +184,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   <section class="section" id="temps-forts" aria-labelledby="temps-title">
     <div class="container">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">Une expérience corps / aventure</span>
+        <span class="eyebrow">Nó Made Experience</span>
         <h2 id="temps-title">Ce qu’on fait pendant une session</h2>
         <p class="lead">Trois temps, dans des proportions qui dépendent de toi. Je m’adapte à ton profil, en solo comme en groupe.</p>
       </div>
