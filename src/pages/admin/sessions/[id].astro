@@ -7,7 +7,8 @@
 import Admin from '@/layouts/Admin.astro';
 import Button from '@/components/Button.astro';
 import Icon from '@/components/Icon.astro';
-import { addParticipant, deleteOuting, getOuting, isOutingStatus, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
+import PublishFields from '@/components/PublishFields.astro';
+import { addParticipant, deleteOuting, getOuting, isOutingStatus, readPublishFields, removeParticipant, setOutingStatus, updateOuting } from '@/lib/crm/outings';
 import { allContactsBrief } from '@/lib/crm/contacts';
 import { offerOptions, parseEuros, suggestAmount } from '@/lib/crm/pricing';
 import { OUTING_STATUS_LABEL } from '@/lib/crm/labels';
@@ -60,6 +61,7 @@ if (Astro.request.method === 'POST') {
         place: String(form.get('place') ?? ''),
         notes: String(form.get('notes') ?? ''),
         amountCents,
+        ...readPublishFields(form),
       });
       return Astro.redirect(`/admin/sessions/${id}?ok=1`, 303);
     }
@@ -84,7 +86,10 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
     <div>
       <span class="eyebrow">Session</span>
       <h1>{formatDateLong(o.startsAt)}, {formatTime(o.startsAt)}</h1>
-      <p>{o.offerLabel}{o.place ? ` · ${o.place}` : ''} · {people} personne{people > 1 ? 's' : ''}</p>
+      <p>
+        {o.offerLabel}{o.place ? ` · ${o.place}` : ''} · {people} personne{people > 1 ? 's' : ''}
+        {o.isPublic === 1 && <> · <strong>publiée sur le site</strong>{o.capacity ? ` (${Math.max(0, o.capacity - people)} place${o.capacity - people > 1 ? 's' : ''} libre${o.capacity - people > 1 ? 's' : ''})` : ''}</>}
+      </p>
     </div>
     <span class:list={['badge', `badge--${badge}`]}>{OUTING_STATUS_LABEL[o.status]}</span>
   </div>
@@ -207,6 +212,7 @@ const badge = o.status === 'faite' ? 'confirmee' : o.status === 'annulee' ? 'ann
         <label for="notes">Notes</label>
         <textarea id="notes" name="notes" rows="3">{o.notes ?? ''}</textarea>
       </div>
+      <PublishFields isPublic={o.isPublic === 1} capacity={o.capacity} publicArea={o.publicArea} />
       <div><Button type="submit" variant="dark" icon="check">Enregistrer</Button></div>
     </form>
   </div>

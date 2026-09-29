@@ -1,0 +1,269 @@
+---
+/**
+ * « Prochaines sorties » : les sessions groupées publiées depuis l'admin (case « Publier sur le site »).
+ * Le site est statique, la liste vient de /api/sessions au chargement. Sans session publiée :
+ * le bloc reste caché, ou affiche `emptyText` s'il est fourni (page Offres).
+ * Chaque ligne mène au formulaire avec la session présélectionnée (?session=<id>).
+ */
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { formatPrice } from '@/lib/format';
+import { CTA_HREF } from '@/data/site';
+
+interface Props {
+  title?: string;
+  lead?: string;
+  emptyText?: string;
+  headingId?: string;
+}
+const {
+  title = 'Prochaines sorties en groupe',
+  lead = 'Des dates fixes, de 3 à 5 personnes. Tu viens seul ou à deux, le groupe se forme sur place.',
+  emptyText,
+  headingId = 'sorties-title',
+} = Astro.props;
+
+// Prix par personne en groupe, par offre (première ligne chiffrée « par personne »), pour l'afficher sur chaque date.
+const offers = await getCollection('offers', ({ filePath }) => filePath?.includes('/offers/fr/'));
+const prices = Object.fromEntries(
+  offers.map((o) => {
+    const p = o.data.pricing.find((l) => l.amountCents !== undefined && /personne/.test(l.label)) ?? o.data.pricing.find((l) => l.amountCents !== undefined);
+    return [o.data.slug, p?.amountCents !== undefined ? `${formatPrice(p.amountCents)} ${p.label.replace(/, en groupe$/, '')}` : ''];
+  }),
+);
+---
+
+<section class="upcoming" aria-labelledby={headingId} data-upcoming data-prices={JSON.stringify(prices)} data-cta={CTA_HREF} hidden={!emptyText}>
+  <div class="upcoming__head">
+    <span class="eyebrow">Dates ouvertes</span>
+    <h2 id={headingId}>{title}</h2>
+    <p class="muted">{lead}</p>
+  </div>
+
+  <ul class="upcoming__list" role="list" data-list aria-busy="true"></ul>
+  {emptyText && <p class="upcoming__empty small muted" data-empty hidden>{emptyText} <a href={CTA_HREF}>Écris-moi</a>.</p>}
+
+  <template data-row>
+    <li class="slot card">
+      <div class="slot__date">
+        <strong data-date></strong>
+        <span class="small muted" data-time></span>
+      </div>
+      <div class="slot__info">
+        <span class="slot__offer" data-offer></span>
+        <span class="small muted slot__meta">
+          <span class="slot__area" data-area><Icon name="pin" size={14} /><span data-area-text></span></span>
+          <span data-price></span>
+        </span>
+      </div>
+      <span class="slot__seats label-sm" data-seats></span>
+      <a class="slot__cta" data-cta>
+        <span>Demander une place</span>
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </li>
+  </template>
+</section>
+
+<script>
+  type Slot = {
+    id: string;
+    offerSlug: string;
+    offerLabel: string;
+    area: string | null;
+    seatsLeft: number | null;
+    dateLabel: string;
+    timeLabel: string;
+    full: boolean;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-upcoming]').forEach(async (root) => {
+    const list = root.querySelector<HTMLUListElement>('[data-list]');
+    const tpl = root.querySelector<HTMLTemplateElement>('[data-row]');
+    const empty = root.querySelector<HTMLElement>('[data-empty]');
+    if (!list || !tpl) return;
+    const prices = JSON.parse(root.dataset.prices ?? '{}') as Record<string, string>;
+    const cta = root.dataset.cta ?? '/contact/';
+
+    let sessions: Slot[] = [];
+    try {
+      const res = await fetch('/api/sessions', { headers: { Accept: 'application/json' } });
+      if (res.ok) sessions = ((await res.json()) as { sessions?: Slot[] }).sessions ?? [];
+    } catch {
+      /* hors ligne ou base indisponible : on garde le bloc tel quel */
+    }
+    list.removeAttribute('aria-busy');
+
+    if (!sessions.length) {
+      if (empty) empty.hidden = false;
+      return;
+    }
+
+    for (const s of sessions) {
+      const row = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const set = (sel: string, text: string) => {
+        const el = row.querySelector<HTMLElement>(sel);
+        if (el) el.textContent = text;
+      };
+      set('[data-date]', s.dateLabel.charAt(0).toUpperCase() + s.dateLabel.slice(1));
+      set('[data-time]', `Rendez-vous ${s.timeLabel}`);
+      set('[data-offer]', s.offerLabel.replace(/\s*\(.*\)$/, ''));
+      set('[data-price]', prices[s.offerSlug] ?? '');
+      if (s.area) set('[data-area-text]', s.area);
+      else row.querySelector('[data-area]')?.remove();
+
+      const seats = row.querySelector<HTMLElement>('[data-seats]');
+      if (seats) {
+        if (s.full) {
+          seats.textContent = 'Complet';
+          seats.dataset.state = 'full';
+        } else if (s.seatsLeft !== null) {
+          seats.textContent = s.seatsLeft === 1 ? 'Dernière place' : `${s.seatsLeft} places`;
+          if (s.seatsLeft <= 2) seats.dataset.state = 'few';
+        } else seats.remove();
+      }
+
+      const link = row.querySelector<HTMLAnchorElement>('[data-cta]');
+      if (link) {
+        if (s.full) link.remove();
+        else {
+          link.href = `${cta}?session=${encodeURIComponent(s.id)}#demande`;
+          link.setAttribute('aria-label', `Demander une place, ${s.dateLabel}, ${s.offerLabel}`);
+          link.dataset.track = 'clic-session-datee';
+        }
+      }
+      list.append(row);
+    }
+    if (empty) empty.hidden = true;
+    root.hidden = false;
+  });
+</script>
+
+<style>
+  .upcoming {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .upcoming[hidden] {
+    display: none;
+  }
+
+  .upcoming__head {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    max-width: 40rem;
+  }
+
+  .upcoming__list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .upcoming__list:empty {
+    display: none;
+  }
+
+  .upcoming__empty a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  .slot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-3) var(--space-4);
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .slot__date {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .slot__date strong {
+    color: var(--green-900);
+    font-size: var(--body-lg);
+  }
+
+  .slot__info {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .slot__offer {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .slot__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+  }
+
+  .slot__area {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .slot__seats {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-low);
+    border: var(--border);
+    color: var(--green-600);
+    white-space: nowrap;
+  }
+
+  .slot__seats[data-state='few'] {
+    background: var(--lime-soft);
+    border-color: var(--lime);
+    color: var(--green-900);
+  }
+
+  .slot__seats[data-state='full'] {
+    color: var(--ink-3);
+  }
+
+  .slot__cta {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: var(--tap-min);
+    padding: 0.6em 1.2em;
+    border-radius: var(--radius-pill);
+    background: var(--deep);
+    color: var(--on-dark);
+    font-size: var(--label);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (min-width: 48em) {
+    .slot {
+      grid-template-columns: 13rem minmax(0, 1fr) auto auto;
+    }
+
+    .slot__info {
+      grid-column: 2;
+    }
+
+    .slot__seats {
+      grid-column: 3;
+    }
+
+    .slot__cta {
+      grid-column: 4;
+    }
+  }
+</style>

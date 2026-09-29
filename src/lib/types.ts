@@ -27,7 +27,7 @@ export interface SessionRequest {
   email: string;
   phone?: string;
   offerSlug: string;
-  /** Réservé v2 : identifiant d'une session datée. Toujours null en v1. */
+  /** Sortie groupée publiée (outings.id) sur laquelle une place est demandée, sinon null. */
   sessionId: string | null;
   groupSize: number;
   preferredPeriod: string;

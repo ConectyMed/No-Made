@@ -17,6 +17,7 @@ import HeroVideo from '@/components/HeroVideo.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import Quote from '@/components/Quote.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import UpcomingSessions from '@/components/UpcomingSessions.astro';
 import { usePage, t } from '@/i18n';
 import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
 import { formatPrice } from '@/lib/format';
@@ -38,11 +39,14 @@ const soloPrice = entry?.data.pricing.find((p) => p.amountCents === undefined);
 const reconnex = offers.find((o) => o.data.slug === 'reconnexion-parent-enfant');
 const duoPrice = reconnex?.data.pricing[0];
 
-// Bandeau de repères du hero : uniquement des données du site (durées des offres, visio), rien d'inventé.
+// Bandeau de repères du hero : uniquement des données du site (durées et prix des offres), rien d'inventé.
+// La visio a déjà sa ligne sous les boutons : sa tuile laisse la place au prix d'entrée.
 const facts: { value: string; label: string; accent?: boolean }[] = [
   { value: entry?.data.duration ?? '2h30', label: 'Session corps / aventure, en solo ou en groupe' },
   { value: reconnex?.data.duration ?? '3h', label: 'Reconnexion parent / enfant' },
-  { value: site.visio.duration.replace('minutes', 'min'), label: 'En visio, gratuites, avant de réserver' },
+  groupPrice?.amountCents !== undefined
+    ? { value: `dès ${formatPrice(groupPrice.amountCents)}`, label: 'Par personne, en groupe · tarif de lancement' }
+    : { value: site.visio.duration.replace('minutes', 'min'), label: 'En visio, gratuites, avant de réserver' },
   { value: '0 écran', label: 'Le téléphone reste dans le sac', accent: true },
 ];
 
@@ -76,7 +80,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
   {
     icon: 'leaf',
     title: 'Redécouvrir ce qui t’entoure',
-    text: 'Les sentiers, la garrigue, les collines à vingt minutes de chez toi. On les regarde rarement. On va les parcourir.',
+    text: 'Les calanques, la garrigue, les collines de l’Esterel ou du golfe, souvent à vingt minutes de chez toi. On les regarde rarement. On va les parcourir.',
     foot: '04 / Nature',
   },
 ];
@@ -267,13 +271,14 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           <p class="lead">Trois heures dehors, à deux. On marche, on bouge ensemble, et on prend le temps de parler.</p>
           <ul class="checks" role="list">
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Sans pression :</strong> des exercices simples, à ton rythme et au sien.</span></li>
+            <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Encadré de près :</strong> sentiers choisis pour l’âge de ton enfant, sortie reportée si la météo tourne. <a href="/encadrement/">Comment je prépare chaque sortie</a>.</span></li>
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Téléphones dans le sac :</strong> l’attention va à l’autre et au sentier.</span></li>
             <li><span class="checks__dot"><Icon name="check" size={14} /></span><span><strong>Un vrai temps à deux :</strong> loin de la maison, loin des écrans.</span></li>
           </ul>
           <div class="reconnex__cta">
             <Button href={`/contact/?offre=${reconnex?.data.slug ?? ''}#demande`} variant="dark" icon="arrow-right">Demander une session Reconnexion</Button>
             {duoPrice?.amountCents !== undefined && (
-              <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · prix de test</span>
+              <span class="label-sm muted">{formatPrice(duoPrice.amountCents)} {duoPrice.label} · tarif de lancement</span>
             )}
           </div>
         </div>
@@ -290,7 +295,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
       </div>
       <ol class="steps" role="list">
         {[
-          { t: 'Tu m’écris', d: 'Le formulaire ci-dessous : la session qui t’intéresse, seul ou à plusieurs, tes disponibilités. Ou un créneau visio, si tu préfères en parler d’abord.' },
+          { t: 'Tu m’écris', d: 'Le formulaire ci-dessous : la session qui t’intéresse, seul ou à plusieurs. Deux minutes, pas plus. Ou un créneau visio, si tu préfères en parler d’abord.' },
           { t: 'On cale une date', d: 'Je te réponds par email. On regarde ensemble le lieu, l’heure et ce qu’il faut prévoir.' },
           { t: 'On se retrouve dehors', d: 'Chaussures fermées, de l’eau dans le sac. Le téléphone reste dedans, le reste suit.' },
         ].map((s, i) => (
@@ -305,6 +310,13 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     </div>
   </section>
 
+  <!-- 5 bis. Prochaines sorties en groupe (sessions publiées depuis l'admin ; bloc caché s'il n'y en a pas) -->
+  <div class="section section--tight upcoming-wrap">
+    <div class="container">
+      <UpcomingSessions headingId="sorties-accueil" />
+    </div>
+  </div>
+
   <!-- 6. Prix -->
   {entry && groupPrice && groupPrice.amountCents !== undefined && (
     <section class="section section--tight" id="prix" aria-labelledby="prix-title">
@@ -313,7 +325,7 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
           <div class="price__glow" aria-hidden="true"></div>
           <div class="price__grid">
             <div class="price__text">
-              <span class="price__pill label-sm">Prix de test</span>
+              <span class="price__pill label-sm">Tarif de lancement</span>
               <h3 id="prix-title" class="price__title">{entry.data.title} : {entry.data.duration}, en solo ou en petit groupe</h3>
               <p class="price__desc">{entry.data.summary}</p>
               <a href={VISIO_HREF} class="price__link label-sm">{VISIO_LABEL} avant de te décider</a>
@@ -845,6 +857,16 @@ const pillars: { icon: IconName; title: string; text: string; foot: string }[] =
     gap: var(--space-3);
     align-items: flex-start;
     color: var(--ink-2);
+  }
+
+  .checks a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  /* Pas de sortie publiée : le bloc reste caché, son espacement aussi. */
+  .upcoming-wrap:has(> .container > [data-upcoming][hidden]) {
+    display: none;
   }
 
   .checks strong {

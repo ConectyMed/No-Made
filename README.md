@@ -26,6 +26,8 @@ Node 22 ou plus récent.
 | Une offre, un prix | `src/content/offers/fr/*.md` |
 | Le prénom, le lien de réservation visio (Cal.com), la phrase du pied de page, l'interrupteur des avis | `src/data/site.ts` |
 | Un avis de participant (avec son accord) | `src/content/testimonials/fr/*.md`, modèle `_modele.md` ; placé dans la page par `<Quote who="…" />` dans `src/pages/index.astro` |
+| Une sortie groupée datée (« Prochaines sorties ») | `/admin/sessions` : créer la session, cocher « Publier sur le site », places et zone |
+| La zone (Marseille, Cannes, Saint-Tropez) | `src/data/site.ts` (`zone`, `places`) |
 | Une page | `src/pages/<nom>.astro` |
 | L'en-tête, le pied de page, un bouton | `src/components/` |
 | La police (Plus Jakarta Sans) | `public/fonts/` + `@font-face` dans `src/styles/global.css` |

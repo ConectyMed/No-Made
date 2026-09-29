@@ -96,6 +96,12 @@ export const outings = sqliteTable(
     /** Montant encaissé pour la session, prérempli d'après l'offre, modifiable. */
     amountCents: integer('amount_cents').notNull().default(0),
     notes: text('notes'),
+    /** 1 : session groupée affichée sur le site (« Prochaines sorties »), on peut y demander une place. */
+    isPublic: integer('is_public').notNull().default(0),
+    /** Places au total pour une session publiée (participants compris). */
+    capacity: integer('capacity'),
+    /** Zone affichée publiquement (ex. « Calanques, Marseille ») ; le lieu exact reste privé, envoyé par email. */
+    publicArea: text('public_area'),
     doneAt: integer('done_at'),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),

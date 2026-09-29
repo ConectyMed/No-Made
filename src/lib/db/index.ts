@@ -3,6 +3,7 @@
  * fichier SQLite local sinon (data/dev.db, ignoré par git).
  * Les migrations sont embarquées et appliquées une fois par démarrage, avant la première requête.
  */
+import { mkdirSync } from 'node:fs';
 import { createClient, type Client } from '@libsql/client';
 import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
 import * as schema from './schema';
@@ -22,6 +23,7 @@ function connect(): Client {
   if (import.meta.env.PROD && process.env.VERCEL) {
     throw new Error('TURSO_DATABASE_URL manquante : la base n’est pas configurée sur Vercel.');
   }
+  mkdirSync('./data', { recursive: true }); // libsql ne crée pas le dossier d'un fichier local
   return createClient({ url: 'file:./data/dev.db' });
 }
 

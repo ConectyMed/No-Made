@@ -5,14 +5,14 @@ import { site, nav, legalLinks } from '@/data/site';
 import { t } from '@/i18n';
 
 const year = new Date().getFullYear();
-const links = [...nav.filter((n) => n.href !== '/'), ...legalLinks];
+const links = [...nav.filter((n) => n.href !== '/'), { href: '/encadrement/', label: 'Encadrement et sécurité' }, ...legalLinks];
 ---
 
 <footer class="footer">
   <div class="container footer__top">
     <div class="footer__brand">
       <a href="/" class="footer__name" aria-label={t('common.home')}>{site.name}</a>
-      <p class="small muted">{site.tagline} Région {site.area}.</p>
+      <p class="small muted">{site.tagline} {site.zone.charAt(0).toUpperCase() + site.zone.slice(1)}.</p>
     </div>
 
     <nav aria-label={t('common.footerNav')}>

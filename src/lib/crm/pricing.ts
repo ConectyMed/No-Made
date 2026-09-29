@@ -1,6 +1,6 @@
 /**
  * Montant suggéré pour une session, d'après l'offre et le nombre de personnes.
- * Toujours modifiable à la main : les prix sont en phase de test et le tarif solo n'existe pas encore.
+ * Toujours modifiable à la main : les prix sont des tarifs de lancement et le tarif solo n'existe pas encore.
  */
 import { getCollection } from 'astro:content';
 

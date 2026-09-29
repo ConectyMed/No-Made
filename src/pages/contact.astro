@@ -1,19 +1,18 @@
 ---
-/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug), rendez-vous visio, FAQ. */
+/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug ou ?session=id), rendez-vous visio, FAQ. */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import ContactForm from '@/components/ContactForm.astro';
 import VisioBooking from '@/components/VisioBooking.astro';
-import Placeholder from '@/components/Placeholder.astro';
 import { usePage } from '@/i18n';
 import { site } from '@/data/site';
 
 const page = usePage('contact');
 
-const faq = [
+const faq: { q: string; a: string; link?: { href: string; label: string } }[] = [
   {
     q: 'Où ont lieu les sessions ?',
-    a: `En région ${site.area}, sur des sentiers que je choisis selon la saison, ton niveau et le groupe. Le point de rendez-vous exact est précisé par email une fois la date calée.`,
+    a: `Autour de ${site.zone.replace(' et alentours', '')}, et alentours, sur des sentiers que je choisis selon la saison, ton niveau et le groupe. Le point de rendez-vous exact est précisé par email une fois la date calée.`,
   },
   {
     q: 'Faut-il être sportif ?',
@@ -21,7 +20,7 @@ const faq = [
   },
   {
     q: 'Peut-on venir seul ?',
-    a: 'Oui. L’Expérience corps / aventure existe en solo, avec un accompagnement personnalisé, ou en petit groupe de trois à cinq. La Reconnexion se fait en duo parent / enfant, ou à quatre.',
+    a: 'Oui, de deux façons. En solo, c’est une session rien qu’avec moi, construite pour toi. Ou tu rejoins une sortie groupée déjà datée (de trois à cinq personnes), même seul : les dates ouvertes sont sur la page Offres. La Reconnexion se fait en duo parent / enfant, ou à quatre.',
   },
   {
     q: 'Et si je veux en parler avant de réserver ?',
@@ -33,7 +32,12 @@ const faq = [
   },
   {
     q: 'Et s’il pleut ?',
-    a: null, // politique météo / annulation à définir
+    a: 'On regarde la météo ensemble la veille. Si des intempéries sont annoncées, tu choisis : on maintient si les conditions le permettent, ou on reporte à une autre date, sans frais. En cas de danger (orage, vent violent, risque incendie), je reporte.',
+  },
+  {
+    q: 'Qui encadre, et est-ce que c’est sûr ?',
+    a: 'C’est moi qui encadre chaque session, en personne. Je choisis les sentiers selon le niveau et l’âge de chacun, et je prépare chaque sortie. Tout est détaillé sur la page Encadrement et sécurité.',
+    link: { href: '/encadrement/', label: 'Encadrement et sécurité' },
   },
   {
     q: 'Qu’est-ce qu’il faut apporter ?',
@@ -71,7 +75,8 @@ const faq = [
           <details class="faq__item card">
             <summary class="faq__q">{item.q}</summary>
             <p class="faq__a muted">
-              {item.a ?? <><Placeholder name="CONDITIONS MÉTÉO ET ANNULATION" /> (à définir dans les CGV).</>}
+              {item.a}
+              {item.link && <> <a href={item.link.href}>{item.link.label}</a>.</>}
             </p>
           </details>
         ))}
@@ -79,12 +84,6 @@ const faq = [
     </div>
   </section>
 
-  <script>
-    // Pré-sélection de l'offre depuis l'URL (?offre=slug), sans rendu serveur.
-    const slug = new URLSearchParams(location.search).get('offre');
-    const select = document.querySelector<HTMLSelectElement>('#demande-offer');
-    if (slug && select && [...select.options].some((o) => o.value === slug)) select.value = slug;
-  </script>
 </Base>
 
 <style>
@@ -143,6 +142,11 @@ const faq = [
 
   .faq__item[open] .faq__q::after {
     transform: rotate(45deg);
+  }
+
+  .faq__a a {
+    color: var(--green-600);
+    font-weight: 600;
   }
 
   .faq__a {

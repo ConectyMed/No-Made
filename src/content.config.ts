@@ -32,7 +32,7 @@ const offers = defineCollection({
     duration: z.string(),
     groupSize: z.string(),
     pricing: z.array(price).min(1),
-    /** "Prix de test, susceptibles de changer" : affiché tant que true. */
+    /** "Tarif de lancement, susceptible d’évoluer" : affiché tant que true. */
     testPrice: z.boolean().default(true),
     forWhom: z.string(),
     includes: z.array(z.string()).min(1),

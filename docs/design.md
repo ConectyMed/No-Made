@@ -100,11 +100,11 @@ eyebrows / links lime-dim, glass `rgba(18,26,21,.78)`, hairlines white at 8 % / 
 
 ## 4. Nav
 
-Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: toggle, mail icon, burger.
+Right side, in order: theme toggle (icon only, discreet), then the CTA. Mobile: short brand under 26em, toggle, a labelled « Demander » pill (not a mail icon), burger.
 
 Floating pill fixed 1rem from the top, 92% wide, max 80rem, white at 80% with blur, hairline border.
 Left: lime dot + "Nó Made Project". Centre (desktop): Accueil, Offres, À propos, Contact.
-Right: CTA pill in green-800 with an arrow. Mobile: brand, CTA icon, burger opening a full-screen panel
+Right: CTA pill in green-800 with an arrow. Mobile: brand, « Demander » pill, burger opening a full-screen panel
 with large links and the CTA. Escape closes, focus managed.
 
 ## 5. Hero
@@ -146,7 +146,7 @@ Split layout (v3, 2026-09-28), on a light frame: text left, media right, floatin
    "Format parent / enfant", headline-xl, lead, three check bullets, CTA + real price note.
 5. **Déroulement** — centred label + headline, three cards with big faded numbers: Tu m'écris ·
    On cale une date · On se retrouve dehors.
-6. **Prix** — deep-green banner: label "Prix de test", the entry offer, its group price large in lime, the
+6. **Prix** — deep-green banner: label "Tarif de lancement", the entry offer, its group price large in lime, the
    solo price as a placeholder until known, CTA, link to /offres, link to the visio block.
 7. **Contact** — centred intro and the request form in a white card (see §8).
 8. **Footer** — tinted, rounded top: brand + one line, link row (Offres, À propos, Contact, Mentions
@@ -223,7 +223,7 @@ Turnstile dormant behind env keys. No payment.
 ## 11. Tech (unchanged decisions)
 
 Astro, static output, plain CSS tokens, no UI framework. Adapter: Vercel, swappable for Netlify or
-Cloudflare Pages. Self-hosted font. No analytics, no cookies, no banner. Offers in Markdown with a
+Cloudflare Pages. Self-hosted font. Cookieless audience measurement only (Vercel Web Analytics via `<Analytics />` from `@vercel/analytics/astro` in Base.astro, public pages, plus click events on the request and visio CTAs via `src/lib/track.ts`), no cookies, no banner. Offers in Markdown with a
 validated schema; prices in integer cents. `Session` type reserved for v2. Production build fails while
 any [PLACEHOLDER] remains (override for previews).
 
@@ -293,3 +293,18 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
 - [x] Hosting: Vercel (Hobby during development, paid plan at the official launch). Public email during development: nomadeproject@outlook.fr; the domain, its `contact@` forward and DNS come later.
 - [ ] Legal identity (name, SIRET, address, VAT), insurer, mediator, cancellation and weather policy
 - [ ] Future languages
+
+## Conversion pass (2026-09-29)
+
+- Zone named everywhere: Marseille, Cannes, Saint-Tropez et alentours (`site.zone`, `site.places`).
+- Solo means one-to-one with Anthony. Groups of 3–5 run on dated sessions published from the admin
+  (« Publier sur le site » on a session: capacity, public area; the exact meeting point stays private).
+  They show in « Prochaines sorties » (home, /offres) via `/api/sessions`, and « Demander une place »
+  opens the form with `?session=<id>`.
+- Request form: session, number of people (select 1–5), name, email required; period, phone, message
+  optional; no consent checkbox (art. 6.1.b, a notice under the button). Turnstile widget rendered when
+  `PUBLIC_TURNSTILE_SITE_KEY` is set; the server only enforces it when both keys exist.
+- « Prix de test » becomes « Tarif de lancement ». Hero facts: 2h30 · 3h · dès 30 € · 0 écran.
+- New page /encadrement/ (who supervises, preparation, weather, parent / child, insurance), linked from
+  the footer, the Reconnexion block, /offres and the FAQ. Weather: chosen together, keep or postpone, free.
+

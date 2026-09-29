@@ -6,6 +6,7 @@
 import Seo from '@/components/Seo.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import Analytics from '@vercel/analytics/astro';
 import { t } from '@/i18n';
 import '@/styles/global.css';
 
@@ -36,6 +37,8 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
       })();
     </script>
     <slot name="head" />
+    <!-- Mesure d'audience Vercel Web Analytics (sans cookie), pages publiques seulement : l'admin a son propre layout. -->
+    <Analytics />
   </head>
   <body class={bodyClass}>
     <a href="#contenu" class="skip-link">{t('common.skipToContent')}</a>
@@ -46,6 +49,9 @@ const { title, description, image, isHome = false, noindex = false, bodyClass } 
     <Footer />
 
     <script>
+      import { trackClicks } from '@/lib/track';
+      trackClicks();
+
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
       if (!reduce && items.length && 'IntersectionObserver' in window) {
