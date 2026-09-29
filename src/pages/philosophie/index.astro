@@ -40,6 +40,9 @@ const dateLabel = (ms: number | null) => (ms ? formatDateLong(ms).replace(/^\S+ 
           <ul class="posts" role="list">
             {articles.map((a, i) => (
               <li class="post card card--hover" data-reveal style={`--reveal-delay: ${Math.min(i, 4) * 70}ms`}>
+                {a.coverId && (
+                  <img class="post__cover" src={`/photos/${a.coverId}`} alt="" loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
+                )}
                 <p class="post__meta label-sm">
                   <time datetime={a.publishedAt ? new Date(a.publishedAt).toISOString() : undefined}>{dateLabel(a.publishedAt)}</time>
                   <span aria-hidden="true">·</span>
@@ -86,6 +89,20 @@ const dateLabel = (ms: number | null) => (ms ? formatDateLong(ms).replace(/^\S+ 
     gap: var(--space-3);
     align-content: start;
     padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  }
+
+  /* Décorative dans la liste (le titre porte le lien) : alt vide ; la description sert sur la page de l'article. */
+  .post__cover {
+    display: block;
+    width: calc(100% + 2 * clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem));
+    max-width: none;
+    margin: calc(-1 * clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem)) calc(-1 * clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem)) var(--space-2);
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    background: var(--surface-low);
   }
 
   .post__meta {

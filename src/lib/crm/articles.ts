@@ -5,6 +5,7 @@
 import { and, desc, eq, ne } from 'drizzle-orm';
 import { getDb, schema } from '../db';
 import { ARTICLE_STATUSES, type Article, type ArticleStatus } from '../db/schema';
+import { deleteUnusedMedia, mediaIdsOf } from './media';
 
 const now = () => Date.now();
 
@@ -48,6 +49,9 @@ export interface ArticleInput {
   excerpt: string;
   body: string;
   status: ArticleStatus;
+  /** Photo de couverture (id de la table media) et sa description ; vides = pas de couverture. */
+  coverId: string;
+  coverAlt: string;
 }
 
 /** Lit le formulaire de l'admin. Renvoie une erreur lisible si le titre manque. */
@@ -59,6 +63,8 @@ export function readArticleForm(form: FormData): { input: ArticleInput; error: s
     excerpt: String(form.get('excerpt') ?? '').trim().slice(0, 400),
     body: String(form.get('body') ?? '').slice(0, 100_000),
     status: isArticleStatus(status) ? status : 'brouillon',
+    coverId: /^[0-9a-f-]{36}$/.test(String(form.get('coverId') ?? '')) ? String(form.get('coverId')) : '',
+    coverAlt: String(form.get('coverAlt') ?? '').trim().slice(0, 200),
   };
   let error: string | null = null;
   if (!input.title) error = 'Il faut un titre.';
@@ -77,6 +83,8 @@ export async function createArticle(input: ArticleInput): Promise<string> {
     excerpt: input.excerpt || null,
     body: input.body,
     status: input.status,
+    coverId: input.coverId || null,
+    coverAlt: input.coverId ? input.coverAlt || null : null,
     publishedAt: input.status === 'publie' ? t : null,
     createdAt: t,
     updatedAt: t,
@@ -96,15 +104,22 @@ export async function updateArticle(id: string, input: ArticleInput): Promise<vo
       excerpt: input.excerpt || null,
       body: input.body,
       status: input.status,
+      coverId: input.coverId || null,
+      coverAlt: input.coverId ? input.coverAlt || null : null,
       publishedAt: input.status === 'publie' ? (current.publishedAt ?? now()) : current.publishedAt,
       updatedAt: now(),
     })
     .where(eq(schema.articles.id, id));
+  // Photos retirées du texte ou couverture remplacée : on les efface si plus rien ne s'en sert.
+  const kept = new Set(mediaIdsOf({ body: input.body, coverId: input.coverId || null }));
+  await deleteUnusedMedia(mediaIdsOf(current).filter((m) => !kept.has(m)));
 }
 
 export async function deleteArticle(id: string): Promise<void> {
   const db = await getDb();
+  const current = await getArticle(id);
   await db.delete(schema.articles).where(eq(schema.articles.id, id));
+  if (current) await deleteUnusedMedia(mediaIdsOf(current));
 }
 
 export async function getArticle(id: string): Promise<Article | null> {

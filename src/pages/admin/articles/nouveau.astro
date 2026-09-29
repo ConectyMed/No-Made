@@ -7,7 +7,7 @@ import { createArticle, readArticleForm, type ArticleInput } from '@/lib/crm/art
 export const prerender = false;
 
 let error: string | null = null;
-let v: ArticleInput = { title: '', slug: '', excerpt: '', body: '', status: 'brouillon' };
+let v: ArticleInput = { title: '', slug: '', excerpt: '', body: '', status: 'brouillon', coverId: '', coverAlt: '' };
 
 if (Astro.request.method === 'POST') {
   const read = readArticleForm(await Astro.request.formData());

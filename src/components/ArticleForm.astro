@@ -1,9 +1,12 @@
 ---
 /**
  * Formulaire d'article de l'admin (nouveau et modification) : titre, chapô, texte en Markdown simple
- * avec aperçu en direct (même rendu que le site, src/lib/markdown.ts), adresse, brouillon ou publié.
+ * avec aperçu en direct (même rendu que le site, src/lib/markdown.ts), photos, adresse, brouillon ou publié.
+ * Photos : réduites dans le navigateur (1400 px de côté au plus, WebP sinon JPEG), envoyées à /admin/api/photos,
+ * puis soit posées en couverture (champ caché coverId), soit insérées dans le texte (![légende](/photos/<id>)).
  */
 import Button from './Button.astro';
+import Icon from './Icon.astro';
 import type { ArticleInput } from '@/lib/crm/articles';
 
 interface Props {
@@ -31,7 +34,14 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
 
     <div class="aform__write">
       <div class="adm-field">
-        <label for="body">Texte</label>
+        <div class="aform__bodyhead">
+          <label for="body">Texte</label>
+          <button type="button" class="aform__tool" data-insert-photo>
+            <Icon name="camera" size={16} /> Insérer une photo
+          </button>
+          <input type="file" accept="image/*" hidden data-insert-file />
+        </div>
+        <p class="small aform__status-msg" data-insert-status role="status"></p>
         <textarea id="body" name="body" rows="22" data-md-input>{v.body}</textarea>
         <details class="aform__help small">
           <summary>Mise en forme</summary>
@@ -42,6 +52,7 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
             <li><code>- </code> en début de ligne : liste à puces ; <code>1. </code> : liste numérotée</li>
             <li><code>&gt; </code> en début de ligne : citation</li>
             <li><code>[le texte](https://le-lien.fr)</code>, ou <code>[mes sessions](/experiences/)</code></li>
+            <li>Photo : bouton « Insérer une photo », là où est le curseur. Remplace « Légende de la photo » par ta légende, ou efface-la (laisse <code>![]</code>) pour une photo sans légende.</li>
           </ul>
         </details>
       </div>
@@ -65,6 +76,25 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
       </label>
     </fieldset>
 
+    <div class="adm-field aform__cover" data-cover>
+      <span class="adm-label">Photo de couverture <span class="muted">(facultatif)</span></span>
+      <input type="hidden" name="coverId" value={v.coverId} data-cover-id />
+      <img class="aform__cover-img" src={v.coverId ? `/photos/${v.coverId}` : undefined} alt="" hidden={!v.coverId} data-cover-img />
+      <div class="aform__cover-actions">
+        <button type="button" class="aform__tool" data-cover-pick>
+          <Icon name="camera" size={16} /> <span data-cover-pick-label>{v.coverId ? 'Changer' : 'Choisir une photo'}</span>
+        </button>
+        <button type="button" class="aform__tool aform__tool--quiet" data-cover-remove hidden={!v.coverId}>Retirer</button>
+        <input type="file" accept="image/*" hidden data-cover-file />
+      </div>
+      <p class="small aform__status-msg" data-cover-status role="status"></p>
+      <div class="adm-field" data-cover-alt-wrap hidden={!v.coverId}>
+        <label for="coverAlt" class="small">Ce qu’on voit sur la photo</label>
+        <input id="coverAlt" name="coverAlt" type="text" maxlength="200" value={v.coverAlt} placeholder="Ex. Un sentier au-dessus de la mer, au lever du jour" />
+        <span class="small muted">Lu à voix haute aux personnes malvoyantes, et utile pour Google.</span>
+      </div>
+    </div>
+
     <div class="adm-field">
       <label for="slug">Adresse <span class="muted">(facultatif)</span></label>
       <input id="slug" name="slug" type="text" maxlength="80" value={v.slug} placeholder="tirée du titre" />
@@ -80,6 +110,64 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
 <script>
   import { renderMarkdown } from '@/lib/markdown';
 
+  const MAX_SIDE = 1400;
+
+  /** Réduit la photo (1400 px de côté au plus) et la réencode en WebP, ou JPEG si le navigateur ne sait pas. */
+  async function shrink(file: File): Promise<{ blob: Blob; width: number; height: number }> {
+    try {
+      const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+      const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+      const width = Math.round(bitmap.width * scale);
+      const height = Math.round(bitmap.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d')?.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close();
+      const encode = (type: string, q: number) => new Promise<Blob | null>((r) => canvas.toBlob(r, type, q));
+      let blob = await encode('image/webp', 0.8);
+      if (!blob || blob.type !== 'image/webp') blob = await encode('image/jpeg', 0.85);
+      if (blob) return { blob, width, height };
+    } catch {
+      /* format que le navigateur ne sait pas lire : on tente l'original */
+    }
+    return { blob: file, width: 0, height: 0 };
+  }
+
+  /** Envoie une photo et renvoie son id. `say` affiche l'avancement ou l'erreur. */
+  async function upload(file: File, say: (msg: string, error?: boolean) => void): Promise<string | null> {
+    if (!file.type.startsWith('image/')) {
+      say('Ce fichier n’est pas une photo.', true);
+      return null;
+    }
+    say('Préparation de la photo…');
+    const { blob, width, height } = await shrink(file);
+    const fd = new FormData();
+    fd.append('file', blob, 'photo');
+    fd.append('width', String(width));
+    fd.append('height', String(height));
+    say('Envoi…');
+    try {
+      const res = await fetch('/admin/api/photos', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+      const data = (await res.json().catch(() => ({}))) as { id?: string; error?: string };
+      if (!res.ok || !data.id) {
+        say(data.error ?? 'L’envoi a échoué. Es-tu toujours connecté ? Recharge la page et réessaie.', true);
+        return null;
+      }
+      say('');
+      return data.id;
+    } catch {
+      say('Pas de connexion. Réessaie dans un instant.', true);
+      return null;
+    }
+  }
+
+  const sayIn = (el: HTMLElement | null) => (msg: string, error = false) => {
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('is-error', error);
+  };
+
   const input = document.querySelector<HTMLTextAreaElement>('[data-md-input]');
   const preview = document.querySelector<HTMLElement>('[data-md-preview]');
   if (input && preview) {
@@ -94,6 +182,64 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
       timer = window.setTimeout(render, 150);
     });
   }
+
+  // Insérer une photo dans le texte, à l'endroit du curseur, avec la légende sélectionnée pour être tapée par-dessus.
+  const insertBtn = document.querySelector<HTMLButtonElement>('[data-insert-photo]');
+  const insertFile = document.querySelector<HTMLInputElement>('[data-insert-file]');
+  const insertSay = sayIn(document.querySelector('[data-insert-status]'));
+  insertBtn?.addEventListener('click', () => insertFile?.click());
+  insertFile?.addEventListener('change', async () => {
+    const file = insertFile.files?.[0];
+    insertFile.value = '';
+    if (!file || !input) return;
+    insertBtn!.disabled = true;
+    const id = await upload(file, insertSay);
+    insertBtn!.disabled = false;
+    if (!id) return;
+    const caption = 'Légende de la photo';
+    const start = input.selectionStart ?? input.value.length;
+    const before = input.value.slice(0, start).replace(/\s*$/, '');
+    const after = input.value.slice(input.selectionEnd ?? start).replace(/^\s*/, '');
+    const block = `![${caption}](/photos/${id})`;
+    const head = before ? `${before}\n\n` : '';
+    input.value = `${head}${block}${after ? `\n\n${after}` : '\n\n'}`;
+    input.focus();
+    input.setSelectionRange(head.length + 2, head.length + 2 + caption.length);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  // Photo de couverture.
+  const coverId = document.querySelector<HTMLInputElement>('[data-cover-id]');
+  const coverImg = document.querySelector<HTMLImageElement>('[data-cover-img]');
+  const coverPick = document.querySelector<HTMLButtonElement>('[data-cover-pick]');
+  const coverPickLabel = document.querySelector<HTMLElement>('[data-cover-pick-label]');
+  const coverRemove = document.querySelector<HTMLButtonElement>('[data-cover-remove]');
+  const coverFile = document.querySelector<HTMLInputElement>('[data-cover-file]');
+  const coverAltWrap = document.querySelector<HTMLElement>('[data-cover-alt-wrap]');
+  const coverSay = sayIn(document.querySelector('[data-cover-status]'));
+  const setCover = (id: string) => {
+    if (coverId) coverId.value = id;
+    if (coverImg) {
+      coverImg.hidden = !id;
+      if (id) coverImg.src = `/photos/${id}`;
+      else coverImg.removeAttribute('src');
+    }
+    if (coverRemove) coverRemove.hidden = !id;
+    if (coverAltWrap) coverAltWrap.hidden = !id;
+    if (coverPickLabel) coverPickLabel.textContent = id ? 'Changer' : 'Choisir une photo';
+    coverId?.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+  coverPick?.addEventListener('click', () => coverFile?.click());
+  coverRemove?.addEventListener('click', () => setCover(''));
+  coverFile?.addEventListener('change', async () => {
+    const file = coverFile.files?.[0];
+    coverFile.value = '';
+    if (!file) return;
+    coverPick!.disabled = true;
+    const id = await upload(file, coverSay);
+    coverPick!.disabled = false;
+    if (id) setCover(id);
+  });
 
   // Quitter la page avec des changements non enregistrés : on prévient.
   const form = document.querySelector<HTMLFormElement>('.aform');
@@ -133,6 +279,74 @@ const { value: v, submitLabel, currentSlug } = Astro.props;
 
   .aform__help {
     color: var(--ink-2);
+  }
+
+  .aform__bodyhead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .aform__tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0 0.9rem;
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--green-900);
+    font-size: var(--label-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .aform__tool:hover {
+    border-color: var(--green-600);
+  }
+
+  .aform__tool:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .aform__tool--quiet {
+    border-color: transparent;
+    color: var(--danger);
+  }
+
+  .aform__status-msg:empty {
+    display: none;
+  }
+
+  .aform__status-msg {
+    color: var(--green-600);
+  }
+
+  .aform__status-msg:global(.is-error) {
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  .aform__cover-img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: var(--border);
+  }
+
+  .aform__cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  [hidden] {
+    display: none !important;
   }
 
   .aform__help summary {

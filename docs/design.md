@@ -319,5 +319,10 @@ site administrator, who changes the files (decided 2026-09-28; the Keystatic ste
   is set on first publish. Rendered on demand, CDN cache 60 s. Body in a small Markdown subset
   (`src/lib/markdown.ts`: everything is HTML-escaped first; headings, lists, quotes, bold, italic, http(s),
   mailto and site-relative links). The admin editor shows a live preview with the same renderer.
-- Not yet: images in articles (would need file storage, e.g. Vercel Blob), individual articles in the
-  sitemap (only /philosophie/ is listed), RSS.
+- Photos (migration 0004): stored in the database (`media` table, blob), no file service to set up. The admin
+  shrinks them in the browser (1400 px long side, WebP q0.8, JPEG fallback) and posts them to
+  `/admin/api/photos` (type checked on the first bytes: JPEG, PNG, WebP; 4 MB max). Served by `/photos/<id>`
+  with a one-year immutable cache. Cover (`cover_id`, `cover_alt`): article header, list card, og:image.
+  Inline: `![caption](/photos/<id>)` alone on a line, only site photos accepted. Photos no article uses any
+  more are deleted on save and on article deletion.
+- Not yet: individual articles in the sitemap (only /philosophie/ is listed), RSS.

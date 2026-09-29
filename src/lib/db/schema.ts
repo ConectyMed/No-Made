@@ -5,9 +5,10 @@
  *  - requests : les demandes du formulaire, avec statut et notes (mini CRM).
  *  - outings, participants : les sessions planifiées et qui y participe (étape 2).
  *  - articles : les textes de la page « Ma philosophie », écrits depuis l'admin.
+ *  - media : les photos des articles, réduites dans le navigateur avant l'envoi, servies par /photos/<id>.
  * Dates en millisecondes depuis l'epoch, montants en centimes.
  */
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index, blob } from 'drizzle-orm/sqlite-core';
 
 export const REQUEST_STATUSES = ['nouvelle', 'repondue', 'confirmee', 'annulee'] as const;
 export type RequestStatus = (typeof REQUEST_STATUSES)[number];
@@ -143,6 +144,9 @@ export const articles = sqliteTable(
     /** Texte en Markdown simple (titres, listes, gras, italique, liens, citations), voir src/lib/markdown.ts. */
     body: text('body').notNull().default(''),
     status: text('status', { enum: ARTICLE_STATUSES }).notNull().default('brouillon'),
+    /** Photo de couverture (table media) : en tête d'article, dans la liste et pour les partages. */
+    coverId: text('cover_id'),
+    coverAlt: text('cover_alt'),
     /** Fixée à la première publication ; sert à l'ordre et à la date affichée. */
     publishedAt: integer('published_at'),
     createdAt: integer('created_at').notNull(),
@@ -150,6 +154,16 @@ export const articles = sqliteTable(
   },
   (t) => [index('articles_status_idx').on(t.status, t.publishedAt)],
 );
+
+export const media = sqliteTable('media', {
+  id: text('id').primaryKey(),
+  mime: text('mime').notNull(),
+  width: integer('width').notNull(),
+  height: integer('height').notNull(),
+  bytes: integer('bytes').notNull(),
+  data: blob('data', { mode: 'buffer' }).notNull(),
+  createdAt: integer('created_at').notNull(),
+});
 
 export type User = typeof users.$inferSelect;
 export type Contact = typeof contacts.$inferSelect;
