@@ -1,0 +1,162 @@
+---
+/**
+ * Un article de « Ma philosophie ». Rendu à la demande depuis la base, mis en cache une minute.
+ * Seuls les articles publiés sont visibles ; un brouillon ou une adresse inconnue répond 404, avec un lien vers la liste
+ * (la page 404 du site est statique : Astro refuse d'y réécrire depuis une page rendue à la demande).
+ */
+import Base from '@/layouts/Base.astro';
+import Button from '@/components/Button.astro';
+import { getPublishedArticle } from '@/lib/crm/articles';
+import { renderMarkdown, readingMinutes } from '@/lib/markdown';
+import { formatDateLong } from '@/lib/dates';
+import { site, CTA_LABEL, CTA_HREF, VISIO_LABEL, VISIO_HREF } from '@/data/site';
+
+export const prerender = false;
+
+const slug = Astro.params.slug ?? '';
+let article = null;
+try {
+  article = await getPublishedArticle(slug);
+} catch (e) {
+  console.error('[philosophie] lecture impossible :', e);
+  return new Response('Service momentanément indisponible.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
+}
+if (!article) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60');
+} else {
+  Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=600');
+}
+const html = article ? renderMarkdown(article.body) : '';
+const published = article ? (article.publishedAt ?? article.createdAt) : 0;
+---
+
+{!article ? (
+<Base title="Texte introuvable" noindex>
+  <header class="article__head container article__col">
+    <a href="/philosophie/" class="article__back label-sm">← Ma philosophie</a>
+    <h1>Ce texte n’est plus là</h1>
+    <p class="lead">Il a peut-être changé d’adresse ou été retiré. Les autres sont sur la page Ma philosophie.</p>
+    <Button href="/philosophie/" variant="dark" icon="arrow-right">Voir les textes</Button>
+  </header>
+</Base>
+) : (
+<Base title={article.title} description={article.excerpt ?? `Un texte de ${site.ownerFirstName}, de ${site.name}.`}>
+  <article class="article">
+    <header class="article__head container article__col">
+      <a href="/philosophie/" class="article__back label-sm">← Ma philosophie</a>
+      <p class="article__meta label-sm">
+        <time datetime={new Date(published).toISOString()}>{formatDateLong(published).replace(/^\S+ /, '')}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingMinutes(article.body)} min de lecture</span>
+      </p>
+      <h1>{article.title}</h1>
+      {article.excerpt && <p class="lead">{article.excerpt}</p>}
+      <p class="article__by small muted">Par {site.ownerFirstName}</p>
+    </header>
+
+    <div class="container article__col">
+      <div class="prose article__body" set:html={html} />
+    </div>
+  </article>
+
+  <section class="section" aria-labelledby="suite-title">
+    <div class="container">
+      <div class="cta frame">
+        <div>
+          <h2 id="suite-title" class="cta__title">On en parle dehors ?</h2>
+          <p class="cta__text">Une session, c’est ce texte en mouvement : de la marche, du souffle, et le téléphone dans le sac.</p>
+        </div>
+        <div class="cta__actions">
+          <Button href={CTA_HREF} variant="lime" icon="arrow-right">{CTA_LABEL}</Button>
+          <a href={VISIO_HREF} class="cta__link label">{VISIO_LABEL}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+)}
+
+<style>
+  .article__col {
+    max-width: calc(var(--prose-max) + 2 * var(--gutter));
+  }
+
+  .article__head {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    padding-block: clamp(2rem, 1.5rem + 3vw, 4rem) var(--space-6);
+  }
+
+  .article__back {
+    color: var(--green-600);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .article__back:hover {
+    text-decoration: underline;
+  }
+
+  .article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    color: var(--green-600);
+  }
+
+  .article__body {
+    font-size: var(--body-lg);
+    line-height: 1.7;
+  }
+
+  .article__body :global(blockquote) {
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--lime);
+    color: var(--green-900);
+    font-style: italic;
+  }
+
+  .article__body :global(strong) {
+    color: var(--ink);
+  }
+
+  .cta {
+    display: grid;
+    gap: var(--space-5);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    background: var(--deep);
+    color: var(--on-dark);
+  }
+
+  .cta__title {
+    color: var(--on-dark);
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .cta__text {
+    color: var(--on-dark-muted);
+    max-width: 44ch;
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .cta__link {
+    color: var(--on-dark);
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 64em) {
+    .cta {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+</style>

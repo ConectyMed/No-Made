@@ -1,5 +1,5 @@
 ---
-/** Contact / Demande de session : formulaire (pré-rempli via ?offre=slug ou ?session=id), rendez-vous visio, FAQ. */
+/** Contact / Demande de session : formulaire (pré-rempli via ?experience=slug ou ?session=id), rendez-vous visio, FAQ. */
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import ContactForm from '@/components/ContactForm.astro';
@@ -20,7 +20,7 @@ const faq: { q: string; a: string; link?: { href: string; label: string } }[] = 
   },
   {
     q: 'Peut-on venir seul ?',
-    a: 'Oui, de deux façons. En solo, c’est une session rien qu’avec moi, construite pour toi. Ou tu rejoins une sortie groupée déjà datée (de trois à cinq personnes), même seul : les dates ouvertes sont sur la page Offres. La Reconnexion se fait en duo parent / enfant, ou à quatre.',
+    a: 'Oui, de deux façons. En solo, c’est une session rien qu’avec moi, construite pour toi. Ou tu rejoins une sortie groupée déjà datée (de trois à cinq personnes), même seul : les dates ouvertes sont sur la page Expériences. La Reconnexion se fait en duo parent / enfant, ou à quatre.',
   },
   {
     q: 'Et si je veux en parler avant de réserver ?',

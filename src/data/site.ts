@@ -56,7 +56,8 @@ export const VISIO_HREF = '/contact/#visio';
 
 export const nav = [
   { href: '/', label: 'Accueil' },
-  { href: '/offres/', label: 'Offres' },
+  { href: '/experiences/', label: 'Expériences' },
+  { href: '/philosophie/', label: 'Ma philosophie' },
   { href: '/a-propos/', label: 'À propos' },
   { href: '/contact/', label: 'Contact' },
 ] as const;

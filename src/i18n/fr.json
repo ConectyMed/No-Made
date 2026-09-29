@@ -26,9 +26,9 @@
       "lead": "Je t’emmène dehors, sur les sentiers autour de Marseille, Cannes et Saint-Tropez, pour remettre le corps et la tête en mouvement : de la marche, du travail au poids du corps, de la mobilité, de la respiration. En solo avec moi, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
     },
     "offers": {
-      "title": "Les sessions",
+      "title": "Les expériences",
       "description": "Deux formats, à tarif de lancement : No'Made Experience (2h30, en solo ou en groupe de 3 à 5) et Reconnexion parent / enfant (3h, en duo ou à 4). Autour de Marseille, Cannes et Saint-Tropez.",
-      "eyebrow": "Les sessions",
+      "eyebrow": "Les expériences",
       "h1": "Deux façons de sortir",
       "lead": "Deux formats, à tarif de lancement. Tu choisis, tu m’écris, on cale une date ensemble, ou tu rejoins une sortie groupée déjà prévue. Et si tu préfères en parler d’abord, on se fait une visio."
     },
@@ -38,6 +38,13 @@
       "eyebrow": "À propos",
       "h1": "Qui t’emmène dehors",
       "lead": "Une personne, un sac, et l’envie de te sortir de la routine."
+    },
+    "philosophy": {
+      "title": "Ma philosophie",
+      "description": "Les textes d’Anthony, de No'Made : le mouvement, le dehors, le souffle, et nos journées trop assises.",
+      "eyebrow": "Ma philosophie",
+      "h1": "Ce qui me fait sortir",
+      "lead": "Ce que je pense du corps, du dehors et de la routine, ce que j’apprends sur les sentiers. J’écris ici quand j’ai quelque chose à te dire."
     },
     "contact": {
       "title": "Demander une session",
@@ -72,7 +79,7 @@
       "title": "Page introuvable",
       "description": "Cette page n’existe pas ou plus.",
       "h1": "Cette page s’est perdue en chemin",
-      "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les sessions.",
+      "lead": "Le lien est peut-être ancien. Retourne à l’accueil ou regarde les expériences.",
       "backHome": "Retour à l’accueil"
     }
   }

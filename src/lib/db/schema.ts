@@ -4,6 +4,7 @@
  *  - contacts : une fiche par personne qui a écrit.
  *  - requests : les demandes du formulaire, avec statut et notes (mini CRM).
  *  - outings, participants : les sessions planifiées et qui y participe (étape 2).
+ *  - articles : les textes de la page « Ma philosophie », écrits depuis l'admin.
  * Dates en millisecondes depuis l'epoch, montants en centimes.
  */
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
@@ -13,6 +14,9 @@ export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 
 export const OUTING_STATUSES = ['prevue', 'faite', 'annulee'] as const;
 export type OutingStatus = (typeof OUTING_STATUSES)[number];
+
+export const ARTICLE_STATUSES = ['brouillon', 'publie'] as const;
+export type ArticleStatus = (typeof ARTICLE_STATUSES)[number];
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -127,8 +131,29 @@ export const participants = sqliteTable(
   (t) => [index('participants_outing_idx').on(t.outingId), index('participants_contact_idx').on(t.contactId)],
 );
 
+export const articles = sqliteTable(
+  'articles',
+  {
+    id: text('id').primaryKey(),
+    /** Adresse publique : /philosophie/<slug>/. ASCII, unique. */
+    slug: text('slug').notNull().unique(),
+    title: text('title').notNull(),
+    /** Chapô : affiché dans la liste, sous le titre, et comme description pour les moteurs de recherche. */
+    excerpt: text('excerpt'),
+    /** Texte en Markdown simple (titres, listes, gras, italique, liens, citations), voir src/lib/markdown.ts. */
+    body: text('body').notNull().default(''),
+    status: text('status', { enum: ARTICLE_STATUSES }).notNull().default('brouillon'),
+    /** Fixée à la première publication ; sert à l'ordre et à la date affichée. */
+    publishedAt: integer('published_at'),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull(),
+  },
+  (t) => [index('articles_status_idx').on(t.status, t.publishedAt)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Contact = typeof contacts.$inferSelect;
 export type RequestRow = typeof requests.$inferSelect;
 export type Outing = typeof outings.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
+export type Article = typeof articles.$inferSelect;

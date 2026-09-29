@@ -1,0 +1,170 @@
+---
+/**
+ * Ma philosophie : les articles d'Anthony, écrits et publiés depuis l'admin (/admin/articles).
+ * Rendue à la demande (la liste vient de la base), mise en cache une minute par le CDN.
+ * Sans article publié : un mot d'attente, rien d'inventé.
+ */
+import Base from '@/layouts/Base.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { usePage } from '@/i18n';
+import { listPublishedArticles } from '@/lib/crm/articles';
+import { readingMinutes } from '@/lib/markdown';
+import { formatDateLong } from '@/lib/dates';
+import { CTA_LABEL, CTA_HREF } from '@/data/site';
+import type { Article } from '@/lib/db/schema';
+
+export const prerender = false;
+
+const page = usePage('philosophy');
+
+let articles: Article[] = [];
+try {
+  articles = await listPublishedArticles();
+  Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=600');
+} catch (e) {
+  console.error('[philosophie] lecture impossible :', e);
+  Astro.response.headers.set('Cache-Control', 'no-store');
+}
+const dateLabel = (ms: number | null) => (ms ? formatDateLong(ms).replace(/^\S+ /, '') : '');
+---
+
+<Base title={page.title} description={page.description}>
+  <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
+
+  <section class="section section--top0" aria-label="Les articles">
+    <div class="container">
+      {
+        articles.length ? (
+          <ul class="posts" role="list">
+            {articles.map((a, i) => (
+              <li class="post card card--hover" data-reveal style={`--reveal-delay: ${Math.min(i, 4) * 70}ms`}>
+                <p class="post__meta label-sm">
+                  <time datetime={a.publishedAt ? new Date(a.publishedAt).toISOString() : undefined}>{dateLabel(a.publishedAt)}</time>
+                  <span aria-hidden="true">·</span>
+                  <span>{readingMinutes(a.body)} min de lecture</span>
+                </p>
+                <h2 class="post__title">
+                  <a href={`/philosophie/${a.slug}/`}>{a.title}</a>
+                </h2>
+                {a.excerpt && <p class="post__excerpt">{a.excerpt}</p>}
+                <span class="post__more label-sm" aria-hidden="true">
+                  Lire <Icon name="arrow-right" size={14} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div class="empty frame" data-reveal>
+            <span class="empty__icon"><Icon name="pen" size={22} /></span>
+            <h2>Le premier texte arrive bientôt</h2>
+            <p class="muted">
+              En attendant, tu peux lire <a href="/a-propos/">mon parcours</a>, ou venir en parler dehors.
+            </p>
+            <Button href={CTA_HREF} variant="dark" icon="arrow-right">{CTA_LABEL}</Button>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section--top0 {
+    padding-top: 0;
+  }
+
+  .posts {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .post {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    color: var(--green-600);
+  }
+
+  .post__title {
+    font-size: var(--text-md);
+  }
+
+  .post__title a {
+    color: var(--green-900);
+    text-decoration: none;
+  }
+
+  /* Toute la carte est cliquable, le lien reste le titre (un seul arrêt au clavier). */
+  .post__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .post__title a:focus-visible {
+    outline: none;
+  }
+
+  .post:has(a:focus-visible) {
+    outline: 2px solid var(--green-600);
+    outline-offset: 3px;
+  }
+
+  .post__excerpt {
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+
+  .post__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--green-600);
+    font-weight: 700;
+  }
+
+  .empty {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    background: var(--surface-low);
+    border: var(--border);
+  }
+
+  .empty__icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-box);
+    background: var(--surface);
+    color: var(--green-900);
+  }
+
+  .empty h2 {
+    font-size: var(--text-md);
+  }
+
+  .empty a {
+    color: var(--green-600);
+    font-weight: 600;
+  }
+
+  @media (min-width: 56em) {
+    .posts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

@@ -22,6 +22,7 @@ const nav: { href: string; label: string; icon: IconName; soon?: boolean }[] = [
   { href: '/admin/demandes', label: 'Demandes', icon: 'mail' },
   { href: '/admin/contacts', label: 'Contacts', icon: 'users' },
   { href: '/admin/sessions', label: 'Sessions', icon: 'calendar' },
+  { href: '/admin/articles', label: 'Articles', icon: 'pen' },
 ];
 const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path.startsWith(href));
 ---
@@ -304,7 +305,7 @@ const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path
     color: var(--green-900);
   }
 
-  .adm-field input:not([type='checkbox']),
+  .adm-field input:not([type='checkbox']):not([type='radio']),
   .adm-field select,
   .adm-field textarea {
     width: 100%;

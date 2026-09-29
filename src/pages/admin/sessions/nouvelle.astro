@@ -46,7 +46,7 @@ if (Astro.request.method === 'POST') {
   const offer = offers.find((o) => o.slug === v.offerSlug);
   const startsAt = parisToMs(v.date, v.time);
   const amountCents = parseEuros(v.amount);
-  if (!offer) error = 'Choisis une offre.';
+  if (!offer) error = 'Choisis une expérience.';
   else if (!startsAt) error = 'La date ou l’heure est illisible.';
   else if (amountCents === null) error = 'Le montant est illisible (ex. 90 ou 90,50).';
   else {
@@ -72,7 +72,7 @@ if (Astro.request.method === 'POST') {
 
   <form method="post" class="adm-card form">
     <div class="adm-field">
-      <label for="offerSlug">Offre</label>
+      <label for="offerSlug">Expérience</label>
       <select id="offerSlug" name="offerSlug" required>
         {offers.map((o) => <option value={o.slug} selected={o.slug === v.offerSlug} data-duration={o.durationMin ?? ''}>{o.label}</option>)}
       </select>
@@ -88,7 +88,7 @@ if (Astro.request.method === 'POST') {
       </div>
       <div class="adm-field">
         <label for="duration">Durée (minutes)</label>
-        <input id="duration" name="duration" type="number" min="15" step="5" placeholder="celle de l’offre" value={v.duration} />
+        <input id="duration" name="duration" type="number" min="15" step="5" placeholder="celle de l’expérience" value={v.duration} />
       </div>
     </div>
     <div class="adm-field">
@@ -98,7 +98,7 @@ if (Astro.request.method === 'POST') {
     <div class="adm-field">
       <label for="amount">Montant prévu (€)</label>
       <input id="amount" name="amount" type="text" inputmode="decimal" placeholder="0" value={v.amount} />
-      <span class="small muted">Prérempli d’après l’offre quand on part d’une demande. Tu peux le corriger à tout moment, y compris après.</span>
+      <span class="small muted">Prérempli d’après l’expérience quand on part d’une demande. Tu peux le corriger à tout moment, y compris après.</span>
     </div>
     <div class="adm-field">
       <label for="notes">Notes</label>

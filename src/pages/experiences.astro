@@ -1,5 +1,5 @@
 ---
-/** Offres : une carte détaillée par session (src/content/offers/fr), infos pratiques, contact. */
+/** Expériences : une carte détaillée par expérience (src/content/offers/fr), infos pratiques, contact. */
 import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import PageIntro from '@/components/PageIntro.astro';
@@ -18,7 +18,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
 <Base title={page.title} description={page.description}>
   <PageIntro eyebrow={page.eyebrow} title={page.h1} lead={page.lead} />
 
-  <section class="section section--top0" aria-label="Les sessions">
+  <section class="section section--top0" aria-label="Les expériences">
     <div class="container list">
       {offers.map((offer, i) => <div data-reveal style={`--reveal-delay: ${i * 90}ms`}><OfferCard offer={offer} headingLevel="h2" /></div>)}
     </div>
@@ -27,7 +27,7 @@ const offers = (await getCollection('offers', ({ filePath }) => filePath?.includ
   <div class="section section--top0">
     <div class="container" data-reveal>
       <UpcomingSessions
-        headingId="sorties-offres"
+        headingId="sorties-experiences"
         lead="Des dates fixes pour l’Expérience en groupe, de 3 à 5 personnes. Tu viens seul ou à deux, le groupe se forme sur place."
         emptyText="Pas de sortie groupée publiée pour l’instant : la prochaine arrive vite. Tu veux être prévenu, ou monter ton propre groupe ?"
       />
