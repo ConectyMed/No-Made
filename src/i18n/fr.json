@@ -1,6 +1,6 @@
 {
   "meta": {
-    "titleSuffix": "Nó Made Project",
+    "titleSuffix": "No'Made",
     "defaultDescription": "Sorties nature autour de Marseille, Cannes et Saint-Tropez : marche, préparation physique au poids du corps, mobilité et respiration. En solo avec moi, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
   },
   "common": {
@@ -11,7 +11,7 @@
     "themeLight": "Passer en mode clair",
     "mainNav": "Navigation principale",
     "footerNav": "Pied de page",
-    "home": "Nó Made Project, retour à l’accueil",
+    "home": "No'Made, retour à l’accueil",
     "requestSession": "Demander une session",
     "requestThisSession": "Demander cette session",
     "visioFirst": "Échanger en visio d’abord",
@@ -20,21 +20,21 @@
   "pages": {
     "home": {
       "title": "Sorties nature à Marseille, Cannes, Saint-Tropez",
-      "description": "Nó Made Project : marche, préparation physique au poids du corps, mobilité et respiration, dehors, autour de Marseille, Cannes et Saint-Tropez. En solo, en petit groupe ou en duo parent / enfant.",
+      "description": "No'Made : marche, préparation physique au poids du corps, mobilité et respiration, dehors, autour de Marseille, Cannes et Saint-Tropez. En solo, en petit groupe ou en duo parent / enfant.",
       "tag": "Marseille · Cannes · Saint-Tropez",
       "h1": "Marcher. Respirer.\nSe retrouver.",
       "lead": "Je t’emmène dehors, sur les sentiers autour de Marseille, Cannes et Saint-Tropez, pour remettre le corps et la tête en mouvement : de la marche, du travail au poids du corps, de la mobilité, de la respiration. En solo avec moi, en petit groupe, ou en duo parent / enfant. Le téléphone reste dans le sac."
     },
     "offers": {
       "title": "Les sessions",
-      "description": "Deux formats, à tarif de lancement : Nó Made Experience (2h30, en solo ou en groupe de 3 à 5) et Reconnexion parent / enfant (3h, en duo ou à 4). Autour de Marseille, Cannes et Saint-Tropez.",
+      "description": "Deux formats, à tarif de lancement : No'Made Experience (2h30, en solo ou en groupe de 3 à 5) et Reconnexion parent / enfant (3h, en duo ou à 4). Autour de Marseille, Cannes et Saint-Tropez.",
       "eyebrow": "Les sessions",
       "h1": "Deux façons de sortir",
       "lead": "Deux formats, à tarif de lancement. Tu choisis, tu m’écris, on cale une date ensemble, ou tu rejoins une sortie groupée déjà prévue. Et si tu préfères en parler d’abord, on se fait une visio."
     },
     "about": {
       "title": "À propos",
-      "description": "Anthony, la personne derrière Nó Made Project : dix ans de voyage en autonomie, le goût de transmettre, et une façon de bouger dehors : marche, poids du corps, mobilité, respiration.",
+      "description": "Anthony, la personne derrière No'Made : dix ans de voyage en autonomie, le goût de transmettre, et une façon de bouger dehors : marche, poids du corps, mobilité, respiration.",
       "eyebrow": "À propos",
       "h1": "Qui t’emmène dehors",
       "lead": "Une personne, un sac, et l’envie de te sortir de la routine."
@@ -48,24 +48,24 @@
     },
     "safety": {
       "title": "Encadrement et sécurité",
-      "description": "Qui encadre les sessions Nó Made Project, comment elles sont préparées, ce qui se passe s’il pleut, et ce qu’il faut savoir pour venir avec son enfant.",
+      "description": "Qui encadre les sessions No'Made, comment elles sont préparées, ce qui se passe s’il pleut, et ce qu’il faut savoir pour venir avec son enfant.",
       "eyebrow": "Encadrement et sécurité",
       "h1": "Sortir dehors, l’esprit tranquille",
       "lead": "Qui t’encadre, comment je prépare chaque sortie, ce qui se passe quand la météo tourne, et ce qu’il faut savoir pour venir avec ton enfant."
     },
     "legalNotice": {
       "title": "Mentions légales",
-      "description": "Mentions légales du site Nó Made Project.",
+      "description": "Mentions légales du site No'Made.",
       "h1": "Mentions légales"
     },
     "terms": {
       "title": "Conditions générales de vente",
-      "description": "Conditions générales de vente des sessions Nó Made Project : réservation, annulation, remboursement.",
+      "description": "Conditions générales de vente des sessions No'Made : réservation, annulation, remboursement.",
       "h1": "Conditions générales de vente"
     },
     "privacy": {
       "title": "Politique de confidentialité",
-      "description": "Comment Nó Made Project traite tes données personnelles (RGPD).",
+      "description": "Comment No'Made traite tes données personnelles (RGPD).",
       "h1": "Politique de confidentialité"
     },
     "notFound": {

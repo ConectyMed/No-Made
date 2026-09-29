@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Site vitrine de Nó Made Project : expériences nature guidées en petit groupe, région PACA.",
+  "description": "Site vitrine de No'Made : expériences nature guidées en petit groupe, région PACA.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/check-placeholders.mjs",
